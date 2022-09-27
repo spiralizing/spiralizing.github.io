@@ -1,7 +1,7 @@
 @def title = "Alfredo González-Espinoza, PhD"
 @def tags = ["syntax", "code"]
 
-# How to use Franklin
+# About me:
 
 \tableofcontents <!-- you can use \toc as well -->
 
