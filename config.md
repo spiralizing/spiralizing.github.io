@@ -19,7 +19,7 @@ website_url   = "https://spiralizing.github.io/"
 +++
 
 # github repository
-prepath = "PersonalWebsite"
+prepath = "spiralizing.github.io"
 <!--
 Add here global latex commands to use throughout your pages.
 -->
