@@ -15,7 +15,7 @@ ignore = ["node_modules/"]
 generate_rss = true
 website_title = "Alfredo González-Espinoza"
 website_descr = "Data Science | Complex Systems | Music"
-website_url   = "https://tlienart.github.io/FranklinTemplates.jl/"
+website_url   = "https://spiralizing.github.io/"
 +++
 
 # github repository

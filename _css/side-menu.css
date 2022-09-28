@@ -35,12 +35,12 @@ This is the parent `<div>` that contains the menu and the content area.
 }
 
 #layout.active #menu {
-  left: 150px;
-  width: 150px;
+  left: 200px;
+  width: 200px;
 }
 
 #layout.active .menu-link {
-  left: 150px;
+  left: 200px;
 }
 
 /*
@@ -90,7 +90,7 @@ appears on the left side of the page.
 
 #menu {
   margin-left: -150px; /* "#menu" width */
-  width: 150px;
+  width: 200px;
   position: fixed;
   top: 0;
   left: 0;
@@ -105,7 +105,7 @@ appears on the left side of the page.
     All anchors inside the menu should be styled like this.
     */
 #menu a {
-  color: #999;
+  color: rgb(252, 98, 87);
   border: none;
   padding: 0.6em 0 0.6em 0.6em;
 }
@@ -156,6 +156,17 @@ appears on the left side of the page.
 #menu .pure-menu-heading {
   font-size: 110%;
   color: #fff;
+  background: #1f8dd6;
+  margin: 0;
+}
+
+/*
+    This styles the menu subheading.
+    */
+#menu .pure-menu-subheading {
+  font-size: 115%;
+  color: rgb(22, 255, 127);
+  background: transparent;
   margin: 0;
 }
 

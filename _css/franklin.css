@@ -122,14 +122,14 @@ h6 {
 
 .franklin-content h1 {
   padding-bottom: 0.5em;
-  border-bottom: 3px double lightgrey;
+  border-bottom: 3px double rgba(163, 163, 163, 0.911);
   margin-top: 1.5em;
   margin-bottom: 1em;
 }
 
 .franklin-content h2 {
   padding-bottom: 0.3em;
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid rgba(76, 82, 79, 0.979);
   margin-top: 2em;
   margin-bottom: 1em;
 }
@@ -167,7 +167,7 @@ td {
 
 .franklin-content blockquote {
   background: var(--block-background);
-  border-left: 7px solid #a8a8a8;
+  border-left: 7px solid #b2b5b6;
   margin: 1.5em 10px;
   padding: 0.5em 10px;
   font-style: italic;

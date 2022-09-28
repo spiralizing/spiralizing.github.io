@@ -1,9 +1,13 @@
 @def title = "Alfredo González-Espinoza, PhD"
+@def subtitle = " | Complex Systems | Data Science | Music Evolution |"
 @def tags = ["syntax", "code"]
 
-# About me:
+# About me: 
 
-\tableofcontents <!-- you can use \toc as well -->
+Hi! 
+
+Welcome to my personal website, I am a Mexican Scientist interested in diverse topics related to music, language, cognition and collective and human behavior from a statistical physics and complex systems perspective. I’m an amateur cellist and I usually spend my free time listening to music, playing video games and playing football (soccer).
+<!--- \tableofcontents <!-- you can use \toc as well -->
 
 This section is meant as a refresher if you're new to Franklin.
 Have a look at both how the website renders and the corresponding markdown (`index.md`).
@@ -33,7 +37,7 @@ struct PointR3{T<:Real} <: Point
     y::T
     z::T
 end
-function len(p::T) where T<:Point
+function len(p::T) where {T<:Point}
   sqrt(sum(getfield(p, η)^2 for η ∈ fieldnames(T)))
 end
 ```

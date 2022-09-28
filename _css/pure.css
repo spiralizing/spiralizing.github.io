@@ -513,7 +513,7 @@ legend {
 .pure-button-active,
 .pure-button:active {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15) inset, 0 0 6px rgba(0, 0, 0, 0.2) inset;
-  border-color: #000\9;
+  border-color: #0000;
 }
 
 .pure-button-disabled,
@@ -924,6 +924,7 @@ a.pure-button-selected {
 
 .pure-menu-list {
   list-style: none;
+  display: block;
   margin: 0;
   padding: 0;
 }
@@ -935,6 +936,7 @@ a.pure-button-selected {
 }
 
 .pure-menu-heading,
+.pure-menu-subheading,
 .pure-menu-link {
   display: block;
   text-decoration: none;
@@ -950,7 +952,7 @@ a.pure-button-selected {
   display: inline-block;
 }
 
-.pure-menu-horizontal .pure-menu-heading,
+.pure-menu-horizontal .pure-menu-heading, .pure-menu-subheading,
 .pure-menu-horizontal .pure-menu-item,
 .pure-menu-horizontal .pure-menu-separator {
   display: inline-block;
@@ -1043,6 +1045,10 @@ a.pure-button-selected {
   color: #565d64;
 }
 
+.pure-menu-subheading {
+  color: #565d64;
+}
+
 .pure-menu-link {
   color: #777;
 }
@@ -1052,7 +1058,7 @@ a.pure-button-selected {
 }
 
 .pure-menu-disabled,
-.pure-menu-heading,
+.pure-menu-heading, .pure-menu-subheading,
 .pure-menu-link {
   padding: 0.5em 1em;
 }
