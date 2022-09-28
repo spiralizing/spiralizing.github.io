@@ -8,7 +8,7 @@ Hi!
 
 Welcome to my personal website, I am a Mexican Scientist interested in diverse topics related to music, language, cognition and collective and human behavior from a statistical physics and complex systems perspective. I’m an amateur cellist and I usually spend my free time listening to music, playing video games and playing football (soccer).
 
-checking if this deploys or not
+checking if this deploys or not ...
 <!--- \tableofcontents <!-- you can use \toc as well -->
 
 This section is meant as a refresher if you're new to Franklin.
