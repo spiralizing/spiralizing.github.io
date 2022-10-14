@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:media="http://search.yahoo.com/mrss/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:georss="http://www.georss.org/georss">
+
+  <channel>
+    <title>
+      <![CDATA[  Alfredo González-Espinoza  ]]>
+    </title>
+    <link> https://spiralizing.github.io/ </link>
+    <description>
+      <![CDATA[  Data Science | Complex Systems | Music  ]]>
+    </description>
+    <atom:link
+      href="https://spiralizing.github.io/feed.xml"
+      rel="self"
+      type="application/rss+xml" />
+
+
+<item>
+  <title>
+    <![CDATA[  Building a semantic network  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </link>
+  <guid> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </guid>
+  <description>
+    <![CDATA[  How to build a semantic graph  ]]>
+  </description>  
+    
+  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Sentiment analysis and topic modeling in pop artists  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </link>
+  <guid> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </guid>
+  <description>
+    <![CDATA[  Sentiment analysis and topic model for some pop artists  ]]>
+  </description>  
+    
+  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Style Transfer  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DSEntries/StyleTransfer/index.html </link>
+  <guid> https://spiralizing.github.io/DSEntries/StyleTransfer/index.html </guid>
+  <description>
+    <![CDATA[  Transfering the style from one image to another  ]]>
+  </description>  
+    
+  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Data Science  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DataScience/index.html </link>
+  <guid> https://spiralizing.github.io/DataScience/index.html </guid>
+  <description>
+    <![CDATA[  Description of my datas science examples and projects  ]]>
+  </description>  
+    
+  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+</channel></rss>

@@ -23,25 +23,6 @@
 
 <item>
   <title>
-    <![CDATA[  Building a semantic network  ]]>
-  </title>
-  <link> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </link>
-  <guid> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </guid>
-  <description>
-    <![CDATA[  How to build a semantic graph  ]]>
-  </description>  
-    
-  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  Sentiment analysis and topic modeling in pop artists  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </link>
@@ -99,25 +80,6 @@
 
 <item>
   <title>
-    <![CDATA[  Music Evolution  ]]>
-  </title>
-  <link> https://spiralizing.github.io/MusicEvo/index.html </link>
-  <guid> https://spiralizing.github.io/MusicEvo/index.html </guid>
-  <description>
-    <![CDATA[  Description of the work I have done around music  ]]>
-  </description>  
-    
-  <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  Research Projects  ]]>
   </title>
   <link> https://spiralizing.github.io/Research/index.html </link>
@@ -165,44 +127,6 @@
   </description>  
     
   <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
-    <![CDATA[  More goodies  ]]>
-  </title>
-  <link>  </link>
-  <guid>  </guid>
-  <description>
-    <![CDATA[  A short description of the page which would serve as <strong>blurb</strong> in a <code>RSS</code> feed; you can use basic markdown here but the whole description string must be a single line &#40;not a multiline string&#41;. Like this one for instance. Keep in mind that styling is minimal in RSS so for instance don&#39;t expect maths or fancy styling to work; images should be ok though: <img src="https://upload.wikimedia.org/wikipedia/en/b/b0/Rick_and_Morty_characters.jpg" alt="" />  ]]>
-  </description>  
-    
-  <pubDate>Wed, 01 May 2019 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
-    <![CDATA[  Code blocks  ]]>
-  </title>
-  <link> https://spiralizing.github.io/menu1/index.html </link>
-  <guid> https://spiralizing.github.io/menu1/index.html </guid>
-  <description>
-    <![CDATA[  A short description of the page which would serve as <strong>blurb</strong> in a <code>RSS</code> feed; you can use basic markdown here but the whole description string must be a single line &#40;not a multiline string&#41;. Like this one for instance. Keep in mind that styling is minimal in RSS so for instance don&#39;t expect maths or fancy styling to work; images should be ok though: <img src="https://upload.wikimedia.org/wikipedia/en/3/32/Rick_and_Morty_opening_credits.jpeg" alt="" />  ]]>
-  </description>  
-    
-  <pubDate>Fri, 22 Mar 2019 00:00:00 +0000</pubDate>  
   
   
   <atom:author>
