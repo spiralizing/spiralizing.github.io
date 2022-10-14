@@ -58,7 +58,7 @@ You can also hide lines (that will be executed nonetheless):
 
 ```julia:./code/ex3
 using Random
-Random.seed!(1) # hide
+Random.seed!(5) # hide
 @show randn(2)
 ```
 
