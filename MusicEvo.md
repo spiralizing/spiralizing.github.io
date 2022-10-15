@@ -11,7 +11,7 @@ During my PhD and postdoctoral years I worked doing research related to **music*
 
 **Music** is a **cultural phenomena** that emerges from social and cultural interactions with individual and collective implications. It’s multi-scale and multi-factorial characteristics makes music a very appealing subject of study to understand problems related not only to socio-cultural behavior and evolution but also to cognitive processes such as **creativity** or **innovation**.
 
-For this reason, understanding, characterizing and quantifying musical features is essential to explore more complicated aspects like cultural evolution or innovation.
+For this reason, identifying, quantifying and characterizing musical features is essential to explore more complicated aspects like cultural evolution or innovation.
 
 \tableofcontents
 

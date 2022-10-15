@@ -89,7 +89,7 @@ appears on the left side of the page.
 */
 
 #menu {
-  margin-left: -150px; /* "#menu" width */
+  margin-left: -200px; /* "#menu" width */
   width: 200px;
   position: fixed;
   top: 0;
@@ -243,11 +243,11 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   }
 
   #menu {
-    left: 150px;
+    left: 200px;
   }
 
   .menu-link {
-    position: fixed;
+    position: relative;
     left: 150px;
     display: none;
   }

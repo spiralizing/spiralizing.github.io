@@ -25,3 +25,8 @@ A **semantic network**, sometimes referred as [knowledge graph](https://en.wikip
 
     warnings.filterwarnings("ignore")
 ```
+We load the `.csv` file as a data frame:
+```python
+    
+    df_cnn = pd.read_csv('Data/CNN_Articles/CNN_Articels_clean.csv')
+```
