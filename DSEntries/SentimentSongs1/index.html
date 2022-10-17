@@ -63,49 +63,165 @@ Total: 3172 songs from 21 Artists</code></pre>
 plt.figure(figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >6</span>))
 plt.title(name_artists[<span class=hljs-number >3</span>]) <span class=hljs-comment >#ladygaga</span>
 sns.boxplot(x=<span class=hljs-string >&#x27;Year&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>,data=df_artists[<span class=hljs-number >3</span>])</code></pre>
-
+<p>
 <div class=container >
 
     <img class=center  src="/assets/ladygaga.svg" width=500  height=450 >
 
 </div>
-
-<pre><code class="python hljs"><span class=hljs-comment >#defining function</span>
-<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_sentplotdata</span>(<span class=hljs-params >cleaned_df</span>):
-     uyears = np.sort(cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>].unique())
-     med_sscore = [np.median(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>] == year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>])
-          <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
-     y_errtop = [np.quantile(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>] == year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>],<span class=hljs-number >0.75</span>) <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
-     y_errbot = [np.quantile(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>]==year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>], <span class=hljs-number >0.25</span>) <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
-     y_err = [np.subtract(med_sscore,y_errbot),np.subtract(y_errtop, med_sscore)]
-
-     <span class=hljs-keyword >return</span> uyears, med_sscore, y_err
-
-sentiments = [get_sentplotdata(df) <span class=hljs-keyword >for</span> df <span class=hljs-keyword >in</span> df_artists]
-
-plt.figure(figsize=(<span class=hljs-number >20</span>,<span class=hljs-number >8</span>))
-<span class=hljs-comment >#we choose 5 artists randomly to show</span>
-picks = np.random.choice(<span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(name_artists)), <span class=hljs-number >5</span>, replace=<span class=hljs-literal >False</span>)
-<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> picks:
-    plt.plot(sentiments[i][<span class=hljs-number >0</span>], sentiments[i][<span class=hljs-number >1</span>],<span class=hljs-string >&#x27;s-&#x27;</span>, label=name_artists[i])
-    
-plt.ylim(-<span class=hljs-number >1.1</span>,<span class=hljs-number >1.1</span>)
-plt.xlim(<span class=hljs-number >2005</span>,<span class=hljs-number >2022</span>)
-plt.legend()
-plt.grid()
-plt.xlabel(<span class=hljs-string >&#x27;Year&#x27;</span>)
-plt.ylabel(<span class=hljs-string >&#x27;Sentiment score (median)&#x27;</span>)</code></pre>
-<p>bleh</p>
+ the first thing we can notice about the plot is that the sentiment values seem to be very disperse in some of the years, this could be due to few amount of data or the shape of the distribution itself. </p>
+<p>Next, we are going to plot the whole distribution &#40;independent of the year&#41; for every artist, and this time we are going to visualize it as a <a href="https://en.wikipedia.org/wiki/Violin_plot">violin plot</a> to have a better idea about the shape of the distributions</p>
 <pre><code class="python hljs"><span class=hljs-comment >#concatenating all the artists dataframes </span>
 all_df = pd.concat(df_artists)
 
 plt.figure(figsize=(<span class=hljs-number >18</span>, <span class=hljs-number >6</span>))
 plt.title(<span class=hljs-string >&#x27;Sentiment score per artist&#x27;</span>)
+<span class=hljs-comment >#plotting all artists sentiment score distributions and visualizing as violinplots</span>
 sns.violinplot(x=<span class=hljs-string >&#x27;Artist&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>,data=all_df)
 plt.ylabel(<span class=hljs-string >&#x27;Sentiment score (Compound)&#x27;</span>)
 plt.xlabel(<span class=hljs-string >&#x27;&#x27;</span>)
 plt.xticks(rotation=<span class=hljs-number >45</span>)
 plt.show()</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/sentiments_artists.svg" width=500  height=450 >
+
+</div>
+
+<p>this plot confirms our suspicion about the shape of the distributions: almost every artist distribution shows <a href="https://en.wikipedia.org/wiki/Multimodal_distribution">bimodality</a>. In this case the bimodality is represented by the two different sentiments indicating that there are few songs across artists that contain a <em>neutral</em> sentiment. This result makes sense, since pop lyrical music usually has strong emotional connotation, with the majority of artists in this sample being <em>positive</em>. The only 3 artists with a larger number of <em>negative songs</em> are <strong>Eminem</strong>, <strong>Nicki Minaj</strong> and <strong>Cardi B</strong>, with Eminem being the most <em>negative</em> one. This result is not surprising since Rap &#40;or hip hop&#41; music is well known to talk about social issues and often has violent or <em>explicit content</em> in the lyrics.</p>
+<h3 id=topic_modeling ><a href="#topic_modeling" class=header-anchor >Topic modeling</a></h3>
+<p>Now, let&#39;s have more fun, let&#39;s try to see if there is any relationship between the sentiment and the content &#40;topic&#41; the lyrics have. In other words, we want to see if their positive or negative sentiments are represented by the same or similar words the artist uses. To explore this question we are going to do <strong>topic modeling</strong> on each artist, so we can assign each of the <em>songs</em> to a particular <em>topic</em> and explore the <em>most used</em> words on each topic.</p>
+<p>For the topic model we use the <a href="https://en.wikipedia.org/wiki/Non-negative_matrix_factorization">non-negative matrix factorization &#40;NNMF&#41;</a> method &#40;I will make another entry with details about other topic models&#41;. For this particular case, NNMF is more than enough and is easier to understand if you are familiar with linear algebra.<br/>  The basic idea behind NNMF is to factorize an initial matrix <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant=bold-italic >V</mi><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\boldsymbol{V}_{m\times n}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.8944em;vertical-align:-0.2083em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.25555em;">V</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> into a product of two smaller matrices <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant=bold-italic >W</mi><mrow><mi>m</mi><mo>×</mo><mi>p</mi></mrow></msub><mo separator=true >,</mo><msub><mi mathvariant=bold-italic >H</mi><mrow><mi>p</mi><mo>×</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\boldsymbol{W}_{m \times p} , \boldsymbol{H}_{p \times n}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.9722em;vertical-align:-0.2861em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.15972em;">W</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">p</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2861em;"><span></span></span></span></span></span></span><span class=mpunct >,</span><span class=mspace  style="margin-right:0.1667em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.08229em;">H</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> :</p>
+<span class=katex-display ><span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML" display=block ><semantics><mrow><mi mathvariant=bold-italic >V</mi><mo>≈</mo><mi mathvariant=bold-italic >W</mi><mo>×</mo><mi mathvariant=bold-italic >H</mi></mrow><annotation encoding="application/x-tex"> \boldsymbol{V} \approx \boldsymbol{W} \times \boldsymbol{H} </annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6861em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.25555em;">V</span></span></span><span class=mspace  style="margin-right:0.2778em;"></span><span class=mrel >≈</span><span class=mspace  style="margin-right:0.2778em;"></span></span><span class=base ><span class=strut  style="height:0.7694em;vertical-align:-0.0833em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.15972em;">W</span></span></span><span class=mspace  style="margin-right:0.2222em;"></span><span class=mbin >×</span><span class=mspace  style="margin-right:0.2222em;"></span></span><span class=base ><span class=strut  style="height:0.6861em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.08229em;">H</span></span></span></span></span></span></span>
+<p>where we can think about what the matrices represent in our problem, the initial matrix would be some type of <em>normalized frequency</em> of each word across all songs &#40;<span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant=bold-italic >V</mi><mrow><mi>m</mi><mo>×</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\boldsymbol{V}_{m\times n}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.8944em;vertical-align:-0.2083em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.25555em;">V</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span>&#41;, where <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> is the number of words and <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> the number of songs. In the product one matrix would be the words distributed through topics &#40;<span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant=bold-italic >W</mi><mrow><mi>m</mi><mo>×</mo><mi>p</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\boldsymbol{W}_{m \times p}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.9722em;vertical-align:-0.2861em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.15972em;">W</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">p</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>&#41; and the other would be the songs distributed through topics &#40;<span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant=bold-italic >H</mi><mrow><mi>p</mi><mo>×</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\boldsymbol{H}_{p \times n}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.9722em;vertical-align:-0.2861em;"></span><span class=mord ><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.08229em;">H</span></span></span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.2583em;"><span style="top:-2.55em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>&#41; with <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span> being the number of topics, a parameter that we control.</p>
+<p>First we are going to construct our <em>frequency matrix</em> or <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant=bold-italic >V</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{V}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6861em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.25555em;">V</span></span></span></span></span></span>, for this we are going to use a vectorizer from <code>sklearn</code> that implements a <a href="https://en.wikipedia.org/wiki/Tf&#37;E2&#37;80&#37;93idf">term-frequency inverse document frequency &#40;TF-IDF&#41;</a> normalization:</p>
+<pre><code class="python hljs"><span class=hljs-keyword >from</span> sklearn.feature_extraction.text <span class=hljs-keyword >import</span> TfidfVectorizer
+<span class=hljs-comment >#define the vectorizer</span>
+<span class=hljs-comment >#removing stop words</span>
+<span class=hljs-comment >#max_df = max documents frequency, min_df = minimum documents frequency</span>
+tfidf_vec = TfidfVectorizer(max_df=<span class=hljs-number >0.9</span>, min_df=<span class=hljs-number >2</span>, stop_words=<span class=hljs-string >&#x27;english&#x27;</span>)</code></pre>
+<p>the <code>max_df</code> and <code>min_df</code>are variables to consider words that appear in at most and at least those fractions or number of documents, next we build our <em>frequency matrix</em>, in this example Selena Gomez&#39;s one:</p>
+<pre><code class="python hljs"><span class=hljs-comment ># artist on index 6 corresponds to Selena Gomez</span>
+freq_mat = tfidf_vec.fit_transform(df_artists[<span class=hljs-number >6</span>][<span class=hljs-string >&#x27;Lyric&#x27;</span>])</code></pre>
+<p>and now we define our NNMF model, we are going to set the number of components &#40;topics&#41; equal to 3 to see if the topics are related to the sentiments. This selection is arbitrary and is under the hypothesis that artists talk about specific topic&#40;s&#41; in a negative or positive way, there are different ways to do this analysis but for simplicity and illustrative purposes we are going to assume that they have only one topic for each sentiment.</p>
+<pre><code class="python hljs"><span class=hljs-keyword >from</span> sklearn.decomposition <span class=hljs-keyword >import</span> NMF
+
+nmf_model = NMF(n_components=<span class=hljs-number >3</span>)</code></pre>
+<p>now we fit the model to the data</p>
+<pre><code class="python hljs">nmf_model.fit(freq_mat)</code></pre>
+<pre><code class="plaintext hljs">NMF(n_components=3)</code></pre>
+<p>and now we can obtain the <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant=bold-italic >H</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{H}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6861em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.08229em;">H</span></span></span></span></span></span> matrix that contains the song and the weights for the song on each topic and go further by assigning the number of topic to each of the songs</p>
+<pre><code class="python hljs"><span class=hljs-comment >#get the H matrix</span>
+topic_results = nmf_model.transform(freq_mat)
+<span class=hljs-comment >#finding where the largest weight is on every song</span>
+<span class=hljs-comment >#and assigning the song to a topic in the original dataframe of the artist</span>
+df_artists[<span class=hljs-number >6</span>][<span class=hljs-string >&#x27;Topic&#x27;</span>] = topic_results.argmax(axis=<span class=hljs-number >1</span>)</code></pre>
+<p>now to see what words are the most used on each topic, if we inspect the <code>nmf_model.components_</code> entry of our model we will see the matrix <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant=bold-italic >W</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{W}</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6861em;"></span><span class=mord ><span class=mord ><span class="mord boldsymbol" style="margin-right:0.15972em;">W</span></span></span></span></span></span> containing the weights for the words on each topic:</p>
+<pre><code class="python hljs">nmf_model.components_</code></pre>
+<pre><code class="plaintext hljs">array([[0.00800022, 0.00368562, 0.01332492, ..., 0.00355086, 0.0046122 ,
+        0.00167504],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.01988694,
+        0.00160906],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.00050211,
+        0.        ]])</code></pre>
+<p>with this information we are going to save in the data frame the first 10 most used words on each topic</p>
+<pre><code class="python hljs">top_words = []
+<span class=hljs-keyword >for</span> ix, topic <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(nmf_model.components_):
+    twords = [tfidf_vec.get_feature_names_out()[i]  <span class=hljs-comment ># topic i</span>
+        <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> topic.argsort()[-<span class=hljs-number >10</span>:]]
+    top_words.append(twords)  
+
+<span class=hljs-comment >#saving the words in the artist df</span>
+df_artists[<span class=hljs-number >6</span>][<span class=hljs-string >&#x27;top_words&#x27;</span>] = df_artists[<span class=hljs-number >6</span>][<span class=hljs-string >&#x27;Topic&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> topic: top_words[topic])</code></pre>
+<p>and now we can plot the sentiment distributions for each topic</p>
+<pre><code class="python hljs">plt.figure(figsize=(<span class=hljs-number >10</span>, <span class=hljs-number >6</span>))
+plt.title(name_artists[<span class=hljs-number >6</span>])
+sns.violinplot(x=<span class=hljs-string >&#x27;Topic&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>, data=df_artists[<span class=hljs-number >6</span>])
+plt.ylabel(<span class=hljs-string >&#x27;Sentiment score (Compound)&#x27;</span>)
+plt.xlabel(<span class=hljs-string >&#x27;Topic Number&#x27;</span>)
+plt.show()</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/selenag.svg" width=500  height=350 >
+
+</div>
+
+<p>and get the top 10 words for each topic</p>
+<pre><code class="python hljs">n_artist = <span class=hljs-number >6</span>
+wordsptop = [df_artists[n_artist]
+             [df_artists[n_artist][<span class=hljs-string >&#x27;Topic&#x27;</span>] == topic][<span class=hljs-string >&#x27;top_words&#x27;</span>].iloc[<span class=hljs-number >0</span>] <span class=hljs-keyword >for</span> topic <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>)
+]
+<span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Topics for artist <span class=hljs-subst >{name_artists[n_artist]}</span> \n&#x27;</span>)
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>):
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Top 10 words for topic <span class=hljs-subst >{i}</span>: <span class=hljs-subst >{wordsptop[i]}</span> \n&#x27;</span>)</code></pre>
+<pre><code class="plaintext hljs">Topics for artist SelenaGomez 
+
+Top 10 words for topic 0: [&#x27;selena&#x27;, &#x27;good&#x27;, &#x27;got&#x27;, &#x27;want&#x27;, &#x27;just&#x27;, &#x27;don&#x27;, &#x27;know&#x27;, &#x27;yeah&#x27;, &#x27;love&#x27;, &#x27;like&#x27;] 
+
+Top 10 words for topic 1: [&#x27;gun&#x27;, &#x27;war&#x27;, &#x27;blow&#x27;, &#x27;youre&#x27;, &#x27;lies&#x27;, &#x27;head&#x27;, &#x27;ahead&#x27;, &#x27;kindness&#x27;, &#x27;kill&#x27;, &#x27;em&#x27;] 
+
+Top 10 words for topic 2: [&#x27;doesn&#x27;, &#x27;think&#x27;, &#x27;need&#x27;, &#x27;baby&#x27;, &#x27;know&#x27;, &#x27;magic&#x27;, &#x27;believe&#x27;, &#x27;disappear&#x27;, &#x27;night&#x27;, &#x27;oh&#x27;]</code></pre>
+<p>From this result we can inspect what are the words commonly used in <em>positive sentiment</em> songs, which topic 0 is the one with the most positive median value, words like &#39;love&#39;, &#39;good&#39; and &#39;like&#39; with &#39;selena&#39; makes us think that here she is probably singing about love and relationships or things she likes. The <em>negative sentiment</em> songs seem to talk about &#39;war&#39; and &#39;lies&#39;.</p>
+<p>Now we do the same for every artist and plot the results</p>
+<pre><code class="python hljs"><span class=hljs-keyword >def</span> <span class="hljs-title function_">get_topics</span>(<span class=hljs-params >df_artist</span>):
+    tfidf_vec = TfidfVectorizer(max_df=<span class=hljs-number >0.9</span>, min_df=<span class=hljs-number >2</span>, stop_words=<span class=hljs-string >&#x27;english&#x27;</span>)
+    freq_mat = tfidf_vec.fit_transform(df_artist[<span class=hljs-string >&#x27;Lyric&#x27;</span>])
+    nmf_model = NMF(n_components=<span class=hljs-number >3</span>)
+    nmf_model.fit(freq_mat)
+    top_words = []
+
+    <span class=hljs-keyword >for</span> ix, topic <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(nmf_model.components_):
+        twords = [tfidf_vec.get_feature_names_out()[i]  <span class=hljs-comment ># topic i</span>
+                <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> topic.argsort()[-<span class=hljs-number >10</span>:]]
+        top_words.append(twords)
+
+    <span class=hljs-comment ># returns the vector of weights for each song on every topic</span>
+    topic_results = nmf_model.transform(freq_mat)
+
+
+    df_artist[<span class=hljs-string >&#x27;Topic&#x27;</span>] = topic_results.argmax(axis=<span class=hljs-number >1</span>)
+    df_artist[<span class=hljs-string >&#x27;top_words&#x27;</span>] = df_artist[<span class=hljs-string >&#x27;Topic&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> topic: top_words[topic])
+
+    <span class=hljs-keyword >return</span> df_artist
+
+<span class=hljs-keyword >for</span> df <span class=hljs-keyword >in</span> df_artists:
+    df = get_topics(df)
+
+fig, axs = plt.subplots(<span class=hljs-number >3</span>,<span class=hljs-number >7</span>, figsize=(<span class=hljs-number >32</span>,<span class=hljs-number >14</span>))
+
+<span class=hljs-keyword >for</span> i,ax <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(axs.flatten()):
+    sns.violinplot(ax=ax, x=<span class=hljs-string >&#x27;Topic&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>, data=df_artists[i])
+    ax.set_title(name_artists[i])
+    ax.set_xlabel(<span class=hljs-string >&#x27; &#x27;</span>)
+    ax.set_ylabel(<span class=hljs-string >&#x27; &#x27;</span>)</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/sent_all_artists.svg" width=500  height=650 >
+
+</div>
+
+<p>and we can inspect the top words for any artist in the same fashion we did for Selena Gomez, for example for Billie Eilish: </p>
+<pre><code class="python hljs">n_artist = <span class=hljs-number >15</span>
+wordsptop = [df_artists[n_artist]
+             [df_artists[n_artist][<span class=hljs-string >&#x27;Topic&#x27;</span>] == topic][<span class=hljs-string >&#x27;top_words&#x27;</span>].iloc[<span class=hljs-number >0</span>] <span class=hljs-keyword >for</span> topic <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>)
+]
+<span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Topics for artist <span class=hljs-subst >{name_artists[n_artist]}</span> \n&#x27;</span>)
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>):
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Top 10 words for topic <span class=hljs-subst >{i}</span>: <span class=hljs-subst >{wordsptop[i]}</span> \n&#x27;</span>)</code></pre>
+<pre><code class="plaintext hljs">Topics for artist BillieEilish 
+
+Top 10 words for topic 0: [&#x27;bullshit&#x27;, &#x27;bad&#x27;, &#x27;wanna&#x27;, &#x27;leave&#x27;, &#x27;just&#x27;, &#x27;way&#x27;, &#x27;need&#x27;, &#x27;want&#x27;, &#x27;know&#x27;, &#x27;don&#x27;] 
+
+Top 10 words for topic 1: [&#x27;help&#x27;, &#x27;say&#x27;, &#x27;home&#x27;, &#x27;gonna&#x27;, &#x27;know&#x27;, &#x27;just&#x27;, &#x27;lie&#x27;, &#x27;love&#x27;, &#x27;let&#x27;, &#x27;like&#x27;] 
+
+Top 10 words for topic 2: [&#x27;sound&#x27;, &#x27;run&#x27;, &#x27;town&#x27;, &#x27;silence&#x27;, &#x27;favorite&#x27;, &#x27;make&#x27;, &#x27;em&#x27;, &#x27;crown&#x27;, &#x27;bow&#x27;, &#x27;watch&#x27;]</code></pre>
+<p>where the negative topic would be represented by the words on topic 0, the positive is topic 1 and neutral topic is represented by topic 2.</p>
+<h3 id=conclusion ><a href="#conclusion" class=header-anchor >Conclusion:</a></h3>
+<p>Sentiment analysis and topic modeling are two of the most common techniques in natural language processing, here we have combined both to give some insights about the lyrics of some of the top pop artists in the last years, we found that some of the artist seem to sing consistently more positive &#40;or negative&#41; about specific subjects. </p>
+<p>Remember to take a look to the <a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/SongLyrics.ipynb">notebook</a> for this example if you want to see more details.</p>
 <div class=page-foot >
     <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 17, 2022.
     Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
