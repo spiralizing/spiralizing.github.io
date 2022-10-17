@@ -124,36 +124,9 @@ sns.boxplot(x='Year', y='sentiment_score',data=df_artists[3])
 
 </div>
 ~~~
+the first thing we can notice about the plot is that the sentiment values seem to be very disperse in some of the years, this could be due to few amount of data or the shape of the distribution itself. 
 
-```python
-#defining function
-def get_sentplotdata(cleaned_df):
-     uyears = np.sort(cleaned_df['Year'].unique())
-     med_sscore = [np.median(cleaned_df[cleaned_df['Year'] == year]['sentiment_score'])
-          for year in uyears]
-     y_errtop = [np.quantile(cleaned_df[cleaned_df['Year'] == year]['sentiment_score'],0.75) for year in uyears]
-     y_errbot = [np.quantile(cleaned_df[cleaned_df['Year']==year]['sentiment_score'], 0.25) for year in uyears]
-     y_err = [np.subtract(med_sscore,y_errbot),np.subtract(y_errtop, med_sscore)]
-
-     return uyears, med_sscore, y_err
-
-sentiments = [get_sentplotdata(df) for df in df_artists]
-
-plt.figure(figsize=(20,8))
-#we choose 5 artists randomly to show
-picks = np.random.choice(range(len(name_artists)), 5, replace=False)
-for i in picks:
-    plt.plot(sentiments[i][0], sentiments[i][1],'s-', label=name_artists[i])
-    
-plt.ylim(-1.1,1.1)
-plt.xlim(2005,2022)
-plt.legend()
-plt.grid()
-plt.xlabel('Year')
-plt.ylabel('Sentiment score (median)')
-
-```
-bleh
+Next, we are going to plot the whole distribution (independent of the year) for every artist, and this time we are going to visualize it as a [violin plot](https://en.wikipedia.org/wiki/Violin_plot) to have a better idea about the shape of the distributions
 
 ```python
 #concatenating all the artists dataframes 
@@ -161,6 +134,7 @@ all_df = pd.concat(df_artists)
 
 plt.figure(figsize=(18, 6))
 plt.title('Sentiment score per artist')
+#plotting all artists sentiment score distributions and visualizing as violinplots
 sns.violinplot(x='Artist', y='sentiment_score',data=all_df)
 plt.ylabel('Sentiment score (Compound)')
 plt.xlabel('')
@@ -168,3 +142,205 @@ plt.xticks(rotation=45)
 plt.show()
 
 ```
+~~~
+<div class="container">
+
+    <img class="center" src="/assets/sentiments_artists.svg" width="500" height="450">
+
+</div>
+~~~
+
+this plot confirms our suspicion about the shape of the distributions: almost every artist distribution shows [bimodality](https://en.wikipedia.org/wiki/Multimodal_distribution). In this case the bimodality is represented by the two different sentiments indicating that there are few songs across artists that contain a _neutral_ sentiment. This result makes sense, since pop lyrical music usually has strong emotional connotation, with the majority of artists in this sample being _positive_. The only 3 artists with a larger number of _negative songs_ are **Eminem**, **Nicki Minaj** and **Cardi B**, with Eminem being the most _negative_ one. This result is not surprising since Rap (or hip hop) music is well known to talk about social issues and often has violent or _explicit content_ in the lyrics.
+
+### Topic modeling
+
+Now, let's have more fun, let's try to see if there is any relationship between the sentiment and the content (topic) the lyrics have. In other words, we want to see if their positive or negative sentiments are represented by the same or similar words the artist uses.
+To explore this question we are going to do **topic modeling** on each artist, so we can assign each of the _songs_ to a particular _topic_ and explore the _most used_ words on each topic.
+
+For the topic model we use the [non-negative matrix factorization (NNMF)](https://en.wikipedia.org/wiki/Non-negative_matrix_factorization) method (I will make another entry with details about other topic models). For this particular case, NNMF is more than enough and is easier to understand if you are familiar with linear algebra.\\ 
+The basic idea behind NNMF is to factorize an initial matrix $\boldsymbol{V}_{m\times n}$ into a product of two smaller matrices $\boldsymbol{W}_{m \times p} , \boldsymbol{H}_{p \times n}$ :
+$$ \boldsymbol{V} \approx \boldsymbol{W} \times \boldsymbol{H} $$
+where we can think about what the matrices represent in our problem, the initial matrix would be some type of _normalized frequency_ of each word across all songs ($\boldsymbol{V}_{m\times n}$), where $m$ is the number of words and $n$ the number of songs. In the product one matrix would be the words distributed through topics ($\boldsymbol{W}_{m \times p}$) and the other would be the songs distributed through topics ($\boldsymbol{H}_{p \times n}$) with $p$ being the number of topics, a parameter that we control.
+
+First we are going to construct our _frequency matrix_ or $\boldsymbol{V}$, for this we are going to use a vectorizer from `sklearn` that implements a [term-frequency inverse document frequency (TF-IDF)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) normalization:
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+#define the vectorizer
+#removing stop words
+#max_df = max documents frequency, min_df = minimum documents frequency
+tfidf_vec = TfidfVectorizer(max_df=0.9, min_df=2, stop_words='english')
+
+```
+the `max_df` and `min_df`are variables to consider words that appear in at most and at least those fractions or number of documents, next we build our _frequency matrix_, in this example Selena Gomez's one:
+
+```python
+# artist on index 6 corresponds to Selena Gomez
+freq_mat = tfidf_vec.fit_transform(df_artists[6]['Lyric'])
+
+```
+and now we define our NNMF model, we are going to set the number of components (topics) equal to 3 to see if the topics are related to the sentiments. This selection is arbitrary and is under the hypothesis that artists talk about specific topic(s) in a negative or positive way, there are different ways to do this analysis but for simplicity and illustrative purposes we are going to assume that they have only one topic for each sentiment.
+
+```python
+from sklearn.decomposition import NMF
+
+nmf_model = NMF(n_components=3)
+
+```
+now we fit the model to the data
+
+```python
+nmf_model.fit(freq_mat)
+```
+```plaintext
+NMF(n_components=3)
+```
+
+and now we can obtain the $\boldsymbol{H}$ matrix that contains the song and the weights for the song on each topic and go further by assigning the number of topic to each of the songs
+
+```python
+#get the H matrix
+topic_results = nmf_model.transform(freq_mat)
+#finding where the largest weight is on every song
+#and assigning the song to a topic in the original dataframe of the artist
+df_artists[6]['Topic'] = topic_results.argmax(axis=1)
+```
+now to see what words are the most used on each topic, if we inspect the `nmf_model.components_` entry of our model we will see the matrix $\boldsymbol{W}$ containing the weights for the words on each topic:
+
+```python
+nmf_model.components_
+```
+```plaintext
+array([[0.00800022, 0.00368562, 0.01332492, ..., 0.00355086, 0.0046122 ,
+        0.00167504],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.01988694,
+        0.00160906],
+       [0.        , 0.        , 0.        , ..., 0.        , 0.00050211,
+        0.        ]])
+```
+
+with this information we are going to save in the data frame the first 10 most used words on each topic
+
+```python
+top_words = []
+for ix, topic in enumerate(nmf_model.components_):
+    twords = [tfidf_vec.get_feature_names_out()[i]  # topic i
+        for i in topic.argsort()[-10:]]
+    top_words.append(twords)  
+
+#saving the words in the artist df
+df_artists[6]['top_words'] = df_artists[6]['Topic'].apply(lambda topic: top_words[topic])
+
+```
+and now we can plot the sentiment distributions for each topic
+
+```python
+plt.figure(figsize=(10, 6))
+plt.title(name_artists[6])
+sns.violinplot(x='Topic', y='sentiment_score', data=df_artists[6])
+plt.ylabel('Sentiment score (Compound)')
+plt.xlabel('Topic Number')
+plt.show()
+
+```
+
+~~~
+<div class="container">
+
+    <img class="center" src="/assets/selenag.svg" width="500" height="350">
+
+</div>
+~~~
+
+and get the top 10 words for each topic
+
+```python
+n_artist = 6
+wordsptop = [df_artists[n_artist]
+             [df_artists[n_artist]['Topic'] == topic]['top_words'].iloc[0] for topic in range(3)
+]
+print(f'Topics for artist {name_artists[n_artist]} \n')
+for i in range(3):
+    print(f'Top 10 words for topic {i}: {wordsptop[i]} \n')
+
+```
+```plaintext
+Topics for artist SelenaGomez 
+
+Top 10 words for topic 0: ['selena', 'good', 'got', 'want', 'just', 'don', 'know', 'yeah', 'love', 'like'] 
+
+Top 10 words for topic 1: ['gun', 'war', 'blow', 'youre', 'lies', 'head', 'ahead', 'kindness', 'kill', 'em'] 
+
+Top 10 words for topic 2: ['doesn', 'think', 'need', 'baby', 'know', 'magic', 'believe', 'disappear', 'night', 'oh']
+```
+From this result we can inspect what are the words commonly used in _positive sentiment_ songs, which topic 0 is the one with the most positive median value, words like 'love', 'good' and 'like' with 'selena' makes us think that here she is probably singing about love and relationships or things she likes. The _negative sentiment_ songs seem to talk about 'war' and 'lies'.
+
+Now we do the same for every artist and plot the results
+```python
+def get_topics(df_artist):
+    tfidf_vec = TfidfVectorizer(max_df=0.9, min_df=2, stop_words='english')
+    freq_mat = tfidf_vec.fit_transform(df_artist['Lyric'])
+    nmf_model = NMF(n_components=3)
+    nmf_model.fit(freq_mat)
+    top_words = []
+
+    for ix, topic in enumerate(nmf_model.components_):
+        twords = [tfidf_vec.get_feature_names_out()[i]  # topic i
+                for i in topic.argsort()[-10:]]
+        top_words.append(twords)
+
+    # returns the vector of weights for each song on every topic
+    topic_results = nmf_model.transform(freq_mat)
+
+
+    df_artist['Topic'] = topic_results.argmax(axis=1)
+    df_artist['top_words'] = df_artist['Topic'].apply(lambda topic: top_words[topic])
+
+    return df_artist
+
+for df in df_artists:
+    df = get_topics(df)
+
+fig, axs = plt.subplots(3,7, figsize=(32,14))
+
+for i,ax in enumerate(axs.flatten()):
+    sns.violinplot(ax=ax, x='Topic', y='sentiment_score', data=df_artists[i])
+    ax.set_title(name_artists[i])
+    ax.set_xlabel(' ')
+    ax.set_ylabel(' ')
+    
+```
+~~~
+<div class="container">
+
+    <img class="center" src="/assets/sent_all_artists.svg" width="500" height="650">
+
+</div>
+~~~
+
+and we can inspect the top words for any artist in the same fashion we did for Selena Gomez, for example for Billie Eilish: 
+
+```python
+n_artist = 15
+wordsptop = [df_artists[n_artist]
+             [df_artists[n_artist]['Topic'] == topic]['top_words'].iloc[0] for topic in range(3)
+]
+print(f'Topics for artist {name_artists[n_artist]} \n')
+for i in range(3):
+    print(f'Top 10 words for topic {i}: {wordsptop[i]} \n')
+```
+```plaintext
+Topics for artist BillieEilish 
+
+Top 10 words for topic 0: ['bullshit', 'bad', 'wanna', 'leave', 'just', 'way', 'need', 'want', 'know', 'don'] 
+
+Top 10 words for topic 1: ['help', 'say', 'home', 'gonna', 'know', 'just', 'lie', 'love', 'let', 'like'] 
+
+Top 10 words for topic 2: ['sound', 'run', 'town', 'silence', 'favorite', 'make', 'em', 'crown', 'bow', 'watch'] 
+```
+where the negative topic would be represented by the words on topic 0, the positive is topic 1 and neutral topic is represented by topic 2.
+
+### Conclusion:
+Sentiment analysis and topic modeling are two of the most common techniques in natural language processing, here we have combined both to give some insights about the lyrics of some of the top pop artists in the last years, we found that some of the artist seem to sing consistently more positive (or negative) about specific subjects. 
+
+Remember to take a look to the [notebook](https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/SongLyrics.ipynb) for this example if you want to see more details.
