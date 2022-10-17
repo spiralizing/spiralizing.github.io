@@ -23,25 +23,6 @@
 
 <item>
   <title>
-    <![CDATA[  Sentiment analysis and topic modeling in pop artists  ]]>
-  </title>
-  <link> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </link>
-  <guid> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </guid>
-  <description>
-    <![CDATA[  Sentiment analysis and topic model for some pop artists  ]]>
-  </description>  
-    
-  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  Style Transfer  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/StyleTransfer/index.html </link>
@@ -66,7 +47,7 @@
   <link> https://spiralizing.github.io/DataScience/index.html </link>
   <guid> https://spiralizing.github.io/DataScience/index.html </guid>
   <description>
-    <![CDATA[  Description of my datas science examples and projects  ]]>
+    <![CDATA[  Description of my data science examples and projects  ]]>
   </description>  
     
   <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  

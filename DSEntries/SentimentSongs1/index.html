@@ -1,1 +1,125 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Sentiment analysis and topic modeling in pop artists</title> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> </ul> </div> </div> <div id=main > <div class=header > <h1>Sentiment analysis and topic modeling in pop artists</h1> <h2> | Complex Systems | Data Science | Music Evolution | </h2> </div> <div class=franklin-content > <p>ble ble</p> <div class=page-foot > <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 15, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> <script src="/libs/pure/ui.min.js"></script> <script src="/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Sentiment analysis and topic modeling in pop artists</title> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> </ul> </div> </div> <div id=main > <div class=header > <h1>Sentiment analysis and topic modeling in pop artists</h1> <h2> | Complex Systems | Data Science | Music Evolution | </h2> </div> <div class=franklin-content > <p>In Natural Language Processing &#40;<strong>NLP</strong>&#41;, sentiment analysis is a methodology to identify and study <strong><em>affective states</em></strong> in language &#40;text, audio&#41; data. It is usually helpful to analyze ratings or reviews of products but it can be applied to other types of analysis including comments on forums, tweets, etc. </p> <p>In this particular case we are going to explore <strong>song lyrics</strong>, and we are going to try to go further and see if we can identify some of the topics associated with particular sentiments.</p> <h3 id=how_does_sentiment_analysis_work ><a href="#how_does_sentiment_analysis_work" class=header-anchor >How does sentiment analysis work?</a></h3> <p>The basic idea of sentiment analysis is to assign a label or ranking of a <em>sentiment</em> to a piece of text. The most simple case is to label the text as <strong>positive</strong> or <strong>negative</strong>, some approaches to this problem are based on a <em>sentiment lexicon</em>, a list of lexical features &#40;words&#41; labeled as positive or negative:</p> <table><tr><th align=center >Category<th align=center >Example<tr><td align=center >Positive emotion<td align=center >Love, nice, good, great<tr><td align=center >Negative emotion<td align=center >Hurt, ugly, sad, bad, worse</table> <p>Depending on how many <em>good</em> or <em>bad</em> words and taking into account their context in the sample, we can assign a ranking or number to the sentiment. Building an effective sentiment analyzer sounds &#40;and is&#41; complicated, fortunately for us this is a widely explored problem with different approaches in computational linguistics.</p> <p>We are going to use the <strong>V</strong>alence <strong>A</strong>ware <strong>D</strong>ictionary for s<strong>E</strong>ntiment <strong>R</strong>easoning &#40;<a href="https://ojs.aaai.org/index.php/ICWSM/article/view/14550"><strong>VADER</strong></a>&#41;, a rule-based model that supposedly outperforms individual human raters. We are going to use <strong>Python</strong> in this case, but VADER has been implemented for different <a href="https://github.com/cjhutto/vaderSentiment">languages</a>.</p> <p>First, we are going to load the VADER model that is included in <a href="https://www.nltk.org/">NLTK &#40;Natural Language Tool Kit&#41;</a>:</p> <pre><code class="python hljs"><span class=hljs-comment >#for DataFrames</span>
+<span class=hljs-keyword >import</span> pandas <span class=hljs-keyword >as</span> pd 
+
+<span class=hljs-comment >#better array management</span>
+<span class=hljs-keyword >import</span> numpy <span class=hljs-keyword >as</span> np
+
+<span class=hljs-comment >#Natural language toolkit</span>
+<span class=hljs-keyword >import</span> nltk
+<span class=hljs-keyword >from</span> nltk.sentiment.vader <span class=hljs-keyword >import</span> SentimentIntensityAnalyzer
+<span class=hljs-comment >#sentiment analyzer</span>
+sid = SentimentIntensityAnalyzer()</code></pre> <p>Now we can try out the analyzer with an example:</p> <pre><code class="python hljs"><span class=hljs-comment >#computing polarity scores</span>
+sid.polarity_scores(<span class=hljs-string >&quot;The last season of game of thrones is the worst of the series&quot;</span>)</code></pre> <pre><code class="plaintext hljs">{&#x27;neg&#x27;: 0.255, &#x27;neu&#x27;: 0.745, &#x27;pos&#x27;: 0.0, &#x27;compound&#x27;: -0.6249}</code></pre>
+<p>The analyzer returns a dictionary with four different quantities: <em>negative</em>, <em>neutral</em>, <em>positive</em> and <em>compound</em>. The first tree are related to the sentiments and the fourth one is a compound score that takes into account all the scores and normalizes the value to be between <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy=false >[</mo><mo>−</mo><mn>1</mn><mo separator=true >,</mo><mn>1</mn><mo stretchy=false >]</mo></mrow><annotation encoding="application/x-tex">[-1,1]</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:1em;vertical-align:-0.25em;"></span><span class=mopen >[</span><span class=mord >−</span><span class=mord >1</span><span class=mpunct >,</span><span class=mspace  style="margin-right:0.1667em;"></span><span class=mord >1</span><span class=mclose >]</span></span></span></span>. As we can se, the statement &quot;The last season of game of thrones is the worst of the series&quot; is accurately described as <em>negative</em> with a compound score of <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.625</mn></mrow><annotation encoding="application/x-tex">-0.625</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.7278em;vertical-align:-0.0833em;"></span><span class=mord >−</span><span class=mord >0.625</span></span></span></span>.</p>
+<p>Now we need the songs from the artists we are going to analyze, I have downloaded <a href="https://www.kaggle.com/datasets/deepshah16/song-lyrics-dataset">this Kaggle dataset</a> of lyrics from several pop artists and saved it in a folder named <code>Data/KaggleDS/</code> and load them as dataframes with pandas:</p>
+<pre><code class="python hljs"><span class=hljs-keyword >import</span> os
+name_dir = <span class=hljs-string >&#x27;Data/KaggleDS/&#x27;</span> <span class=hljs-comment >#directory where the data is stored</span>
+name_artists = []
+df_artists = []
+<span class=hljs-keyword >for</span> file <span class=hljs-keyword >in</span> os.listdir(name_dir):
+    <span class=hljs-keyword >if</span> file.endswith(<span class=hljs-string >&#x27;.csv&#x27;</span>):
+        df = pd.read_csv(os.path.join(name_dir, file))
+        df_artists.append(clean_df(df)) <span class=hljs-comment >#saving the clean dataframes</span>
+        name_artists.append(file.split(<span class=hljs-string >&#x27;.&#x27;</span>)[<span class=hljs-number >0</span>]) <span class=hljs-comment >#saving the names</span></code></pre>
+<p>The function <code>clean_df&#40;&#41;</code> is used to clean the data, you can see more details in the <a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/SongLyrics.ipynb">notebook</a> for this code.</p>
+<p>Now we check the artists and the number of songs for each artist</p>
+<pre><code class="python hljs">n_songs = <span class=hljs-number >0</span>
+<span class=hljs-keyword >for</span> i, artist <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(name_artists):
+    art_songs = df_artists[i].shape[<span class=hljs-number >0</span>]
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;<span class=hljs-subst >{artist}</span>, <span class=hljs-subst >{art_songs}</span> lyrics.&#x27;</span>)
+    n_songs += art_songs
+    
+<span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;\n\n Total: <span class=hljs-subst >{n_songs}</span> songs from <span class=hljs-subst >{<span class=hljs-built_in >len</span>(name_artists)}</span> Artists&#x27;</span>)</code></pre>
+<pre><code class="plaintext hljs">TaylorSwift, 256 lyrics.
+Drake, 307 lyrics.
+NickiMinaj, 174 lyrics.
+LadyGaga, 156 lyrics.
+ColdPlay, 159 lyrics.
+PostMalone, 95 lyrics.
+SelenaGomez, 85 lyrics.
+CardiB, 53 lyrics.
+CharliePuth, 49 lyrics.
+Rihanna, 215 lyrics.
+Maroon5, 97 lyrics.
+JustinBieber, 158 lyrics.
+Eminem, 366 lyrics.
+KatyPerry, 131 lyrics.
+EdSheeran, 126 lyrics.
+BillieEilish, 52 lyrics.
+DuaLipa, 85 lyrics.
+ArianaGrande, 164 lyrics.
+Khalid, 48 lyrics.
+BTS, 233 lyrics.
+Beyonce, 163 lyrics.
+
+Total: 3172 songs from 21 Artists</code></pre>
+<p>and we use the analyzer to compute the compound score and assign it to a new column <code>sentiment_score</code> in the dataframe</p>
+<pre><code class="python hljs"><span class=hljs-keyword >for</span> df <span class=hljs-keyword >in</span> df_artists:
+    df[<span class=hljs-string >&#x27;sentiment_score&#x27;</span>] = df[<span class=hljs-string >&#x27;Lyric&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> song: sid.polarity_scores(song)[<span class=hljs-string >&#x27;compound&#x27;</span>])</code></pre>
+<p>Now we can explore, for example how a specific artist changes their sentiment over time</p>
+<pre><code class="python hljs"><span class=hljs-keyword >import</span> matplotlib.pyplot <span class=hljs-keyword >as</span> plt
+<span class=hljs-keyword >import</span> seaborn <span class=hljs-keyword >as</span> sns
+
+plt.figure(figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >6</span>))
+plt.title(name_artists[<span class=hljs-number >3</span>]) <span class=hljs-comment >#ladygaga</span>
+sns.boxplot(x=<span class=hljs-string >&#x27;Year&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>,data=df_artists[<span class=hljs-number >3</span>])</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/ladygaga.svg" width=500  height=450 >
+
+</div>
+
+<pre><code class="python hljs"><span class=hljs-comment >#defining function</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_sentplotdata</span>(<span class=hljs-params >cleaned_df</span>):
+     uyears = np.sort(cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>].unique())
+     med_sscore = [np.median(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>] == year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>])
+          <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
+     y_errtop = [np.quantile(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>] == year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>],<span class=hljs-number >0.75</span>) <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
+     y_errbot = [np.quantile(cleaned_df[cleaned_df[<span class=hljs-string >&#x27;Year&#x27;</span>]==year][<span class=hljs-string >&#x27;sentiment_score&#x27;</span>], <span class=hljs-number >0.25</span>) <span class=hljs-keyword >for</span> year <span class=hljs-keyword >in</span> uyears]
+     y_err = [np.subtract(med_sscore,y_errbot),np.subtract(y_errtop, med_sscore)]
+
+     <span class=hljs-keyword >return</span> uyears, med_sscore, y_err
+
+sentiments = [get_sentplotdata(df) <span class=hljs-keyword >for</span> df <span class=hljs-keyword >in</span> df_artists]
+
+plt.figure(figsize=(<span class=hljs-number >20</span>,<span class=hljs-number >8</span>))
+<span class=hljs-comment >#we choose 5 artists randomly to show</span>
+picks = np.random.choice(<span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(name_artists)), <span class=hljs-number >5</span>, replace=<span class=hljs-literal >False</span>)
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> picks:
+    plt.plot(sentiments[i][<span class=hljs-number >0</span>], sentiments[i][<span class=hljs-number >1</span>],<span class=hljs-string >&#x27;s-&#x27;</span>, label=name_artists[i])
+    
+plt.ylim(-<span class=hljs-number >1.1</span>,<span class=hljs-number >1.1</span>)
+plt.xlim(<span class=hljs-number >2005</span>,<span class=hljs-number >2022</span>)
+plt.legend()
+plt.grid()
+plt.xlabel(<span class=hljs-string >&#x27;Year&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;Sentiment score (median)&#x27;</span>)</code></pre>
+<p>bleh</p>
+<pre><code class="python hljs"><span class=hljs-comment >#concatenating all the artists dataframes </span>
+all_df = pd.concat(df_artists)
+
+plt.figure(figsize=(<span class=hljs-number >18</span>, <span class=hljs-number >6</span>))
+plt.title(<span class=hljs-string >&#x27;Sentiment score per artist&#x27;</span>)
+sns.violinplot(x=<span class=hljs-string >&#x27;Artist&#x27;</span>, y=<span class=hljs-string >&#x27;sentiment_score&#x27;</span>,data=all_df)
+plt.ylabel(<span class=hljs-string >&#x27;Sentiment score (Compound)&#x27;</span>)
+plt.xlabel(<span class=hljs-string >&#x27;&#x27;</span>)
+plt.xticks(rotation=<span class=hljs-number >45</span>)
+plt.show()</code></pre>
+<div class=page-foot >
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 17, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+      </div> 
+  </div> 
+  <script src="/libs/pure/ui.min.js"></script>
+  
+      
+
+
+
+  
+  
+      <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
