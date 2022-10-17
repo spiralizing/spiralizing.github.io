@@ -6,7 +6,7 @@
   --block-background: hsl(0, 0%, 94%);
   --output-background: hsl(0, 0%, 98%);
   --small: 14px;
-  --normal: 19px;
+  --normal: 18px;
   --text-color: hsv(0, 0%, 20%);
 }
 
@@ -215,8 +215,8 @@ td {
 
 .franklin-content .fndef tr,
 td {
-  padding: 0;
-  border: 0;
+  padding: 0.1;
+  border: 0.2;
   text-align: left;
 }
 
