@@ -1,1 +1,255 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Style Transfer</title> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> </ul> </div> </div> <div id=main > <div class=header > <h1>Style Transfer</h1> <h2> | Complex Systems | Data Science | Music Evolution | </h2> </div> <div class=franklin-content > <p>ble ble</p> <div class=page-foot > <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 17, 2022. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> <script src="/libs/pure/ui.min.js"></script> <script src="/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Copying the style of an image to another</title> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> </ul> </div> </div> <div id=main > <div class=header > <h1>Copying the style of an image to another</h1> <h2> | Complex Systems | Data Science | Music Evolution | </h2> </div> <div class=franklin-content > <p>Style transfer is one of the many cool applications that <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Networks &#40;CNNs&#41;</a> have. The main idea of this method is to transfer the <em>style</em> or <strong>spatial structure</strong> of an image to a different one.</p> <p>First we are going to load some imports</p> <pre><code class="python hljs"><span class=hljs-keyword >import</span> seaborn <span class=hljs-keyword >as</span> sns
+
+<span class=hljs-keyword >import</span> scipy.stats <span class=hljs-keyword >as</span> stats
+
+<span class=hljs-keyword >import</span> torch
+<span class=hljs-keyword >import</span> torch.nn.functional <span class=hljs-keyword >as</span> F
+<span class=hljs-keyword >import</span> torch.nn <span class=hljs-keyword >as</span> nn
+<span class=hljs-keyword >import</span> torchvision
+<span class=hljs-keyword >import</span> torchvision.transforms <span class=hljs-keyword >as</span> T
+
+<span class=hljs-keyword >from</span> torchsummary <span class=hljs-keyword >import</span> summary
+
+<span class=hljs-keyword >import</span> time
+<span class=hljs-keyword >import</span> os
+<span class=hljs-keyword >import</span> copy
+<span class=hljs-keyword >import</span> numpy <span class=hljs-keyword >as</span> np
+
+<span class=hljs-comment >#importing convolution from scipy</span>
+<span class=hljs-keyword >from</span> scipy.signal <span class=hljs-keyword >import</span> convolve2d
+<span class=hljs-comment >#reading image</span>
+<span class=hljs-keyword >from</span> imageio <span class=hljs-keyword >import</span> imread
+<span class=hljs-comment >#plotting</span>
+<span class=hljs-keyword >import</span> matplotlib.pyplot <span class=hljs-keyword >as</span> plt</code></pre> <p>we also will need to use GPUs since training on the CPU can take way longer, we set our device as <code>cuda:0</code>.</p> <pre><code class="python hljs">device = torch.device(<span class=hljs-string >&#x27;cuda:0&#x27;</span> <span class=hljs-keyword >if</span> torch.cuda.is_available() <span class=hljs-keyword >else</span> <span class=hljs-string >&#x27;cpu&#x27;</span>)</code></pre>
+<p>For this particular case we are going to load the <a href="https://iq.opengenus.org/vgg19-architecture/">VGG-19</a>, a well known CNN architecture that has already been trained for image classification. This CNN architecture features 19 layers, 16 convolutional and 3 linear &#40;or fully connected&#41;.</p>
+<pre><code class="python hljs">vggnet = torchvision.models.vgg19(pretrained=<span class=hljs-literal >True</span>)</code></pre>
+<p>Because we are not interested in training the network but only in passing images through it, we need to <em>lock</em> or <em>freeze</em> all its parameters:</p>
+<pre><code class="python hljs"><span class=hljs-comment >#freezing all parameters</span>
+<span class=hljs-keyword >for</span> p <span class=hljs-keyword >in</span> vggnet.parameters():
+    p.requires_grad = <span class=hljs-literal >False</span>
+
+<span class=hljs-comment >#switching to evaluation mode</span>
+vggnet.<span class=hljs-built_in >eval</span>()
+<span class=hljs-comment >#moving the model to the GPU</span>
+vggnet.to(device)</code></pre>
+<p>Now that our model is loaded on the GPU, we are going to leave it there for a bit and load the images we are going to use. </p>
+<p>The first image is going to be the picture I have on my home here, and the image we are going to extract and copy its style is and art work from <a href="https://www.allysongrey.com/">Allyson Grey</a> &#40;Alex Grey&#39;s daughter&#41;</p>
+<pre><code class="python hljs"><span class=hljs-comment >#importing images </span>
+img_content = imread(<span class=hljs-string >&#x27;https://raw.githubusercontent.com/spiralizing/CVResume/main/Resume/Mypic.jpeg&#x27;</span>)
+img_style = imread(<span class=hljs-string >&#x27;http://oregoneclipse2017.com/wp-content/uploads/2017/08/allyson-grey.jpg&#x27;</span>)</code></pre>
+<p>we also need to initialize the final image, since we are going to generate a new image by copying features from the two images we loaded, we can simply generate an image with random numbers that lie within the range &#40;0,255&#41;.</p>
+<pre><code class="python hljs"><span class=hljs-comment >#initialize the target image with random numbers</span>
+
+img_target = np.random.randint(low=<span class=hljs-number >0</span>, high=<span class=hljs-number >255</span>, size= img_content.shape, dtype=np.uint8)
+<span class=hljs-comment >#checking sizes</span>
+
+<span class=hljs-built_in >print</span>(img_content.shape)
+<span class=hljs-built_in >print</span>(img_style.shape)
+<span class=hljs-built_in >print</span>(img_target.shape)</code></pre>
+<pre><code class="plaintext hljs">(431, 431, 3)
+(1600, 1603, 3)
+(431, 431, 3)</code></pre>
+<p>Now we need to make sure we have our images in the right format for pytorch, for this we are going to create a transformation with a normalization, resizing and conversion to tensors</p>
+<pre><code class="python hljs"><span class=hljs-comment >#re-sizing the images so it takes less time to train</span>
+Trans = T.Compose(
+    [T.ToTensor(), 
+    T.Resize(<span class=hljs-number >256</span>), 
+    T.Normalize([<span class=hljs-number >0.485</span>, <span class=hljs-number >0.456</span>, <span class=hljs-number >0.406</span>], [<span class=hljs-number >0.229</span>,<span class=hljs-number >0.224</span>,<span class=hljs-number >0.225</span>])]
+)
+
+<span class=hljs-comment >#unsqueeze the images to make them a 4D tensor</span>
+img_content = Trans( img_content ).unsqueeze(<span class=hljs-number >0</span>).to(device)
+img_style = Trans( img_style ).unsqueeze(<span class=hljs-number >0</span>).to(device)
+img_target = Trans( img_target ).unsqueeze(<span class=hljs-number >0</span>).to(device)
+
+<span class=hljs-comment >#check shapes [n_batch, channels, px_y, px_x]</span>
+<span class=hljs-built_in >print</span>(img_content.shape)
+<span class=hljs-built_in >print</span>(img_style.shape)
+<span class=hljs-built_in >print</span>(img_target.shape)</code></pre>
+<pre><code class="plaintext hljs">torch.Size([1, 3, 256, 256])
+torch.Size([1, 3, 256, 256])
+torch.Size([1, 3, 256, 256])</code></pre>
+<p>Now that our images are in the right format we can visualize them before starting with the process of copying the style</p>
+<pre><code class="python hljs">fig, ax = plt.subplots(<span class=hljs-number >1</span>,<span class=hljs-number >3</span>, figsize=(<span class=hljs-number >18</span>,<span class=hljs-number >6</span>))
+
+titles = [<span class=hljs-string >&#x27;Content pic&#x27;</span>, <span class=hljs-string >&#x27;New pic&#x27;</span>, <span class=hljs-string >&#x27;Style pic&#x27;</span>]
+
+<span class=hljs-keyword >for</span> i, pic <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>([img_content, img_target, img_style]):
+    img = pic.cpu().squeeze().numpy().transpose((<span class=hljs-number >1</span>,<span class=hljs-number >2</span>,<span class=hljs-number >0</span>)) <span class=hljs-comment >#transform for display</span>
+    img = (img - np.<span class=hljs-built_in >min</span>(img)) / (np.<span class=hljs-built_in >max</span>(img)-np.<span class=hljs-built_in >min</span>(img)) <span class=hljs-comment >#undo normalization</span>
+    ax[i].imshow(img)
+    ax[i].set_title(titles[i])</code></pre>
+<p>
+<div class=container >
+
+    <img class=center  src="/assets/transfer_img1.svg" width=500  height=350 >
+
+</div>
+ the <em>new pic</em> is the image that we are going to </p>
+<pre><code class="python hljs"><span class=hljs-keyword >def</span> <span class="hljs-title function_">get_feat_actmaps</span>(<span class=hljs-params >img, net</span>):
+    feature_maps = []
+    feature_names = []
+
+    convL_ix = <span class=hljs-number >0</span> <span class=hljs-comment >#counter init</span>
+
+    <span class=hljs-comment >#loop over the layers in the features block</span>
+    <span class=hljs-keyword >for</span> lay_num <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(net.features)):
+        <span class=hljs-comment >#process the image through this layer</span>
+        img = net.features[lay_num](img)
+        <span class=hljs-comment >#store the results that come from the convolutional layers</span>
+        <span class=hljs-keyword >if</span> <span class=hljs-string >&#x27;Conv2d&#x27;</span> <span class=hljs-keyword >in</span> <span class=hljs-built_in >str</span>(net.features[lay_num]):
+            feature_maps.append( img )
+            feature_names.append(<span class=hljs-string >&#x27;ConvLayer_&#x27;</span> + <span class=hljs-built_in >str</span>(convL_ix))
+            convL_ix += <span class=hljs-number >1</span>
+        
+    <span class=hljs-keyword >return</span> feature_maps, feature_names
+
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_gramMat</span>(<span class=hljs-params >M</span>):
+    <span class=hljs-comment >#reshaping to 2D</span>
+    _,chans,height,width = M.shape
+    M = M.reshape(chans, height*width) 
+
+    <span class=hljs-comment >#compute covariance matrix</span>
+    gram = torch.mm(M, M.t()) / (chans*height*width)
+
+    <span class=hljs-keyword >return</span> gram</code></pre>
+<pre><code class="python hljs">content_fm, content_fn = get_feat_actmaps(img_content, vggnet)</code></pre>
+<pre><code class="python hljs">fig, axs = plt.subplots(<span class=hljs-number >2</span>,<span class=hljs-number >7</span>, figsize=(<span class=hljs-number >18</span>,<span class=hljs-number >6</span>))
+
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >7</span>):
+    img = np.mean( content_fm[i].cpu().squeeze().numpy(), axis=<span class=hljs-number >0</span>)
+    img = (img - np.<span class=hljs-built_in >min</span>(img))/(np.<span class=hljs-built_in >max</span>(img) - np.<span class=hljs-built_in >min</span>(img))
+
+    axs[<span class=hljs-number >0</span>,i].imshow(img, cmap=<span class=hljs-string >&#x27;gray&#x27;</span>)
+    axs[<span class=hljs-number >0</span>,i].set_title(<span class=hljs-string >&#x27;Content&#x27;</span>+ <span class=hljs-built_in >str</span>(content_fn[i]))
+
+    <span class=hljs-comment >#the gram matrix:</span>
+    img = get_gramMat(content_fm[i]).cpu().numpy()
+    img = (img - np.<span class=hljs-built_in >min</span>(img))/(np.<span class=hljs-built_in >max</span>(img)-np.<span class=hljs-built_in >min</span>(img))
+
+    axs[<span class=hljs-number >1</span>,i].imshow(img, cmap=<span class=hljs-string >&#x27;gray&#x27;</span>,vmax=<span class=hljs-number >0.1</span>)
+    axs[<span class=hljs-number >1</span>,i].set_title(<span class=hljs-string >&#x27;GramMat &#x27;</span>+ <span class=hljs-built_in >str</span>(content_fn[i]))
+
+plt.tight_layout()
+plt.show()</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/transfer_gram1.svg" width=500  height=350 >
+
+</div>
+
+<pre><code class="python hljs">style_fm, style_fn = get_feat_actmaps(img_style, vggnet)
+
+fig, axs = plt.subplots(<span class=hljs-number >2</span>, <span class=hljs-number >7</span>, figsize=(<span class=hljs-number >18</span>, <span class=hljs-number >6</span>))
+
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >7</span>):
+    img = np.mean(style_fm[i].cpu().squeeze().numpy(), axis=<span class=hljs-number >0</span>)
+    img = (img - np.<span class=hljs-built_in >min</span>(img))/(np.<span class=hljs-built_in >max</span>(img) - np.<span class=hljs-built_in >min</span>(img))
+
+    axs[<span class=hljs-number >0</span>, i].imshow(img, cmap=<span class=hljs-string >&#x27;gray&#x27;</span>)
+    axs[<span class=hljs-number >0</span>, i].set_title(<span class=hljs-string >&#x27;style &#x27;</span> + <span class=hljs-built_in >str</span>(style_fn[i]))
+
+    <span class=hljs-comment >#the gram matrix:</span>
+    img = get_gramMat(style_fm[i]).cpu().numpy()
+    img = (img - np.<span class=hljs-built_in >min</span>(img))/(np.<span class=hljs-built_in >max</span>(img)-np.<span class=hljs-built_in >min</span>(img))
+
+    axs[<span class=hljs-number >1</span>, i].imshow(img, cmap=<span class=hljs-string >&#x27;gray&#x27;</span>, vmax=<span class=hljs-number >0.1</span>)
+    axs[<span class=hljs-number >1</span>, i].set_title(<span class=hljs-string >&#x27;GramMat &#x27;</span> + <span class=hljs-built_in >str</span>(style_fn[i]))
+
+plt.tight_layout()
+plt.show()</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/transfer_gram2.svg" width=500  height=350 >
+
+</div>
+
+<pre><code class="python hljs"><span class=hljs-comment >#2 layers from content</span>
+layers_content = [<span class=hljs-string >&#x27;ConvLayer_1&#x27;</span>, <span class=hljs-string >&#x27;ConvLayer_2&#x27;</span>]
+<span class=hljs-comment >#5 layers for style</span>
+layers_style = [<span class=hljs-string >&#x27;ConvLayer_1&#x27;</span>,<span class=hljs-string >&#x27;ConvLayer_2&#x27;</span>,<span class=hljs-string >&#x27;ConvLayer_3&#x27;</span>,<span class=hljs-string >&#x27;ConvLayer_4&#x27;</span>,<span class=hljs-string >&#x27;ConvLayer_5&#x27;</span>]
+<span class=hljs-comment >#how much weight to give to each style layer</span>
+weights_style = [<span class=hljs-number >1</span>, <span class=hljs-number >0.5</span>, <span class=hljs-number >0.5</span>, <span class=hljs-number >0.2</span> ,<span class=hljs-number >0.1</span>]</code></pre>
+<pre><code class="python hljs">target = img_target.clone()
+target.requires_grad = <span class=hljs-literal >True</span>
+target = target.to(device)
+<span class=hljs-comment >#scale up the loss function for the style</span>
+style_scale = <span class=hljs-number >1e5</span> 
+
+n_epochs = <span class=hljs-number >2500</span>
+<span class=hljs-comment >#optimizing the target image</span>
+optimizer = torch.optim.RMSprop([target], lr=<span class=hljs-number >0.005</span>)</code></pre>
+<pre><code class="python hljs"><span class=hljs-keyword >for</span> e_i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(n_epochs):
+    target_fm, target_fn = get_feat_actmaps(target, vggnet)
+
+    style_loss = <span class=hljs-number >0</span>
+    content_loss = <span class=hljs-number >0</span>
+
+    <span class=hljs-keyword >for</span> layer_i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(target_fn)):
+        <span class=hljs-comment >#using only the layers specified previously</span>
+
+        <span class=hljs-comment >#content loss</span>
+        <span class=hljs-keyword >if</span> target_fn[layer_i] <span class=hljs-keyword >in</span> layers_content:
+            content_loss += torch.mean(( target_fm[layer_i] - content_fm[layer_i])**<span class=hljs-number >2</span>)
+        
+        <span class=hljs-comment >#style loss</span>
+        <span class=hljs-keyword >if</span> target_fn[layer_i] <span class=hljs-keyword >in</span> layers_style:
+            <span class=hljs-comment >#computing gram Matrices</span>
+            Gtarget = get_gramMat(target_fm[layer_i])
+            Gstyle = get_gramMat(style_fm[layer_i])
+
+            <span class=hljs-comment >#compute loss with weights</span>
+            style_loss += torch.mean( (Gtarget - Gstyle)**<span class=hljs-number >2</span> ) * weights_style[layers_style.index(target_fn[layer_i])]
+
+    <span class=hljs-comment >#computing combined loss (re-scaled style loss + content loss)</span>
+    comb_loss = style_scale*style_loss + content_loss
+
+    <span class=hljs-comment >#backprop</span>
+    optimizer.zero_grad()
+    comb_loss.backward()
+    optimizer.step()</code></pre>
+<pre><code class="python hljs">fig, ax = plt.subplots(<span class=hljs-number >1</span>, <span class=hljs-number >3</span>, figsize=(<span class=hljs-number >18</span>, <span class=hljs-number >11</span>))
+
+pic = img_content.cpu().squeeze().numpy().transpose((<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, <span class=hljs-number >0</span>))
+pic = (pic-np.<span class=hljs-built_in >min</span>(pic)) / (np.<span class=hljs-built_in >max</span>(pic)-np.<span class=hljs-built_in >min</span>(pic))
+ax[<span class=hljs-number >0</span>].imshow(pic)
+ax[<span class=hljs-number >0</span>].set_title(<span class=hljs-string >&#x27;Content picture&#x27;</span>, fontweight=<span class=hljs-string >&#x27;bold&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_xticks([])
+ax[<span class=hljs-number >0</span>].set_yticks([])
+
+pic = torch.sigmoid(target).cpu().detach(
+).squeeze().numpy().transpose((<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, <span class=hljs-number >0</span>))
+ax[<span class=hljs-number >1</span>].imshow(pic)
+ax[<span class=hljs-number >1</span>].set_title(<span class=hljs-string >&#x27;New picture&#x27;</span>, fontweight=<span class=hljs-string >&#x27;bold&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_xticks([])
+ax[<span class=hljs-number >1</span>].set_yticks([])
+
+pic = img_style.cpu().squeeze().numpy().transpose((<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, <span class=hljs-number >0</span>))
+pic = (pic-np.<span class=hljs-built_in >min</span>(pic)) / (np.<span class=hljs-built_in >max</span>(pic)-np.<span class=hljs-built_in >min</span>(pic))
+ax[<span class=hljs-number >2</span>].imshow(pic)
+ax[<span class=hljs-number >2</span>].set_title(<span class=hljs-string >&#x27;Style picture&#x27;</span>, fontweight=<span class=hljs-string >&#x27;bold&#x27;</span>)
+ax[<span class=hljs-number >2</span>].set_xticks([])
+ax[<span class=hljs-number >2</span>].set_yticks([])
+
+plt.show()</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/transfer_final.svg" width=500  height=350 >
+
+</div>
+
+<div class=page-foot >
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 18, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+      </div> 
+  </div> 
+  <script src="/libs/pure/ui.min.js"></script>
+  
+  
+      <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
