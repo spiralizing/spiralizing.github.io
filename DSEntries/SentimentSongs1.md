@@ -46,7 +46,7 @@ sid.polarity_scores("The last season of game of thrones is the worst of the seri
 ```plaintext
 {'neg': 0.255, 'neu': 0.745, 'pos': 0.0, 'compound': -0.6249}
 ```
-The analyzer returns a dictionary with four different quantities: _negative_, _neutral_, _positive_ and _compound_. The first tree are related to the sentiments and the fourth one is a compound score that takes into account all the scores and normalizes the value to be between $[-1,1]$. As we can se, the statement "The last season of game of thrones is the worst of the series" is accurately described as _negative_ with a compound score of $-0.625$.
+The analyzer returns a dictionary with four different quantities: _negative_, _neutral_, _positive_ and _compound_. The first tree are related to the sentiments and the fourth one is a compound score that takes into account all the scores and normalizes the value to be between $[-1,1]$. As we can see, the statement "The last season of game of thrones is the worst of the series" is accurately described as _negative_ with a compound score of $-0.625$.
 
 Now we need the songs from the artists we are going to analyze, I have downloaded [this Kaggle dataset](https://www.kaggle.com/datasets/deepshah16/song-lyrics-dataset) of lyrics from several pop artists and saved it in a folder named `Data/KaggleDS/` and load them as dataframes with pandas:
 
