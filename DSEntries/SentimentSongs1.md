@@ -21,7 +21,7 @@ The basic idea of sentiment analysis is to assign a label or ranking of a _senti
 
 Depending on how many _good_ or _bad_ words and taking into account their context in the sample, we can assign a ranking or number to the sentiment. Building an effective sentiment analyzer sounds (and is) complicated, fortunately for us this is a widely explored problem with different approaches in computational linguistics.
 
-We are going to use the **V**alence **A**ware **D**ictionary for s**E**ntiment **R**easoning ([**VADER**](https://ojs.aaai.org/index.php/ICWSM/article/view/14550)), a rule-based model that supposedly outperforms individual human raters. We are going to use **Python** in this case, but VADER has been implemented for different [languages](https://github.com/cjhutto/vaderSentiment).
+We are going to use the **V**alence **A**ware **D**ictionary for s**E**ntiment **R**easoning ([**VADER**](https://ojs.aaai.org/index.php/ICWSM/article/view/14550)), a rule-based model that supposedly outperforms individual human raters. We are going to use **Python** in this case, but VADER has been implemented for [different languages](https://github.com/cjhutto/vaderSentiment).
 
 First, we are going to load the VADER model that is included in [NLTK (Natural Language Tool Kit)](https://www.nltk.org/):
 
