@@ -12,9 +12,232 @@
 
     nlp = spacy.load(<span class=hljs-string >&#x27;en_core_web_sm&#x27;</span>)
 
-    warnings.filterwarnings(<span class=hljs-string >&quot;ignore&quot;</span>)</code></pre> <p>We load the <code>.csv</code> file as a data frame:</p> <pre><code class="python hljs">df_cnn = pd.read_csv(<span class=hljs-string >&#x27;Data/CNN_Articles/CNN_Articels_clean.csv&#x27;</span>)</code></pre>
+    warnings.filterwarnings(<span class=hljs-string >&quot;ignore&quot;</span>)</code></pre> <p>We load the <code>.csv</code> file as a data frame:</p> <pre><code class="python hljs">df_cnn = pd.read_csv(<span class=hljs-string >&#x27;Data/CNN_Articles/CNN_Articels_clean.csv&#x27;</span>)
+<span class=hljs-comment >#remove nans</span>
+df_cnn.dropna(inplace=<span class=hljs-literal >True</span>)</code></pre> <pre><code class="python hljs">plt.figure(figsize=(<span class=hljs-number >10</span>,<span class=hljs-number >4</span>))
+sns.countplot(df_cnn[<span class=hljs-string >&#x27;Category&#x27;</span>])</code></pre> <div class=container > <img class=center  src="/assets/cnn_categ.svg" width=500  height=350 > </div> <pre><code class="python hljs">art_lenghts = [df_cnn[<span class=hljs-string >&#x27;Article text&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> text: <span class=hljs-built_in >len</span>(text.split(<span class=hljs-string >&#x27; &#x27;</span>))) ,
+    df_cnn[<span class=hljs-string >&#x27;Headline&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> text: <span class=hljs-built_in >len</span>(text.split(<span class=hljs-string >&#x27; &#x27;</span>))) ,
+    df_cnn[<span class=hljs-string >&#x27;Description&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> text: <span class=hljs-built_in >len</span>(text.split(<span class=hljs-string >&#x27; &#x27;</span>)))
+    ]
+
+fig, ax = plt.subplots(<span class=hljs-number >1</span>,<span class=hljs-number >3</span>, figsize=(<span class=hljs-number >16</span>,<span class=hljs-number >4</span>))
+
+ax[<span class=hljs-number >0</span>].hist(art_lenghts[<span class=hljs-number >0</span>])
+ax[<span class=hljs-number >0</span>].set_title(<span class=hljs-string >f&#x27;Full text (median <span class=hljs-subst >{np.median(art_lenghts[<span class=hljs-number >0</span>]):<span class=hljs-number >.0</span>f}</span>) &#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_xlabel(<span class=hljs-string >&#x27;# words&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)
+
+ax[<span class=hljs-number >1</span>].hist(art_lenghts[<span class=hljs-number >1</span>])
+ax[<span class=hljs-number >1</span>].set_title(<span class=hljs-string >f&#x27;Headline (median <span class=hljs-subst >{np.median(art_lenghts[<span class=hljs-number >1</span>]):<span class=hljs-number >.0</span>f}</span>) &#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_xlabel(<span class=hljs-string >&#x27;# words&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)
+
+ax[<span class=hljs-number >2</span>].hist(art_lenghts[<span class=hljs-number >2</span>])
+ax[<span class=hljs-number >2</span>].set_title(<span class=hljs-string >f&#x27;Description (median <span class=hljs-subst >{np.median(art_lenghts[<span class=hljs-number >2</span>]):<span class=hljs-number >.0</span>f}</span>) &#x27;</span>)
+ax[<span class=hljs-number >2</span>].set_xlabel(<span class=hljs-string >&#x27;# words&#x27;</span>)
+ax[<span class=hljs-number >2</span>].set_ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)</code></pre> <div class=container > <img class=center  src="/assets/semnet_distro.svg" width=500  height=250 > </div> <pre><code class="python hljs"><span class=hljs-comment >#categories to use</span>
+use_cat = df_cnn[<span class=hljs-string >&#x27;Category&#x27;</span>].unique()[<span class=hljs-number >1</span>:<span class=hljs-number >6</span>]
+<span class=hljs-built_in >print</span>(use_cat)</code></pre> <pre><code class="plaintext hljs">[&#x27;business&#x27; &#x27;health&#x27; &#x27;entertainment&#x27; &#x27;sport&#x27; &#x27;politics&#x27;]</code></pre>
+<pre><code class="python hljs">new_df = pd.DataFrame(columns=df_cnn.columns)
+n_articles = <span class=hljs-number >400</span>
+<span class=hljs-keyword >for</span> cat <span class=hljs-keyword >in</span> use_cat:
+    <span class=hljs-comment >#temporal slice of dataframe</span>
+    tmp_df = df_cnn[df_cnn[<span class=hljs-string >&#x27;Category&#x27;</span>] == cat].copy(deep=<span class=hljs-literal >False</span>)
+    <span class=hljs-comment >#random choice N articles</span>
+    selec_art = np.random.choice(<span class=hljs-built_in >range</span>(tmp_df.shape[<span class=hljs-number >0</span>]), n_articles)
+    <span class=hljs-comment >#appending the new dataframe ignoring the index so the new dataframe will have new indexes</span>
+    new_df = pd.concat([new_df, tmp_df.iloc[selec_art]], ignore_index=<span class=hljs-literal >True</span>)</code></pre>
+<pre><code class="python hljs"><span class=hljs-comment >#passing one description to our nlp model</span>
+des = nlp(new_df[<span class=hljs-string >&#x27;Description&#x27;</span>][<span class=hljs-number >32</span>])
+<span class=hljs-comment >#print the original text</span>
+<span class=hljs-built_in >print</span>(des.text)</code></pre>
+<pre><code class="plaintext hljs">A Monday attack on a Fox News crew reporting near the Ukrainian capital of Kyiv left two of the network&#x27;s journalists dead and its correspondent severely injured, the channel said on Tuesday.
+```python
+from spacy import displacy 
+
+#displaying entities of the text
+displacy.render(des, style=&#x27;ent&#x27;)</code></pre>
+<p>
+<div class=entities  style="line-height: 2.5; direction: ltr">A 
+    <mark class=entity  style="background: #bfe1d9; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        Monday
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">DATE</span>
+    </mark>
+    attack on a 
+    <mark class=entity  style="background: #7aecec; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        Fox News
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">ORG</span>
+    </mark>
+    crew reporting near the 
+    <mark class=entity  style="background: #c887fb; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        Ukrainian
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">NORP</span>
+    </mark>
+    capital of 
+    <mark class=entity  style="background: #feca74; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        Kyiv
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">GPE</span>
+    </mark>
+    left 
+    <mark class=entity  style="background: #e4e7d2; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        two
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">CARDINAL</span>
+    </mark>
+    of the network\'s journalists dead and its correspondent severely injured, the channel said on 
+    <mark class=entity  style="background: #bfe1d9; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
+        Tuesday
+        <span style="font-size: 0.8em; font-weight: bold; line-height: 1; border-radius: 0.35em; vertical-align: middle; margin-left: 0.5rem">DATE</span>
+    </mark>.
+</div>
+ </p>
+<pre><code class="python hljs">ent_type = [<span class=hljs-string >&#x27;PERSON&#x27;</span>, <span class=hljs-string >&#x27;NORP&#x27;</span>, <span class=hljs-string >&#x27;FAC&#x27;</span>, <span class=hljs-string >&#x27;ORG&#x27;</span>, <span class=hljs-string >&#x27;GPE&#x27;</span>, <span class=hljs-string >&#x27;LOC&#x27;</span>, <span class=hljs-string >&#x27;PRODUCT&#x27;</span>, <span class=hljs-string >&#x27;EVENT&#x27;</span>,<span class=hljs-string >&#x27;WORK_OF_ART&#x27;</span>, <span class=hljs-string >&#x27;LAW&#x27;</span>, <span class=hljs-string >&#x27;LANGUAGE&#x27;</span>]</code></pre>
+<pre><code class="python hljs">art_ents = []
+arts_used_ix = []
+catego = []
+<span class=hljs-keyword >for</span> ix, text <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(new_df[<span class=hljs-string >&#x27;Description&#x27;</span>]):
+    des = nlp(text)
+    <span class=hljs-keyword >if</span> <span class=hljs-built_in >len</span>(des.ents) &gt; <span class=hljs-number >1</span>: <span class=hljs-comment >#storing only those who have more than 1 entities</span>
+        arts_used_ix.append(ix)
+        in_ents = []
+        catego.append(new_df[<span class=hljs-string >&#x27;Category&#x27;</span>][ix])
+        <span class=hljs-keyword >for</span> ent <span class=hljs-keyword >in</span> des.ents:
+            <span class=hljs-keyword >if</span> ent.label_ <span class=hljs-keyword >in</span> ent_type:
+                in_ents.append(ent.text)
+        
+        art_ents.append(np.unique(np.array(in_ents)))</code></pre>
+<pre><code class="python hljs">unique_ents = [element <span class=hljs-keyword >for</span> nestedlist <span class=hljs-keyword >in</span> art_ents <span class=hljs-keyword >for</span> element <span class=hljs-keyword >in</span> nestedlist]
+all_ent_len = <span class=hljs-built_in >len</span>(unique_ents)
+unique_ents = np.unique(np.array(unique_ents))
+vocab_len = <span class=hljs-built_in >len</span>(unique_ents)
+
+<span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;There are <span class=hljs-subst >{all_ent_len}</span> named entities with <span class=hljs-subst >{vocab_len}</span> unique ones&#x27;</span>)</code></pre>
+<pre><code class="plaintext hljs">There are 4277 named entities with 1857 unique ones</code></pre>
+<pre><code class="python hljs">word2tag = {}
+tag2word = {}
+<span class=hljs-keyword >for</span> i, ent <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(unique_ents):
+    word2tag[ent] = i
+    tag2word[i] = ent</code></pre>
+<pre><code class="python hljs"><span class=hljs-keyword >import</span> networkx <span class=hljs-keyword >as</span> nx
+
+<span class=hljs-comment >#initializing graph</span>
+entG = nx.Graph()</code></pre>
+<pre><code class="python hljs"><span class=hljs-keyword >for</span> ents <span class=hljs-keyword >in</span> art_ents:
+    <span class=hljs-keyword >if</span> <span class=hljs-built_in >len</span>(ents) &gt; <span class=hljs-number >1</span>:
+        <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(ents)):
+            <span class=hljs-keyword >for</span> j <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(i+<span class=hljs-number >1</span>, <span class=hljs-built_in >len</span>(ents)):
+                <span class=hljs-comment >#getting the labels for the edges</span>
+                v1 = word2tag[ents[i]]
+                v2 = word2tag[ents[j]]
+                <span class=hljs-comment >#check if the edge exists</span>
+                <span class=hljs-keyword >if</span> entG.has_edge(v1, v2):
+                    <span class=hljs-comment >#if does exist it adds +1 to its weight</span>
+                    entG[v1][v2][<span class=hljs-string >&#x27;weight&#x27;</span>] +=<span class=hljs-number >1</span>
+                <span class=hljs-keyword >else</span>:
+                    <span class=hljs-comment >#if doesn&#x27;t it creates it</span>
+                    entG.add_edge(v1, v2, weight=<span class=hljs-number >1</span>)</code></pre>
+<pre><code class="python hljs">plot_options = {<span class=hljs-string >&quot;node_size&quot;</span>: <span class=hljs-number >10</span>, <span class=hljs-string >&quot;with_labels&quot;</span>: <span class=hljs-literal >False</span>, <span class=hljs-string >&quot;width&quot;</span>: <span class=hljs-number >0.8</span>}
+
+fig, ax = plt.subplots(figsize=(<span class=hljs-number >15</span>, <span class=hljs-number >15</span>))
+ax.axis(<span class=hljs-string >&quot;off&quot;</span>)
+nx.draw_networkx(entG, ax=ax,**plot_options)</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/semnet_fullnet.svg" width=500  height=500 >
+
+</div>
+
+<pre><code class="python hljs"><span class=hljs-comment >#finding the largest connected component</span>
+large_c = <span class=hljs-built_in >max</span>(nx.connected_components(entG), key=<span class=hljs-built_in >len</span>)
+large_c = entG.subgraph(large_c).copy()
+<span class=hljs-comment >#saving original labels and relabeling</span>
+old2new = <span class=hljs-built_in >dict</span>(<span class=hljs-built_in >zip</span>(large_c, <span class=hljs-built_in >range</span>(<span class=hljs-number >1</span>, <span class=hljs-built_in >len</span>(large_c.nodes))))
+new2old = <span class=hljs-built_in >dict</span>(<span class=hljs-built_in >zip</span>(<span class=hljs-built_in >range</span>(<span class=hljs-number >1</span>, <span class=hljs-built_in >len</span>(large_c.nodes)), large_c))
+large_c = nx.relabel_nodes(large_c, mapping=old2new, copy=<span class=hljs-literal >True</span>)</code></pre>
+<pre><code class="python hljs">pos = nx.spring_layout(large_c, iterations=<span class=hljs-number >100</span>)
+
+fig, ax = plt.subplots(figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >12</span>))
+ax.axis(<span class=hljs-string >&quot;off&quot;</span>)
+nx.draw_networkx(large_c,pos=pos, ax=ax,**plot_options)</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/semnet_largec.svg" width=500  height=500 >
+
+</div>
+
+<pre><code class="python hljs"><span class=hljs-keyword >from</span> networkx.algorithms.community <span class=hljs-keyword >import</span> louvain_communities
+<span class=hljs-comment >#finding communities</span>
+parts = louvain_communities(large_c)</code></pre>
+<pre><code class="python hljs"><span class=hljs-keyword >import</span> matplotlib
+<span class=hljs-comment >#getting random colors one for each comunity</span>
+col_list = <span class=hljs-built_in >list</span>(matplotlib.colors.cnames.keys())
+ncolors = np.random.choice(col_list, <span class=hljs-built_in >len</span>(parts), replace=<span class=hljs-literal >False</span>)
+<span class=hljs-comment >#assigning the colors</span>
+colors = [<span class=hljs-string >&quot;&quot;</span> <span class=hljs-keyword >for</span> x <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(large_c.number_of_nodes())]
+<span class=hljs-keyword >for</span> i,com <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(parts):
+    <span class=hljs-keyword >for</span> node <span class=hljs-keyword >in</span> <span class=hljs-built_in >list</span>(com):
+        colors[node-<span class=hljs-number >1</span>] = ncolors[i]</code></pre>
+<pre><code class="python hljs">fig, ax = plt.subplots(figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >12</span>))
+
+nx.draw_networkx(large_c, pos=pos,
+    node_size=<span class=hljs-number >15</span>,with_labels=<span class=hljs-literal >False</span>, 
+    width=<span class=hljs-number >0.5</span>, node_color=colors,
+)
+ax.axis(<span class=hljs-string >&quot;off&quot;</span>)
+fig.set_facecolor(<span class=hljs-string >&#x27;grey&#x27;</span>)</code></pre>
+
+<div class=container >
+
+    <img class=center  src="/assets/semnet_partition.svg" width=500  height=500 >
+
+</div>
+
+<pre><code class="python hljs"><span class=hljs-keyword >for</span> nc, m <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(parts):
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Component <span class=hljs-subst >{nc}</span> has <span class=hljs-subst >{<span class=hljs-built_in >len</span>(m)}</span> nodes&#x27;</span>)</code></pre>
+<pre><code class="plaintext hljs">Component 0 has 2 nodes
+Component 1 has 178 nodes
+Component 2 has 159 nodes
+Component 3 has 8 nodes
+Component 4 has 203 nodes
+Component 5 has 58 nodes
+Component 6 has 22 nodes
+Component 7 has 82 nodes
+Component 8 has 79 nodes
+Component 9 has 65 nodes
+Component 10 has 4 nodes
+Component 11 has 7 nodes
+Component 12 has 23 nodes
+Component 13 has 76 nodes
+Component 14 has 15 nodes
+Component 15 has 9 nodes
+Component 16 has 5 nodes
+Component 17 has 12 nodes
+Component 18 has 8 nodes
+Component 19 has 8 nodes
+Component 20 has 75 nodes
+Component 21 has 9 nodes
+Component 22 has 146 nodes
+Component 23 has 32 nodes
+Component 24 has 54 nodes</code></pre>
+<pre><code class="python hljs">[tag2word[new2old[n]] <span class=hljs-keyword >for</span> n <span class=hljs-keyword >in</span> parts[<span class=hljs-number >14</span>]]</code></pre>
+<pre><code class="plaintext hljs">[&#x27;All-Star&#x27;,
+ &#x27;MVP&#x27;,
+ &#x27;Steve Nash&#x27;,
+ &#x27;Warriors&#x27;,
+ &#x27;Jordan&#x27;,
+ &quot;LeBron James&#x27;&quot;,
+ &#x27;Looney Tune-acy&#x27;,
+ &#x27;Michael Jordan&#x27;,
+ &#x27;Space Jam: A New Legacy&#x27;,
+ &#x27;Brooklyn Nets&#x27;,
+ &#x27;NBA&#x27;,
+ &#x27;Kyrie Irving&#x27;,
+ &#x27;Adam Silver&#x27;,
+ &#x27;the New Orleans Pelicans&#x27;,
+ &#x27;African-American&#x27;]</code></pre>
 <div class=page-foot >
-    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 18, 2022.
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: October 19, 2022.
     Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
 </div>
 </div>
