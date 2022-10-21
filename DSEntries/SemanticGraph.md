@@ -8,31 +8,38 @@ tags = ["python","NLP", "data science", "knowledge graph"]
 +++
 
 A **semantic network**, sometimes referred as [knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph) is a graph $\mathcal{G}(v,e)$ where the vertices (or nodes) represent concepts, entities, events, etc. and the edges represent a relationship between the concepts. This relationship is said to be **semantic** because in natural language process it is usually defined if the concepts appear in the same sentence, paragraph or document. 
+
+Here we are going to build a semantic network from [Cable News Network (CNN)](https://www.cnn.com/) articles that I downloaded from a [Kaggle dataset](https://www.kaggle.com/datasets/hadasu92/cnn-articles-after-basic-cleaning).
+
+Let's do some imports first
 ```python 
-    #Imports
-    import warnings
-    import pandas as pd
-    import numpy as np
-    import spacy
-    import seaborn as sns
-
-
-    import matplotlib.pyplot as plt
-    from IPython import display
-    display.set_matplotlib_formats('svg')
-
-    nlp = spacy.load('en_core_web_sm')
-
-    warnings.filterwarnings("ignore")
+#dataframes and arrays
+import pandas as pd
+import numpy as np
+#plotting
+import seaborn as sns
+import matplotlib.pyplot as plt
+from IPython import display
+display.set_matplotlib_formats('svg')
 ```
-We load the `.csv` file as a data frame:
+We load the `.csv` file as a data frame and drop the NaNs that might be in it:
 ```python
     
 df_cnn = pd.read_csv('Data/CNN_Articles/CNN_Articels_clean.csv')
 #remove nans
 df_cnn.dropna(inplace=True)
 ```
-
+now let's explore a bit of the dataset and its statistics, we look at the columns to see what information is contained in the data frame
+```python
+df_cnn.columns
+```
+```plaintext
+Index(['Index', 'Author', 'Date published', 'Category', 'Section', 'Url',
+       'Headline', 'Description', 'Keywords', 'Second headline',
+       'Article text'],
+      dtype='object')
+```
+looks like the articles are classified by categories, let's explore the count for each category
 ```python
 plt.figure(figsize=(10,4))
 sns.countplot(df_cnn['Category'])
@@ -44,8 +51,11 @@ sns.countplot(df_cnn['Category'])
 
 </div>
 ~~~
+we can see that the number of articles is not uniformly distributed across categories, this could add some bias to our analysis so we will need to make a uniform _sample_ of articles to avoid this. We will catch up on that later, for now let's see what text can we use to extract the information we need to build our semantic network.
 
+The data frame has `Headline`, `Description` and `Article text` as our potential candidates to extract the information, let's explore the length -number of words- for each 
 ```python
+#getting the lengths
 art_lenghts = [df_cnn['Article text'].apply(lambda text: len(text.split(' '))) ,
     df_cnn['Headline'].apply(lambda text: len(text.split(' '))) ,
     df_cnn['Description'].apply(lambda text: len(text.split(' ')))
@@ -75,16 +85,18 @@ ax[2].set_ylabel('Count')
 
 </div>
 ~~~
+for simplicity and trying to avoid any other biases that could be introduced by the data, we are going to use the `Description` that has a median of 26 words. 
 
+Now we focus on the categories we are going to use, since `travel`, `vr` and `style` seem to have few articles, we are going to ignore those categories
 ```python
 #categories to use
-use_cat = df_cnn['Category'].unique()[1:6]
+use_cat = df_cnn['Category'].unique()[:6]
 print(use_cat)
 ```
 ```plaintext
-['business' 'health' 'entertainment' 'sport' 'politics']
+['news' 'business' 'health' 'entertainment' 'sport' 'politics']
 ```
-
+for each category we get a sample of `n_articles = 400`, this number is arbitrary and is close to the number of articles that the category `entertainment` has
 ```python
 new_df = pd.DataFrame(columns=df_cnn.columns)
 n_articles = 400
@@ -96,6 +108,17 @@ for cat in use_cat:
     #appending the new dataframe ignoring the index so the new dataframe will have new indexes
     new_df = pd.concat([new_df, tmp_df.iloc[selec_art]], ignore_index=True)
 ```
+now that we have stored the articles we are going to work with in a new data frame `new_df` we can load a **language model** from the [spaCy](https://spacy.io/) library
+
+```python
+import spacy
+#loading the small version of the  model for the english language
+nlp = spacy.load('en_core_web_sm')
+
+```
+this model has already been prepared to [identify features](https://spacy.io/usage/linguistic-features) for the English language (and some other languages too) and comes with tools that helps us analyze texts, in our case we are going to use its **named entity recognition** tool which will recognize and tag entities for a given text.
+
+Let's try the entity recognition feature from one of the descriptions in the new data frame we made with the sampled articles, first we pass the text through the model
 ```python
 #passing one description to our nlp model
 des = nlp(new_df['Description'][32])
@@ -104,6 +127,8 @@ print(des.text)
 ```
 ```plaintext
 A Monday attack on a Fox News crew reporting near the Ukrainian capital of Kyiv left two of the network's journalists dead and its correspondent severely injured, the channel said on Tuesday.
+```
+now we import `displacy` to output a _fancy_ tagging of named entities
 ```python
 from spacy import displacy 
 
@@ -144,19 +169,47 @@ displacy.render(des, style='ent')
 </div>
 ~~~ 
 
+as we can see, the named entities that the model recognizes have different types and spacy already assigns the type to each identity, if we want to extract this entities we can do it by accessing `des.ents` from our processed text `des`.
+
+The fact that named entities are also numbers and dates could add noise to our network so we need to get rid of that type of entities, we can inspect what type of entities our model recognizes by doing 
+```python
+nlp.get_pipe("ner").labels
+```
+```plaintext
+('CARDINAL',
+ 'DATE',
+ 'EVENT',
+ 'FAC',
+ 'GPE',
+ 'LANGUAGE',
+ 'LAW',
+ 'LOC',
+ 'MONEY',
+ 'NORP',
+ 'ORDINAL',
+ 'ORG',
+ 'PERCENT',
+ 'PERSON',
+ 'PRODUCT',
+ 'QUANTITY',
+ 'TIME',
+ 'WORK_OF_ART')
+```
+now we can select what type of entities we are interested in
 ```python
 ent_type = ['PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT','WORK_OF_ART', 'LAW', 'LANGUAGE']
 ```
-
+and extract them from each of the descriptions in our data `new_df`
 ```python
 art_ents = []
 arts_used_ix = []
 catego = []
 for ix, text in enumerate(new_df['Description']):
     des = nlp(text)
-    if len(des.ents) > 1: #storing only those who have more than 1 entities
+    if len(des.ents) > 1: #storing only those who have more than 1 entity
         arts_used_ix.append(ix)
         in_ents = []
+        #saving its category just in case
         catego.append(new_df['Category'][ix])
         for ent in des.ents:
             if ent.label_ in ent_type:
@@ -164,7 +217,7 @@ for ix, text in enumerate(new_df['Description']):
         
         art_ents.append(np.unique(np.array(in_ents)))
 ```
-
+and now we can see how many entities we have in total and how many unique entities there are
 ```python
 unique_ents = [element for nestedlist in art_ents for element in nestedlist]
 all_ent_len = len(unique_ents)
@@ -176,7 +229,7 @@ print(f'There are {all_ent_len} named entities with {vocab_len} unique ones')
 ```plaintext
 There are 4277 named entities with 1857 unique ones
 ```
-
+for simplicity, we are going to map the entities to numbers with a dictionary
 ```python
 word2tag = {}
 tag2word = {}
@@ -184,7 +237,7 @@ for i, ent in enumerate(unique_ents):
     word2tag[ent] = i
     tag2word[i] = ent
 ```
-
+now we are going to build our semantic network with the `networkx` package, first we initialize the graph
 ```python
 import networkx as nx
 
@@ -192,6 +245,7 @@ import networkx as nx
 entG = nx.Graph()
 
 ```
+now we iterate over the entities that we saved and use them as nodes to create edges between them if they appear in the same piece of text (description), we are going to add **weights** to the edges equal to the number of occurrences the two nodes (words) have in the descriptions
 
 ```python
 for ents in art_ents:
@@ -209,7 +263,7 @@ for ents in art_ents:
                     #if doesn't it creates it
                     entG.add_edge(v1, v2, weight=1)
 ```
-
+and we visualize the resulting network
 
 ```python
 plot_options = {"node_size": 10, "with_labels": False, "width": 0.8}
@@ -226,6 +280,8 @@ nx.draw_networkx(entG, ax=ax,**plot_options)
 
 </div>
 ~~~
+it looks that there are a lot of articles that have entities disconnected from the main component of the network, we will throw these small, isolated components of our network and use only the largest connected component
+
 ```python
 #finding the largest connected component
 large_c = max(nx.connected_components(entG), key=len)
@@ -235,7 +291,6 @@ old2new = dict(zip(large_c, range(1, len(large_c.nodes))))
 new2old = dict(zip(range(1, len(large_c.nodes)), large_c))
 large_c = nx.relabel_nodes(large_c, mapping=old2new, copy=True)
 ```
-
 ```python
 pos = nx.spring_layout(large_c, iterations=100)
 
@@ -251,12 +306,16 @@ nx.draw_networkx(large_c,pos=pos, ax=ax,**plot_options)
 
 </div>
 ~~~
+now we have a cool looking semantic network, there are lots of type of analysis we can make from a network, like identifying relevant nodes, cliques or communities and other topological features that are non evident or very difficult to identify without constructing the network.
+
+Here we are going to use a community detection algorithm to exemplify its use, from `networkx` we load the [Louvain method](https://en.wikipedia.org/wiki/Louvain_method) which uses [modularity](https://en.wikipedia.org/wiki/Modularity_(networks)) as the feature to optimize while finding the communities, this method has the advantage of using the _weights_ of the edges, so it will be more likely for nodes with a strong edge to be in the same community, 
 
 ```python
 from networkx.algorithms.community import louvain_communities
 #finding communities
 parts = louvain_communities(large_c)
 ```
+now we are going to assign some randomly chosen colors to each of the communities
 ```python
 import matplotlib
 #getting random colors one for each comunity
@@ -268,6 +327,7 @@ for i,com in enumerate(parts):
     for node in list(com):
         colors[node-1] = ncolors[i]
 ```
+and plot the resulting graph
 
 ```python
 fig, ax = plt.subplots(figsize=(12, 12))
@@ -287,6 +347,7 @@ fig.set_facecolor('grey')
 </div>
 ~~~
 
+we inspect the communities, show how many nodes each of them has
 ```python
 for nc, m in enumerate(parts):
     print(f'Component {nc} has {len(m)} nodes')
@@ -318,7 +379,7 @@ Component 22 has 146 nodes
 Component 23 has 32 nodes
 Component 24 has 54 nodes
 ```
-
+to have any idea of what this communities represent we can inspect some of them, it looks like there are at least 3 big communities with more than 100 nodes that probably won't have easily interpretable information so we are going to expect one of the small ones, for example the 14th 
 ```python
 [tag2word[new2old[n]] for n in parts[14]]
 ```
@@ -339,3 +400,7 @@ Component 24 has 54 nodes
  'the New Orleans Pelicans',
  'African-American']
 ```
+
+in this particular case it looks like these nodes are related to each other through _basketball_, they might be not the only nodes that are related to basketball but they definitely share more between each other than the rest of the basketball related nodes according to the community detection analysis.
+
+If you liked this example don't forget to take a look at the [notebook here](https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/SemanticGraph.ipynb).
