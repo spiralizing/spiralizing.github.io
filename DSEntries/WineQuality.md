@@ -943,7 +943,7 @@ weighted avg       0.76      0.75      0.75       320
 
 ```
 
-our model performs slightly worse in predicting quality score for red wine, it could be related to the size of the dataset. But why is that we can have higher accuracy in predicting the amount of residual sugar?
+our model performs slightly worse in predicting quality score for red wine, it could be related to the size of the dataset. But why is that we can have higher accuracy in predicting chemical properties relevant to flavor profile like the amount of residual sugar?
 
 this discrepancy could have different explanations: 
 
@@ -951,9 +951,9 @@ this discrepancy could have different explanations:
 * Wine quality could be related to the acidity values we couldn't predict accurately
 * Wine quality scores have a **subjective** component from the _experts_ 
 
-it is not simple to know what exactly might be the issue, but we can ignore the first one since we are using the same model for each prediction, of course we could have a better model but that is not the point of this experiment, in the [original paper](https://www.sciencedirect.com/science/article/abs/pii/S0167923609001377) of this dataset the authors report that a modified [Support Vector Machine (SVM)](https://en.wikipedia.org/wiki/Support_vector_machine) model performs better than a deep neural network or decision tree models. 
+it is not simple to know what exactly might be the issue, but we can ignore the first one since we are using the same model for each prediction, of course we could have a better model but that is not the point of this experiment. In the [original paper](https://www.sciencedirect.com/science/article/abs/pii/S0167923609001377) of this dataset the authors report that a modified [Support Vector Machine (SVM)](https://en.wikipedia.org/wiki/Support_vector_machine) model performs better than a deep neural network or decision tree models. 
 
-The last couple of explanations are more plausible, but difficult to prove. For the first one we would need to do more statistical tests to evaluate the contribution of that variable to the prediction. However, it is not hard to think that there is a subjective component (expert preferences, physiological differences) when it comes to evaluating wine quality, predicting human behavior is a complicated task and I wouldn't be surprised that even with a perfect model we would still not be able to get great results because we are lacking information about individual preferences from the experts.
+The last couple of explanations are more plausible, but difficult to prove. For the first one we would need to do more statistical tests to evaluate the contribution of those variables to the prediction. However, it is not hard to think that there is a subjective component (expert preferences, physiological differences) when it comes to evaluating wine quality. Predicting human behavior is a complicated task and I wouldn't be surprised that even with a perfect model we would still not be able to get great results because we are lacking information about individual preferences from the experts.
 
 Don't forget to take a look at the notebook for this post [here!](https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/Wine.ipynb) 
 
