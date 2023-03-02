@@ -24,7 +24,7 @@ rwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>] = <span class=
 wwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>] = <span class=hljs-number >0</span>
 
 <span class=hljs-comment >#concatenating data frames</span>
-allwine_data = pd.concat([rwine_data, wwine_data], axis=<span class=hljs-number >0</span>, ignore_index=<span class=hljs-literal >True</span>)</code></pre> <p>it is fairly common that the data sets contain unbalanced and not normalized data so it won&#39;t hurt if we look at its distribution: </p> <pre><code class="python hljs"><span class=hljs-comment >#plot data </span>
+allwine_data = pd.concat([rwine_data, wwine_data], axis=<span class=hljs-number >0</span>, ignore_index=<span class=hljs-literal >True</span>)</code></pre> <p>it is fairly common that data sets contain unbalanced and not normalized data so it won&#39;t hurt if we look at its distribution: </p> <pre><code class="python hljs"><span class=hljs-comment >#plot data </span>
 fig, ax = plt.subplots(<span class=hljs-number >1</span>, figsize=(<span class=hljs-number >17</span>,<span class=hljs-number >4</span>))
 ax = sns.boxplot(data=allwine_data)
 ax.set_xticklabels(allwine_data.columns,rotation=<span class=hljs-number >45</span>)</code></pre> <p> <div class=container > <img class=center  src="/assets/chem_distro1.svg" width=500  height=350 > </div> the distributions of the wine properties have different scales so it will be convenient to normalize them</p> <pre><code class="python hljs"><span class=hljs-comment ># we drop the columns quality and wine type since those don&#x27;t need normalization.</span>
