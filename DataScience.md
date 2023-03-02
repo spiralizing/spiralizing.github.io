@@ -18,3 +18,5 @@ I hope you find something useful or interesting.
 * [Sentiment analysis and topic modeling in pop artists](/DSEntries/SentimentSongs1/)
 
 * [Copying the style of an image to another using Convolutional Neural Networks](/DSEntries/StyleTransfer/)
+
+* [Predicting wine quality scores](/DSEntries/WineQuality/)
