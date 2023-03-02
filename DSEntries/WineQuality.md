@@ -54,7 +54,7 @@ wwine_data['wine type'] = 0
 #concatenating data frames
 allwine_data = pd.concat([rwine_data, wwine_data], axis=0, ignore_index=True)
 ```
-it is fairly common that the data sets contain unbalanced and not normalized data so it won't hurt if we look at its distribution: 
+it is fairly common that data sets contain unbalanced and not normalized data so it won't hurt if we look at its distribution: 
 
 ```python
 #plot data 
