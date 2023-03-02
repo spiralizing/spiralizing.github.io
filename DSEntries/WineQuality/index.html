@@ -1,0 +1,551 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Predicting wine quality using chemical properties</title> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> </div> </div> <div id=main > <div class=header > <h1>Predicting wine quality using chemical properties</h1> <h2> | Complex Systems | Data Science | Music Evolution | </h2> </div> <div class=franklin-content ><p> As a food and drink enthusiast I&#39;ve always wondered if we can use statistics to predict flavor profile or quality/taste in food. I know there is a whole research field when it comes to <a href="https://en.wikipedia.org/wiki/Food_science">food science</a> that explores these kind of questions, but I wanted to see if I could try it on my own.</p> <p>Particularly, when I talk to people about drinks is usually about beer or whisky, but when the conversation goes toward wine I often feel lost, I don&#39;t think I have the sophisticated palate that other people have. So when I realized that there is a <a href="https://archive-beta.ics.uci.edu/dataset/186/wine&#43;quality">data set of wine quality</a>, first published on a <a href="https://www.sciencedirect.com/science/article/abs/pii/S0167923609001377">paper</a> that includes different chemical properties and a quality score provided by wine experts. I decided to check it out and to see if I could use statistics &#40;machine learning&#41; to explore and try to answer questions I&#39;ve wondered for a while, like: <strong>Can we predict the quality/taste of a wine knowing its chemical properties?</strong></p> <p>This entry has the following sections:</p> <p><div class=franklin-toc ><ol><li><a href="#loading_imports_and_data">Loading imports and data</a><li><a href="#predicting_wine_type">Predicting wine type</a><li><a href="#can_we_predict_the_value_of_a_chemical_property">Can we predict the value of a chemical property?</a><li><a href="#predicting_wine_quality">Predicting wine quality</a></ol></div> </p> <h2 id=loading_imports_and_data ><a href="#loading_imports_and_data" class=header-anchor >Loading imports and data</a></h2> <p>First, we load some libraries we are going to use for this mini-project:</p> <pre><code class="python hljs"><span class=hljs-comment >#importing libraries</span>
+<span class=hljs-keyword >import</span> torch
+<span class=hljs-keyword >import</span> torch.nn <span class=hljs-keyword >as</span> nn
+<span class=hljs-keyword >from</span> torch.utils.data <span class=hljs-keyword >import</span> DataLoader, TensorDataset
+<span class=hljs-keyword >from</span> sklearn.model_selection <span class=hljs-keyword >import</span> train_test_split
+<span class=hljs-keyword >import</span> torch.nn.functional <span class=hljs-keyword >as</span> F
+<span class=hljs-keyword >import</span> sklearn.metrics <span class=hljs-keyword >as</span> skm
+
+<span class=hljs-keyword >import</span> numpy <span class=hljs-keyword >as</span> np
+<span class=hljs-keyword >import</span> scipy.stats <span class=hljs-keyword >as</span> stats
+
+<span class=hljs-keyword >import</span> pandas <span class=hljs-keyword >as</span> pd
+
+<span class=hljs-keyword >import</span> matplotlib.pyplot <span class=hljs-keyword >as</span> plt
+<span class=hljs-keyword >import</span> seaborn <span class=hljs-keyword >as</span> sns
+
+<span class=hljs-keyword >from</span> IPython <span class=hljs-keyword >import</span> display
+display.set_matplotlib_formats(<span class=hljs-string >&#x27;svg&#x27;</span>)</code></pre> <pre><code class="python hljs"><span class=hljs-comment >#getting the dataset - there are 2 sets: red wines and white wines</span>
+url_white = <span class=hljs-string >&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv&quot;</span>
+url_red = <span class=hljs-string >&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv&quot;</span>
+rwine_data = pd.read_csv(url_red, sep=<span class=hljs-string >&#x27;;&#x27;</span>)
+wwine_data = pd.read_csv(url_white, sep=<span class=hljs-string >&#x27;;&#x27;</span>)</code></pre> <p>We assign labels for type of wine on each data frame and then concatenate them to have all the information in one single data frame:</p> <pre><code class="python hljs"><span class=hljs-comment >#assigning labels</span>
+rwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>] = <span class=hljs-number >1</span>
+wwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>] = <span class=hljs-number >0</span>
+
+<span class=hljs-comment >#concatenating data frames</span>
+allwine_data = pd.concat([rwine_data, wwine_data], axis=<span class=hljs-number >0</span>, ignore_index=<span class=hljs-literal >True</span>)</code></pre> <p>it is fairly common that the data sets contain unbalanced and not normalized data so it won&#39;t hurt if we look at its distribution: </p> <pre><code class="python hljs"><span class=hljs-comment >#plot data </span>
+fig, ax = plt.subplots(<span class=hljs-number >1</span>, figsize=(<span class=hljs-number >17</span>,<span class=hljs-number >4</span>))
+ax = sns.boxplot(data=allwine_data)
+ax.set_xticklabels(allwine_data.columns,rotation=<span class=hljs-number >45</span>)</code></pre> <p> <div class=container > <img class=center  src="/assets/chem_distro1.svg" width=500  height=350 > </div> the distributions of the wine properties have different scales so it will be convenient to normalize them</p> <pre><code class="python hljs"><span class=hljs-comment ># we drop the columns quality and wine type since those don&#x27;t need normalization.</span>
+normed_alldata = allwine_data.drop([<span class=hljs-string >&#x27;quality&#x27;</span>, <span class=hljs-string >&#x27;wine type&#x27;</span>], axis=<span class=hljs-number >1</span>)
+
+<span class=hljs-keyword >for</span> col <span class=hljs-keyword >in</span> normed_alldata.columns:
+    <span class=hljs-comment >#getting mean and standard deviation...</span>
+    col_mean = np.mean(normed_alldata[col])
+    col_std = np.std(normed_alldata[col], ddof=<span class=hljs-number >1</span>)
+    <span class=hljs-comment >#normalizing data</span>
+    normed_alldata[col] = (normed_alldata[col] - col_mean) / col_std</code></pre> <p>now we check that the data is normalized by plotting the new distributions</p> <pre><code class="python hljs"><span class=hljs-comment >#plot the normalized data</span>
+fig, ax = plt.subplots(<span class=hljs-number >1</span>, figsize=(<span class=hljs-number >17</span>,<span class=hljs-number >4</span>))
+ax = sns.boxplot(data=normed_alldata)
+ax.set_xticklabels(normed_alldata.columns,rotation=<span class=hljs-number >45</span>)</code></pre> <div class=container > <img class=center  src="/assets/chem_distronorm.svg" width=500  height=350 > </div> <h2 id=predicting_wine_type ><a href="#predicting_wine_type" class=header-anchor >Predicting wine type</a></h2> <p>Before trying to predict wine quality, a good exercise would be to see how accurately we can predict other properties with the data we already have. The type of wine could be the simplest one so we will start with that one.</p> <p>Let&#39;s see how many points we have of each type of wine: </p> <pre><code class="python hljs"><span class=hljs-comment >#plotting the counts for each type of wine</span>
+plt.hist(allwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>].values)
+plt.xticks([<span class=hljs-number >0</span>,<span class=hljs-number >1</span>], labels=[<span class=hljs-string >&#x27;White&#x27;</span>,<span class=hljs-string >&#x27;Red&#x27;</span>])</code></pre> <p> <div class=container > <img class=center  src="/assets/count_winetype.svg" width=350  height=350 > </div> there is a disproportion of data points, if we train a model with this data it will be likely to be biased towards predicting white wine &#40;better trained for predicting white wine&#41;, so we need to use a balanced dataset.</p> <p>To balance the dataset we need to create more data points or reduce their number, for simplicity we are going to perform the second option. We need to randomly select a subset of points from the white wine group of data points </p> <pre><code class="python hljs"><span class=hljs-comment ># making a *randomized* selection of white wine data</span>
+white_ix = np.where(allwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>]==<span class=hljs-number >0</span>)[<span class=hljs-number >0</span>]
+red_ix = np.where(allwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>]==<span class=hljs-number >1</span>)[<span class=hljs-number >0</span>]
+
+<span class=hljs-comment >#this are the indexes we are going to choose for our dataset</span>
+ix_selec = np.concatenate([np.random.choice(white_ix, <span class=hljs-built_in >len</span>(red_ix)), red_ix])</code></pre> <p>now we can define the variables for our machine learning model</p> <pre><code class="python hljs"><span class=hljs-comment >#defining the data and target</span>
+normed_allselect = normed_alldata.iloc[ix_selec]
+wine_target = allwine_data[<span class=hljs-string >&#x27;wine type&#x27;</span>].values[ix_selec]</code></pre> <p>in Pytorch an easy way to pass the data to the model is through loaders, so we can define a function to build the loaders and make it easier if we decide to make more experiments with different datasets </p> <pre><code class="python hljs"><span class=hljs-comment ># function that will help us to build the data loaders for PyTorch</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_loaders</span>(<span class=hljs-params >data, target, test_size, batch_size</span>):
+    <span class=hljs-comment >#first converting to torch format</span>
+    Tdata = torch.tensor(data.values).<span class=hljs-built_in >float</span>()
+    Ttarget = torch.tensor(target).<span class=hljs-built_in >float</span>()[:, <span class=hljs-literal >None</span>]
+    
+    <span class=hljs-comment >#split the data</span>
+    train_data, test_data, train_labels, test_labels = train_test_split(Tdata, Ttarget, test_size=test_size)
+    
+    <span class=hljs-comment >#creating datasets for the loaders</span>
+    train_data = TensorDataset(train_data, train_labels)
+    test_data = TensorDataset(test_data, test_labels)
+    
+    <span class=hljs-comment >#creating loaders, dropping last to have equal size loaders.</span>
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=<span class=hljs-literal >True</span>, drop_last=<span class=hljs-literal >True</span>)
+    test_loader = DataLoader(test_data, batch_size=test_data.tensors[<span class=hljs-number >0</span>].shape[<span class=hljs-number >0</span>])
+    
+    <span class=hljs-keyword >return</span> train_loader, test_loader</code></pre> <p>and we use the function we just defined to build the loaders with our data, using 80&#37; of the data for training and the rest for testing with batches of size <code>batch_size &#61; 64</code></p> <pre><code class="python hljs">train_loader, test_loader = get_loaders(
+    normed_allselect, wine_target, test_size=<span class=hljs-number >0.2</span>, batch_size=<span class=hljs-number >64</span>)</code></pre> <p>Now we can think about our <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">Artificial Neural Network &#40;ANN&#41;</a> model, I decided to select a model flexible enough to be used for our different experiments. The model is <em>fully connected</em> &#40;FCNN&#41; which means that all nodes from neighbor layers are connected to each other with the exception of self-loops and nodes from the same layer. It has an input layer, four hidden layers and an output layer, and we can visualize the architecture in the next figure</p> <div class=container > <img class=center  src="/assets/nn.svg" width=600  height=600 > </div> <p>to build this model we can use the Torch base NN class:</p> <pre><code class="python hljs"><span class=hljs-comment >#defining our class for this ANN model fully connected with batch normalization</span>
+<span class=hljs-keyword >class</span> <span class="hljs-title class_">ANN_wine</span>(nn.Module):
+    <span class=hljs-keyword >def</span> <span class="hljs-title function_">__init__</span>(<span class=hljs-params >self, n_input</span>):  <span class=hljs-comment ># initiating class, setting number of input nodes as variable</span>
+        <span class=hljs-built_in >super</span>().__init__()
+
+        <span class=hljs-comment >#intput for the n_input features to 16 nodes</span>
+        self.<span class=hljs-built_in >input</span> = nn.Linear(n_input, <span class=hljs-number >16</span>)
+
+        <span class=hljs-comment >#First layer</span>
+        self.fc1 = nn.Linear(<span class=hljs-number >16</span>, <span class=hljs-number >32</span>)
+        self.bnorm1 = nn.BatchNorm1d(<span class=hljs-number >16</span>)
+        <span class=hljs-comment >#second layer</span>
+        self.fc2 = nn.Linear(<span class=hljs-number >32</span>, <span class=hljs-number >20</span>)
+        self.bnorm2 = nn.BatchNorm1d(<span class=hljs-number >32</span>)
+        <span class=hljs-comment >#third layer</span>
+        self.fc3 = nn.Linear(<span class=hljs-number >20</span>, <span class=hljs-number >16</span>)
+        self.bnorm3 = nn.BatchNorm1d(<span class=hljs-number >20</span>)
+        <span class=hljs-comment >#the output</span>
+        self.output = nn.Linear(<span class=hljs-number >16</span>, <span class=hljs-number >1</span>)
+
+    <span class=hljs-comment >#defining forward pass with ReLu activation functions</span>
+    <span class=hljs-keyword >def</span> <span class="hljs-title function_">forward</span>(<span class=hljs-params >self, x</span>):  
+        <span class=hljs-comment >#input forward</span>
+        x = F.relu(self.<span class=hljs-built_in >input</span>(x))
+
+        <span class=hljs-comment >#forward of layer 1 with batch normalization</span>
+        x = self.bnorm1(x)
+        x = F.relu(self.fc1(x))
+        <span class=hljs-comment >#forward of layer 2 with  batch normalization</span>
+        x = self.bnorm2(x)
+        x = F.relu(self.fc2(x))
+        <span class=hljs-comment >#forward of layer 3 with  batch normalization</span>
+        x = self.bnorm3(x)
+        x = F.relu(self.fc3(x))
+
+        <span class=hljs-keyword >return</span> self.output(x)</code></pre> <p>before training our model we need to make sure that the data loaders and the model have the same format, to check this we just need to pass one batch from the loader through the model</p> <pre><code class="python hljs"><span class=hljs-comment >#Loading a batch from the training dataset</span>
+X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(train_loader))
+<span class=hljs-built_in >print</span>(X.shape)
+<span class=hljs-built_in >print</span>(y.shape)
+
+<span class=hljs-comment >#we initialize our model with 11 input features</span>
+ANN_winetype = ANN_wine(<span class=hljs-number >11</span>)
+<span class=hljs-comment >#pass the model</span>
+y_hat = ANN_winetype(X)
+<span class=hljs-built_in >print</span>(y_hat.shape)</code></pre> <pre><code class="plaintext hljs">torch.Size([64, 11])
+torch.Size([64, 1])
+torch.Size([64, 1])</code></pre> <p>it seems that everything is in order. Now we need to train the model, we define a function to train the model that uses Binary <a href="https://en.wikipedia.org/wiki/Cross_entropy">Cross-entropy</a> as loss function and the <a href="https://optimization.cbe.cornell.edu/index.php?title&#61;Adam#:~:text&#61;Adam&#37;20optimizer&#37;20is&#37;20the&#37;20extended,was&#37;20first&#37;20introduced&#37;20in&#37;202014.">Adam optimizer</a>: </p> <pre><code class="python hljs"><span class=hljs-keyword >def</span> <span class="hljs-title function_">train_model</span>(<span class=hljs-params >model,train_loader, test_loader, n_epochs, learn_rate</span>):
+    <span class=hljs-comment >#loss function: binary cross entropy.</span>
+    lossfun = nn.BCEWithLogitsLoss()
+    <span class=hljs-comment >#defining the optimizer</span>
+    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+    
+    <span class=hljs-comment >#now we initialize the losses and accuracy</span>
+    losses = torch.zeros(n_epochs)
+    train_acc = []
+    test_acc = []
+    <span class=hljs-keyword >for</span> epoch_i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(n_epochs):
+        <span class=hljs-comment >#using the model in training mode</span>
+        model.train()
+        batch_acc = []
+        batch_loss = []
+        
+        <span class=hljs-comment >#Now we loop over the batches</span>
+        <span class=hljs-keyword >for</span> X, y <span class=hljs-keyword >in</span> train_loader:
+            <span class=hljs-comment >#forward</span>
+            y_hat = model(X)
+            loss = lossfun(y_hat, y)
+            
+            <span class=hljs-comment >#back propagation</span>
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            
+            <span class=hljs-comment >#storing batch loss and accuracy</span>
+            batch_loss.append(loss.item())
+            batch_acc.append( <span class=hljs-number >100</span>*torch.mean( ((y_hat&gt;<span class=hljs-number >0</span>) == y).<span class=hljs-built_in >float</span>()).item())
+        
+        <span class=hljs-comment >#saving epoch&#x27;s loss and accuracy </span>
+        train_acc.append(np.mean(batch_acc))
+        losses[epoch_i] = np.mean(batch_loss)
+        
+        <span class=hljs-comment >#now we evaluate the model with the test data</span>
+        <span class=hljs-comment >#switch to evaluation mode</span>
+        model.<span class=hljs-built_in >eval</span>()
+        X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(test_loader))
+        
+        <span class=hljs-comment >#forward</span>
+        <span class=hljs-keyword >with</span> torch.no_grad():
+            y_hat = model(X)
+        <span class=hljs-comment >#accuracy for test data    </span>
+        test_acc.append( <span class=hljs-number >100</span>*torch.mean(((y_hat&gt;<span class=hljs-number >0</span>) == y).<span class=hljs-built_in >float</span>()).item())
+        
+    <span class=hljs-keyword >return</span> train_acc, test_acc, losses</code></pre> <p>now we can train our model and plot the loss and accuracy over epochs</p> <pre><code class="python hljs">train_acc, test_acc, losses = train_model(ANN_winetype,
+                                          train_loader,
+                                          test_loader,
+                                          n_epochs=<span class=hljs-number >200</span>,
+                                          learn_rate=<span class=hljs-number >0.001</span>
+                                          )</code></pre> <pre><code class="python hljs">fig, ax = plt.subplots(<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >5</span>))
+
+ax[<span class=hljs-number >0</span>].plot(losses, <span class=hljs-string >&#x27;k-&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_ylabel(<span class=hljs-string >&#x27;Loss&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_title(<span class=hljs-string >&#x27;Loss per Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].grid()
+
+ax[<span class=hljs-number >1</span>].plot(train_acc)
+ax[<span class=hljs-number >1</span>].plot(test_acc)
+ax[<span class=hljs-number >1</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_ylabel(<span class=hljs-string >&#x27;Accuracy (%)&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_title(<span class=hljs-string >f&#x27;Final accuracy: <span class=hljs-subst >{test_acc[-<span class=hljs-number >1</span>]:<span class=hljs-number >.2</span>f}</span>%&#x27;</span>)
+ax[<span class=hljs-number >1</span>].grid()</code></pre> <p> <div class=container > <img class=center  src="/assets/traintest_winetype.svg" width=500  height=400 > </div> From these plots we can argue that our model was too elaborated for this task, it took few epochs to reach a maximum in accuracy. To evaluate the performance of our model we import some metrics from <code>sklearn</code> like the <a href="https://en.wikipedia.org/wiki/Confusion_matrix">confusion matrix</a> and a classification report that includes values for: <a href="https://en.wikipedia.org/wiki/Precision_and_recall">precision, recall</a> and <a href="https://en.wikipedia.org/wiki/F-score">f1-score</a>. </p> <pre><code class="python hljs"><span class=hljs-keyword >from</span> sklearn.metrics <span class=hljs-keyword >import</span> classification_report
+<span class=hljs-keyword >from</span> sklearn.metrics <span class=hljs-keyword >import</span> confusion_matrix
+
+X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(test_loader))
+y_hat = ANN_winetype(X)
+pred_wine = (y_hat &gt; <span class=hljs-number >0</span>).detach().numpy()
+
+CM_winetype = confusion_matrix(y, pred_wine)</code></pre> <p>plotting the confusion matrix:</p> <pre><code class="python hljs">plt.rcParams.update({<span class=hljs-string >&#x27;font.size&#x27;</span>: <span class=hljs-number >15</span>})
+plt.figure(figsize=(<span class=hljs-number >8</span>, <span class=hljs-number >8</span>))
+plt.imshow(CM_winetype, <span class=hljs-string >&#x27;Oranges&#x27;</span>)
+plt.xticks([<span class=hljs-number >0</span>, <span class=hljs-number >1</span>], [<span class=hljs-string >&#x27;White&#x27;</span>, <span class=hljs-string >&#x27;Red&#x27;</span>])
+plt.yticks([<span class=hljs-number >0</span>, <span class=hljs-number >1</span>], [<span class=hljs-string >&#x27;White&#x27;</span>, <span class=hljs-string >&#x27;Red&#x27;</span>])
+plt.xlabel(<span class=hljs-string >&#x27;Predicted type&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;True type&#x27;</span>)
+
+plt.text(<span class=hljs-number >0</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;True negatives:\n<span class=hljs-subst >{CM_winetype[<span class=hljs-number >0</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >0</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;False negatives:\n<span class=hljs-subst >{CM_winetype[<span class=hljs-number >1</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(<span class=hljs-number >1</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;True positives:\n<span class=hljs-subst >{CM_winetype[<span class=hljs-number >1</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >1</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;False positives:\n<span class=hljs-subst >{CM_winetype[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+
+plt.show()</code></pre> <p> <div class=container > <img class=center  src="/assets/cm_winetype.svg" width=500  height=450 > </div> since we didn&#39;t get any false positives/negatives the precision and recall have <em>perfect</em> values and we expect to have a perfect f1-score since this is computed from precision and recall, to confirm this we print the classification report</p> <pre><code class="python hljs">cr = classification_report(y, pred_wine)
+<span class=hljs-built_in >print</span>(cr)</code></pre> <pre><code class="plaintext hljs">---------        precision    recall  f1-score   support
+
+         0.0       1.00      1.00      1.00       326
+         1.0       1.00      1.00      1.00       314
+
+    accuracy                           1.00       640
+   macro avg       1.00      1.00      1.00       640
+weighted avg       1.00      1.00      1.00       640</code></pre> <p>But, why is that this model performs so well, my first guess is that chemical properties between white and red wines are <strong>very</strong> different. Instead of comparing all the properties in our data, I decided to do a small search on Google and chose the chemical properties that contribute the most to flavor profile and found <a href="https://www.sciencehistory.org/distillations/scientia-vitis-decanting-the-chemistry-of-wine-flavor">here</a> that the main component is <strong>sugar</strong> &#40;residual sugar&#41;, followed by acid and tannins.</p> <p>So we will going to drop some of the properties from the full dataset</p> <pre><code class="python hljs"><span class=hljs-comment >#selecting chemical properties that contribute to flavor</span>
+chem_prop = normed_allselect.columns.drop(
+    [<span class=hljs-string >&#x27;free sulfur dioxide&#x27;</span>, <span class=hljs-string >&#x27;total sulfur dioxide&#x27;</span>, <span class=hljs-string >&#x27;sulphates&#x27;</span>, <span class=hljs-string >&#x27;density&#x27;</span>, <span class=hljs-string >&#x27;chlorides&#x27;</span>]).values
+chem_prop</code></pre> <p>and then we can see how the remaining distributions differ with the type of wine</p> <pre><code class="python hljs">plt.rcParams.update({<span class=hljs-string >&#x27;font.size&#x27;</span>: <span class=hljs-number >10</span>})
+
+fig, ax = plt.subplots(<span class=hljs-number >2</span>, <span class=hljs-number >3</span>, figsize=(<span class=hljs-number >14</span>, <span class=hljs-number >9</span>))
+prop_c = <span class=hljs-number >0</span>  <span class=hljs-comment ># counter</span>
+
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >2</span>):
+    <span class=hljs-keyword >for</span> j <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>):
+        sns.boxplot(data=allwine_data, x=<span class=hljs-string >&#x27;wine type&#x27;</span>, y = chem_prop[prop_c], ax=ax[i,j])
+        ax[i,j].set_xticklabels([<span class=hljs-string >&#x27;white&#x27;</span>,<span class=hljs-string >&#x27;red&#x27;</span>])
+        prop_c += <span class=hljs-number >1</span>
+
+plt.show()</code></pre> <p> <div class=container > <img class=center  src="/assets/chem_props.svg" width=600  height=600 > </div> as we can see, both types of wine have very different chemical properties, white wines tend to be more sugary on average, on the other hand red wines have larger average values of fixed and volatile acidity. It would not be surprising if by using simpler models &#40;linear regression, decision tree, statistical tests&#41; we can achieve the same type of result.</p> <h2 id=can_we_predict_the_value_of_a_chemical_property ><a href="#can_we_predict_the_value_of_a_chemical_property" class=header-anchor >Can we predict the value of a chemical property?</a></h2> <p>Now let&#39;s see if we can predict chemical properties related to flavor profile, since both type of wine have different chemical properties we are going to use only the data of one type of wine. We will work with the white wine dataset since it is the one with the largest amount of data points.</p> <p>We normalize the data and construct loaders</p> <pre><code class="python hljs"><span class=hljs-comment >#we are going to normalize wine properties except for the quality (or target)</span>
+normed_wdata = wwine_data.drop([<span class=hljs-string >&#x27;quality&#x27;</span>, <span class=hljs-string >&#x27;wine type&#x27;</span>], axis=<span class=hljs-number >1</span>)
+
+<span class=hljs-keyword >for</span> col <span class=hljs-keyword >in</span> normed_wdata.columns:
+    <span class=hljs-comment >#getting mean and standard deviation...</span>
+    col_mean = np.mean(normed_wdata[col])
+    col_std = np.std(normed_wdata[col], ddof=<span class=hljs-number >1</span>)
+    <span class=hljs-comment >#normalizing data </span>
+    normed_wdata[col] = (normed_wdata[col] - col_mean) / col_std</code></pre> <p>we do the first property in the list: <strong>Fixed Acidity</strong></p> <pre><code class="python hljs"><span class=hljs-comment >#the first chemical property in the list </span>
+new_data = normed_wdata.drop(chem_prop[<span class=hljs-number >0</span>], axis=<span class=hljs-number >1</span>)
+new_target = wwine_data[chem_prop[<span class=hljs-number >0</span>]].values
+
+<span class=hljs-comment >#build loaders</span>
+train_loader, test_loader = get_loaders(new_data, new_target, test_size=<span class=hljs-number >0.2</span>, batch_size=<span class=hljs-number >64</span>)</code></pre> <p>now we need to define another training function, it should be different since we will be performing a <strong>regression</strong> for these values &#40;real numbers&#41; and we need a different loss function like <a href="https://en.wikipedia.org/wiki/Mean_squared_error">Mean Square Error &#40;MSE&#41;</a>, we are going to use <a href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">Pearson Correlation</a> that indicates linear statistical dependencies as a quantity to test accuracy.</p> <pre><code class="python hljs"><span class=hljs-keyword >def</span> <span class="hljs-title function_">train_model_2</span>(<span class=hljs-params >model, train_loader, test_loader, n_epochs, learn_rate</span>):
+    <span class=hljs-comment >#loss function: Mean Square Error - for regression.</span>
+    lossfun = nn.MSELoss()
+    <span class=hljs-comment >#defining the optimizer</span>
+    optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
+
+    <span class=hljs-comment >#now we initialize the losses and accuracy</span>
+    losses = torch.zeros(n_epochs)
+    train_acc = []
+    test_acc = []
+    <span class=hljs-keyword >for</span> epoch_i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(n_epochs):
+        <span class=hljs-comment >#using the model in training mode</span>
+        model.train()
+        batch_acc = []
+        batch_loss = []
+
+        <span class=hljs-comment >#Now we loop over the batches</span>
+        <span class=hljs-keyword >for</span> X, y <span class=hljs-keyword >in</span> train_loader:
+            <span class=hljs-comment >#forward</span>
+            y_hat = model(X)
+            loss = lossfun(y_hat, y)
+
+            <span class=hljs-comment >#back propagation</span>
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            <span class=hljs-comment >#storing batch loss and accuracy</span>
+            batch_loss.append(loss.item())
+            <span class=hljs-comment >#computing pearson correlation for &quot;accuracy&quot;</span>
+            batch_cor = np.corrcoef(np.concatenate(np.array(y_hat.detach())),np.concatenate(np.array(y)))[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]
+            batch_acc.append(batch_cor)
+
+        <span class=hljs-comment >#saving epoch&#x27;s loss and accuracy</span>
+        train_acc.append(np.mean(batch_acc))
+        losses[epoch_i] = np.mean(batch_loss)
+
+        <span class=hljs-comment >#now we evaluate the model with the test data</span>
+        <span class=hljs-comment >#switch to evaluation mode</span>
+        model.<span class=hljs-built_in >eval</span>()
+        X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(test_loader))
+
+        <span class=hljs-comment >#forward</span>
+        <span class=hljs-keyword >with</span> torch.no_grad():
+            y_hat = model(X)
+        <span class=hljs-comment >#accuracy for test data</span>
+        test_cor = np.corrcoef(np.concatenate(
+            np.array(y_hat.detach())), np.concatenate(np.array(y)))[<span class=hljs-number >0</span>, <span class=hljs-number >1</span>]
+        test_acc.append(test_cor)
+
+    <span class=hljs-keyword >return</span> train_acc, test_acc, losses</code></pre> <p>we initialize our model and make a test by passing one batch, we are using the same function &#40;ANN architecture&#41; but with different number of inputs this time &#40;10 instead of 11&#41;:</p> <pre><code class="python hljs"><span class=hljs-comment >#defining a new model and passing data through it </span>
+chemprop_model = ANN_wine(<span class=hljs-number >10</span>)
+
+X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(train_loader))
+<span class=hljs-comment >#evaluating</span>
+y_hat = chemprop_model(X)
+<span class=hljs-built_in >print</span>(X.shape)
+<span class=hljs-built_in >print</span>(y.shape)
+<span class=hljs-built_in >print</span>(y_hat.shape)</code></pre> <pre><code class="plaintext hljs">torch.Size([64, 10])
+torch.Size([64, 1])
+torch.Size([64, 1])</code></pre> <pre><code class="python hljs">m2_trainacc, m2_testacc, m2_losses = train_model_2(chemprop_model, 
+    train_loader, 
+    test_loader, 
+    n_epochs=<span class=hljs-number >200</span>, 
+    learn_rate=<span class=hljs-number >0.001</span>)</code></pre> <pre><code class="python hljs">fig, ax = plt.subplots(<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, figsize=(<span class=hljs-number >14</span>, <span class=hljs-number >6</span>))
+
+ax[<span class=hljs-number >0</span>].plot(m2_losses, <span class=hljs-string >&#x27;k-&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_ylabel(<span class=hljs-string >&#x27;Loss&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_title(<span class=hljs-string >&#x27;Loss per Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].grid()
+
+ax[<span class=hljs-number >1</span>].plot(m2_trainacc)
+ax[<span class=hljs-number >1</span>].plot(m2_testacc)
+ax[<span class=hljs-number >1</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_ylabel(<span class=hljs-string >r&#x27;Pearson Correlation Coefficient ($\rho$)&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_title(<span class=hljs-string >&#x27;Final &#x27;</span> <span class=hljs-string >r&#x27;$\rho$&#x27;</span> <span class=hljs-string >f&#x27;: <span class=hljs-subst >{m2_testacc[-<span class=hljs-number >1</span>]:<span class=hljs-number >.2</span>f}</span>&#x27;</span>)
+ax[<span class=hljs-number >1</span>].grid()</code></pre> <p> <div class=container > <img class=center  src="/assets/traintest_fixedac.svg" width=500  height=400 > </div> and evaluate the final performance from the training, with the correlation coefficient for the train and test data</p> <pre><code class="python hljs"><span class=hljs-comment >#loading all train and test data</span>
+train_data = train_loader.dataset.tensors
+test_data = test_loader.dataset.tensors
+
+<span class=hljs-comment >#passing the data through the model to predict Fixed Acidity values</span>
+train_pred = chemprop_model(train_data[<span class=hljs-number >0</span>])
+test_pred = chemprop_model(test_data[<span class=hljs-number >0</span>])
+
+<span class=hljs-comment >#computing pearson correlation coefficient of target and predicted values for train and test data</span>
+pcor_train = np.corrcoef(np.concatenate(np.array(train_pred.detach().numpy())),np.concatenate(train_data[<span class=hljs-number >1</span>].detach().numpy()))[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]
+pcor_test = np.corrcoef(np.concatenate(np.array(test_pred.detach().numpy())),np.concatenate(test_data[<span class=hljs-number >1</span>].detach().numpy()))[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]</code></pre> <p>plotting the estimations</p> <pre><code class="python hljs">plt.figure(figsize=(<span class=hljs-number >7</span>,<span class=hljs-number >7</span>))
+plt.plot(train_pred.detach(), train_data[<span class=hljs-number >1</span>].detach(), <span class=hljs-string >&#x27;o&#x27;</span>)
+plt.plot(test_pred.detach(), test_data[<span class=hljs-number >1</span>].detach(), <span class=hljs-string >&#x27;o&#x27;</span>)
+plt.grid()
+plt.legend((<span class=hljs-string >&#x27;Train &#x27;</span> <span class=hljs-string >r&#x27;$\rho$&#x27;</span> <span class=hljs-string >f&#x27;: <span class=hljs-subst >{pcor_train:<span class=hljs-number >.2</span>f}</span>&#x27;</span>, <span class=hljs-string >&#x27;Test &#x27;</span> <span class=hljs-string >r&#x27;$\rho$&#x27;</span> <span class=hljs-string >f&#x27;: <span class=hljs-subst >{pcor_test:<span class=hljs-number >.2</span>f}</span>&#x27;</span>))
+plt.title(<span class=hljs-string >&#x27;Fixed Acidity&#x27;</span>)
+<span class=hljs-comment >#plt.xlim([0,60])</span>
+plt.xlabel(<span class=hljs-string >&#x27;Predicted Value&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;Real Value&#x27;</span>)
+plt.axline((<span class=hljs-number >0</span>, <span class=hljs-number >0</span>), slope=<span class=hljs-number >1</span>, linestyle=<span class=hljs-string >&#x27;--&#x27;</span>, color=<span class=hljs-string >&#x27;k&#x27;</span>, label=<span class=hljs-literal >None</span>)
+plt.show()</code></pre> <p> <div class=container > <img class=center  src="/assets/cor_fixedac.svg" width=500  height=450 > </div> the dashed line represents the identity &#40;<span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy=false >(</mo><mi>x</mi><mo stretchy=false >)</mo><mo>=</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">f(x) = x</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class=mopen >(</span><span class="mord mathnormal">x</span><span class=mclose >)</span><span class=mspace  style="margin-right:0.2778em;"></span><span class=mrel >=</span><span class=mspace  style="margin-right:0.2778em;"></span></span><span class=base ><span class=strut  style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>&#41;, helping us as a reference since the closest the points are to the identity it means the values are predicted more accurately, as expected the model performs better with the training set, but the correlation coefficient of almost 90&#37; in the test set indicates a good prediction.</p> <p>We do the same analysis for each chemical property:</p> <pre><code class="python hljs"><span class=hljs-comment >#variables to store data</span>
+pcor_trains = np.zeros(<span class=hljs-number >6</span>)
+pcor_tests = np.zeros(<span class=hljs-number >6</span>)
+pred_trains = []
+pred_tests = []
+data_trains = []
+data_tests = []
+
+<span class=hljs-comment >#looping over the chemical properties</span>
+<span class=hljs-keyword >for</span> (nc,chemprop) <span class=hljs-keyword >in</span> <span class=hljs-built_in >enumerate</span>(chem_prop):
+    <span class=hljs-comment >#building data</span>
+    new_data = normed_data.drop(chemprop, axis=<span class=hljs-number >1</span>)
+    new_target = wwine_data[chemprop].values
+    <span class=hljs-comment >#loaders</span>
+    train_loader, test_loader = get_loaders(
+        new_data, new_target, test_size=<span class=hljs-number >0.2</span>, batch_size=<span class=hljs-number >64</span>)
+    <span class=hljs-comment >#initializing model</span>
+    chemprop_model = ANN_wine(<span class=hljs-number >10</span>)
+    <span class=hljs-comment >#training... </span>
+    _ = train_model_2(
+        chemprop_model, train_loader, test_loader, n_epochs=<span class=hljs-number >200</span>, learn_rate=<span class=hljs-number >0.001</span>)
+
+    <span class=hljs-comment >#computing final accuracy</span>
+    train_data = train_loader.dataset.tensors
+    test_data = test_loader.dataset.tensors
+
+    train_pred = chemprop_model(train_data[<span class=hljs-number >0</span>])
+    test_pred = chemprop_model(test_data[<span class=hljs-number >0</span>])
+    
+    pcor_train = np.corrcoef(np.concatenate(np.array(train_pred.detach().numpy())),np.concatenate(train_data[<span class=hljs-number >1</span>].detach().numpy()))[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]
+    pcor_test = np.corrcoef(np.concatenate(np.array(test_pred.detach().numpy())),np.concatenate(test_data[<span class=hljs-number >1</span>].detach().numpy()))[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]  
+
+    pcor_trains[nc] = pcor_train
+    pcor_tests[nc] = pcor_test
+    
+    pred_trains.append(train_pred)
+    pred_tests.append(test_pred)
+    data_trains.append(train_data[<span class=hljs-number >1</span>])
+    data_tests.append(test_data[<span class=hljs-number >1</span>])</code></pre> <p>and plot the results</p> <pre><code class="python hljs">fig, ax = plt.subplots(<span class=hljs-number >2</span>, <span class=hljs-number >3</span>, figsize=(<span class=hljs-number >18</span>, <span class=hljs-number >12</span>))
+prop_c = <span class=hljs-number >0</span> <span class=hljs-comment >#counter</span>
+
+<span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >2</span>):
+    <span class=hljs-keyword >for</span> j <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >3</span>):
+        xl = [np.<span class=hljs-built_in >min</span>(pred_trains[prop_c].detach().numpy()), np.<span class=hljs-built_in >max</span>(pred_trains[prop_c].detach().numpy())]
+        yl = [np.<span class=hljs-built_in >min</span>(pred_trains[prop_c].detach().numpy()), np.<span class=hljs-built_in >max</span>(pred_trains[prop_c].detach().numpy())]
+        ax[i,j].plot(pred_trains[prop_c].detach(), data_trains[prop_c].detach(), <span class=hljs-string >&#x27;o&#x27;</span>)
+        ax[i,j].plot(pred_tests[prop_c].detach(), data_tests[prop_c].detach(), <span class=hljs-string >&#x27;o&#x27;</span>)
+        ax[i,j].grid()
+        ax[i,j].set_xlim(xl)
+        ax[i,j].set_ylim(yl)
+        ax[i,j].legend((<span class=hljs-string >&#x27;Train &#x27;</span> <span class=hljs-string >r&#x27;$\rho$&#x27;</span> <span class=hljs-string >f&#x27;: <span class=hljs-subst >{pcor_trains[prop_c]:<span class=hljs-number >.2</span>f}</span>&#x27;</span>,
+                <span class=hljs-string >&#x27;Test &#x27;</span> <span class=hljs-string >r&#x27;$\rho$&#x27;</span> <span class=hljs-string >f&#x27;: <span class=hljs-subst >{pcor_tests[prop_c]:<span class=hljs-number >.2</span>f}</span>&#x27;</span>))
+        ax[i,j].set_title(chem_prop[prop_c])
+        <span class=hljs-comment >#ax[i,j].xlim([0, 60])</span>
+        ax[i,j].set_xlabel(<span class=hljs-string >&#x27;Predicted Value&#x27;</span>)
+        ax[i,j].set_ylabel(<span class=hljs-string >&#x27;Real Value&#x27;</span>)
+        ax[i,j].axline((<span class=hljs-number >0</span>, <span class=hljs-number >0</span>), slope=<span class=hljs-number >1</span>, linestyle=<span class=hljs-string >&#x27;--&#x27;</span>, color=<span class=hljs-string >&#x27;k&#x27;</span>, label=<span class=hljs-literal >None</span>)
+        prop_c += <span class=hljs-number >1</span></code></pre> <div class=container > <img class=center  src="/assets/regression_chemprops.svg" width=700  height=700 > </div> <p>almost all chemical properties can be predicted with a decent amount of precision, however if we check the pearson correlation values for the test data there are a couple of poor performances: <em>volatile acidity</em> and <em>citric acid</em>. </p> <h2 id=predicting_wine_quality ><a href="#predicting_wine_quality" class=header-anchor >Predicting wine quality</a></h2> <p>Finally, we will use the same model to predict wine quality, first let&#39;s check how the quality scores are distributed</p> <pre><code class="python hljs">target = wwine_data[<span class=hljs-string >&#x27;quality&#x27;</span>].values
+
+plt.hist(target)
+plt.xlabel(<span class=hljs-string >&#x27;Quality Score&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)
+plt.show()</code></pre> <div class=container > <img class=center  src="/assets/quality_whitedistros.svg" width=300  height=300 > </div> <p>there are too many categories and the data is not distributed uniformly, to simplify this we will make a binary quality score &#40;good, not good&#41; and then try to balance the data so we don&#39;t bias our training process.</p> <p>First we binarize the data:</p> <pre><code class="python hljs"><span class=hljs-comment >#we set 0 = not good, 1 = good</span>
+boolean_target = np.array([<span class=hljs-number >0</span> <span class=hljs-keyword >if</span> target[i] &lt; <span class=hljs-number >6</span> <span class=hljs-keyword >else</span> <span class=hljs-number >1</span> <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(target))] )
+
+<span class=hljs-comment >#plotting new distribution</span>
+plt.hist(boolean_target)
+plt.xlabel(<span class=hljs-string >&#x27;Quality Score&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)
+plt.xticks([<span class=hljs-number >0</span>,<span class=hljs-number >1</span>], labels=[<span class=hljs-string >&#x27;Not good&#x27;</span>, <span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.show()</code></pre> <p> <div class=container > <img class=center  src="/assets/binary_qualitycount.svg" width=300  height=300 > </div> we can identify a clear unbalance between the two categories, this is the same problem we had before where we needed to select a subset of datapoints, we will do the same in this case</p> <pre><code class="python hljs"><span class=hljs-comment >#locating both categories</span>
+good_ix = np.where(boolean_target==<span class=hljs-number >1</span>)[<span class=hljs-number >0</span>]
+bad_ix = np.where(boolean_target==<span class=hljs-number >0</span>)[<span class=hljs-number >0</span>]
+
+<span class=hljs-comment >#number of data points to be sampled</span>
+n_samps = <span class=hljs-built_in >len</span>(bad_ix)
+
+<span class=hljs-comment >#selecting at random</span>
+<span class=hljs-comment ># we choose at random n_samps for the 1 &#x27;quality&#x27; </span>
+ix_selec = np.concatenate([np.random.choice(good_ix, n_samps), bad_ix])
+
+<span class=hljs-comment ># we use the selection for the data </span>
+btarget_select = boolean_target[ix_selec]
+normed_select = normed_wdata.iloc[ix_selec]</code></pre> <p>Now we can finally try to predict the quality of the wine, we build the loaders, initialize the model and pass data through it</p> <pre><code class="python hljs"><span class=hljs-comment >#building loaders</span>
+train_loader, test_loader = get_loaders(normed_select, 
+    btarget_select, 
+    test_size=<span class=hljs-number >0.2</span>, 
+    batch_size=<span class=hljs-number >64</span>)
+
+<span class=hljs-comment >#initializing model</span>
+ANN_model = ANN_wine(<span class=hljs-number >11</span>)
+
+<span class=hljs-comment >#passing data through the model</span>
+X,y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(train_loader))
+<span class=hljs-built_in >print</span>(X.shape)
+<span class=hljs-built_in >print</span>(y.shape)
+y_hat = ANN_model(X)
+<span class=hljs-built_in >print</span>(y_hat.shape)</code></pre> <pre><code class="plaintext hljs">torch.Size([64, 11])
+torch.Size([64, 1])
+torch.Size([64, 1])</code></pre> <pre><code class="python hljs">train_acc, test_acc, losses = train_model(ANN_model, 
+                                          train_loader, 
+                                          test_loader,
+                                          n_epochs=<span class=hljs-number >1000</span>,
+                                          learn_rate=<span class=hljs-number >0.001</span>
+                                          )
+
+fig, ax = plt.subplots(<span class=hljs-number >1</span>, <span class=hljs-number >2</span>, figsize=(<span class=hljs-number >12</span>, <span class=hljs-number >5</span>))
+
+ax[<span class=hljs-number >0</span>].plot(losses, <span class=hljs-string >&#x27;k-&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_ylabel(<span class=hljs-string >&#x27;Loss&#x27;</span>)
+ax[<span class=hljs-number >0</span>].set_title(<span class=hljs-string >&#x27;Loss per Epoch&#x27;</span>)
+ax[<span class=hljs-number >0</span>].grid()
+
+ax[<span class=hljs-number >1</span>].plot(train_acc)
+ax[<span class=hljs-number >1</span>].plot(test_acc)
+ax[<span class=hljs-number >1</span>].set_xlabel(<span class=hljs-string >&#x27;Epoch&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_ylabel(<span class=hljs-string >&#x27;Accuracy (%)&#x27;</span>)
+ax[<span class=hljs-number >1</span>].set_title(<span class=hljs-string >f&#x27;Final accuracy: <span class=hljs-subst >{test_acc[-<span class=hljs-number >1</span>]:<span class=hljs-number >.2</span>f}</span>%&#x27;</span>)
+ax[<span class=hljs-number >1</span>].grid()</code></pre> <div class=container > <img class=center  src="/assets/traintest_whitewinequality.svg" width=500  height=400 > </div> <p>In this case, the accuracy is not as high as with the chemical properties or the type of wine, and it seems that we could still get lower loss and better training accuracy if we train for more epochs, however the lack of improvement on test accuracy tells us that it might not be necessary to train for longer.</p> <p>Now let&#39;s se how good our ANN model is to predict the wine quality given by experts</p> <pre><code class="python hljs">X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(test_loader))
+y_hat = ANN_model(X)
+pred_wwine = (y_hat &gt; <span class=hljs-number >0</span>).detach().numpy()
+
+<span class=hljs-comment >#confusion matrix</span>
+c_matrix = confusion_matrix(y, pred_wwine)
+
+plt.rcParams.update({<span class=hljs-string >&#x27;font.size&#x27;</span>: <span class=hljs-number >15</span>})
+plt.figure(figsize=(<span class=hljs-number >8</span>, <span class=hljs-number >8</span>))
+plt.imshow(c_matrix, <span class=hljs-string >&#x27;Blues&#x27;</span>)
+plt.xticks([<span class=hljs-number >0</span>,<span class=hljs-number >1</span>], [<span class=hljs-string >&#x27;Bad&#x27;</span>,<span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.yticks([<span class=hljs-number >0</span>,<span class=hljs-number >1</span>],[<span class=hljs-string >&#x27;Bad&#x27;</span>,<span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.xlabel(<span class=hljs-string >&#x27;Predicted quality&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;True quality&#x27;</span>)
+
+plt.text(<span class=hljs-number >0</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;True negatives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >0</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >0</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;False negatives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >1</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(<span class=hljs-number >1</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;True positives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >1</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >1</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;False positives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+
+plt.show()</code></pre> <div class=container > <img class=center  src="/assets/cm_whitewinequality.svg" width=500  height=500 > </div> <pre><code class="python hljs">cr_wwine = classification_report(y, pred_wwine)
+<span class=hljs-built_in >print</span>(cr_wwine)</code></pre> <pre><code class="plaintext hljs">---             precision    recall  f1-score   support
+
+         0.0       0.83      0.79      0.81       327
+         1.0       0.80      0.84      0.82       329
+
+    accuracy                           0.82       656
+   macro avg       0.82      0.82      0.82       656
+weighted avg       0.82      0.82      0.82       656</code></pre> <p>These results are decent enough to think our model does capture some hidden rules in the dependency of the chemical properties with the quality of the wine, but they fall short if we compare them with previous results.</p> <p>But, what about red wine? We do the same analysis for red wine</p> <pre><code class="python hljs"><span class=hljs-comment >#Normalizing data</span>
+normed_rdata = rwine_data.drop([<span class=hljs-string >&#x27;quality&#x27;</span>, <span class=hljs-string >&#x27;wine type&#x27;</span>], axis=<span class=hljs-number >1</span>)
+
+<span class=hljs-keyword >for</span> col <span class=hljs-keyword >in</span> normed_rdata.columns:
+    <span class=hljs-comment >#getting mean and standard deviation...</span>
+    col_mean = np.mean(normed_rdata[col])
+    col_std = np.std(normed_rdata[col], ddof=<span class=hljs-number >1</span>)
+    <span class=hljs-comment >#normalizing data</span>
+    normed_rdata[col] = (normed_rdata[col] - col_mean) / col_std
+
+<span class=hljs-comment >#binarizing target</span>
+target = rwine_data[<span class=hljs-string >&#x27;quality&#x27;</span>].values
+boolean_target = np.array(
+    [<span class=hljs-number >0</span> <span class=hljs-keyword >if</span> target[i] &lt; <span class=hljs-number >6</span> <span class=hljs-keyword >else</span> <span class=hljs-number >1</span> <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-built_in >len</span>(target))])
+
+<span class=hljs-comment >#plotting target distribution</span>
+plt.hist(boolean_target)
+plt.xlabel(<span class=hljs-string >&#x27;Quality Score&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;Count&#x27;</span>)
+plt.xticks([<span class=hljs-number >0</span>, <span class=hljs-number >1</span>], labels=[<span class=hljs-string >&#x27;Not good&#x27;</span>, <span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.show()</code></pre> <p> <div class=container > <img class=center  src="/assets/binary_redqualitycount.svg" width=300  height=300 > </div> it seems that the data is slightly unbalanced, so for this time we will skip the balancing part and train and test our model</p> <pre><code class="python hljs"><span class=hljs-comment >#building loaders</span>
+train_loader, test_loader = get_loaders(
+    normed_rdata, boolean_target, test_size=<span class=hljs-number >0.2</span>, batch_size=<span class=hljs-number >64</span>)
+
+<span class=hljs-comment >#checking that the loaders are correct</span>
+X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(train_loader))
+<span class=hljs-built_in >print</span>(X.shape)
+<span class=hljs-built_in >print</span>(y.shape)
+
+<span class=hljs-comment >#init model</span>
+ANN_model = ANN_wine(<span class=hljs-number >11</span>)
+<span class=hljs-comment >#passing data</span>
+y_hat = ANN_model(X)
+<span class=hljs-built_in >print</span>(y_hat.shape)</code></pre> <pre><code class="plaintext hljs">torch.Size([64, 11])
+torch.Size([64, 1])
+torch.Size([64, 1])</code></pre> <pre><code class="python hljs">train_acc, test_acc, losses = train_model(ANN_model,
+                                          train_loader,
+                                          test_loader,
+                                          n_epochs=<span class=hljs-number >1000</span>,
+                                          learn_rate=<span class=hljs-number >0.001</span>
+                                          )
+
+X, y = <span class=hljs-built_in >next</span>(<span class=hljs-built_in >iter</span>(test_loader))
+y_hat = ANN_model(X)
+pred_rwine = (y_hat &gt; <span class=hljs-number >0</span>).detach().numpy()
+
+c_matrix = confusion_matrix(y, pred_rwine)
+plt.rcParams.update({<span class=hljs-string >&#x27;font.size&#x27;</span>: <span class=hljs-number >15</span>})
+plt.figure(figsize=(<span class=hljs-number >8</span>, <span class=hljs-number >8</span>))
+plt.imshow(c_matrix, <span class=hljs-string >&#x27;Blues&#x27;</span>)
+plt.xticks([<span class=hljs-number >0</span>, <span class=hljs-number >1</span>], [<span class=hljs-string >&#x27;Bad&#x27;</span>, <span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.yticks([<span class=hljs-number >0</span>, <span class=hljs-number >1</span>], [<span class=hljs-string >&#x27;Bad&#x27;</span>, <span class=hljs-string >&#x27;Good&#x27;</span>])
+plt.xlabel(<span class=hljs-string >&#x27;Predicted quality&#x27;</span>)
+plt.ylabel(<span class=hljs-string >&#x27;True quality&#x27;</span>)
+
+plt.text(<span class=hljs-number >0</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;True negatives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >0</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >0</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;False negatives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >1</span>,<span class=hljs-number >0</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(<span class=hljs-number >1</span>, <span class=hljs-number >1</span>, <span class=hljs-string >f&#x27;True positives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >1</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+plt.text(
+    <span class=hljs-number >1</span>, <span class=hljs-number >0</span>, <span class=hljs-string >f&#x27;False positives:\n<span class=hljs-subst >{c_matrix[<span class=hljs-number >0</span>,<span class=hljs-number >1</span>]}</span>&#x27;</span>, ha=<span class=hljs-string >&#x27;center&#x27;</span>, va=<span class=hljs-string >&#x27;center&#x27;</span>)
+
+plt.show()</code></pre> <div class=container > <img class=center  src="/assets/cm_redwinequality.svg" width=500  height=500 > </div> <pre><code class="python hljs">cr_rwine = classification_report(y, pred_rwine)
+<span class=hljs-built_in >print</span>(cr_rwine)</code></pre> <pre><code class="plaintext hljs">----             precision    recall  f1-score   support
+
+         0.0       0.67      0.75      0.71       130
+         1.0       0.82      0.75      0.78       190
+
+    accuracy                           0.75       320
+   macro avg       0.74      0.75      0.75       320
+weighted avg       0.76      0.75      0.75       320</code></pre> <p>our model performs slightly worse in predicting quality score for red wine, it could be related to the size of the dataset. But why is that we can have higher accuracy in predicting the amount of residual sugar?</p> <p>this discrepancy could have different explanations: </p> <ul> <li><p>Our model &#40;approach&#41; is not good enough</p> <li><p>Wine quality could be related to the acidity values we couldn&#39;t predict accurately</p> <li><p>Wine quality scores have a <strong>subjective</strong> component from the <em>experts</em> </p> </ul> <p>it is not simple to know what exactly might be the issue, but we can ignore the first one since we are using the same model for each prediction, of course we could have a better model but that is not the point of this experiment, in the <a href="https://www.sciencedirect.com/science/article/abs/pii/S0167923609001377">original paper</a> of this dataset the authors report that a modified <a href="https://en.wikipedia.org/wiki/Support_vector_machine">Support Vector Machine &#40;SVM&#41;</a> model performs better than a deep neural network or decision tree models. </p> <p>The last couple of explanations are more plausible, but difficult to prove. For the first one we would need to do more statistical tests to evaluate the contribution of that variable to the prediction. However, it is not hard to think that there is a subjective component &#40;expert preferences, physiological differences&#41; when it comes to evaluating wine quality, predicting human behavior is a complicated task and I wouldn&#39;t be surprised that even with a perfect model we would still not be able to get great results because we are lacking information about individual preferences from the experts.</p> <p>Don&#39;t forget to take a look at the notebook for this post <a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/Wine.ipynb">here&#33;</a> </p> <div class=page-foot > <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: March 02, 2023. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> <script src="/libs/pure/ui.min.js"></script> <script src="/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>

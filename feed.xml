@@ -23,6 +23,25 @@
 
 <item>
   <title>
+    <![CDATA[  Predicting wine quality using chemical properties  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DSEntries/WineQuality/index.html </link>
+  <guid> https://spiralizing.github.io/DSEntries/WineQuality/index.html </guid>
+  <description>
+    <![CDATA[  Predicting wine quality with NN  ]]>
+  </description>  
+    
+  <pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
     <![CDATA[  Building a semantic network  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </link>
