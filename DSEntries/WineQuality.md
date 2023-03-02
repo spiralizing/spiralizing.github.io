@@ -439,7 +439,7 @@ new_target = wwine_data[chem_prop[0]].values
 #build loaders
 train_loader, test_loader = get_loaders(new_data, new_target, test_size=0.2, batch_size=64)
 ```
-now we need to define another training function, it should be different since we will be performing a **regression** for these values (real numbers) and we need a different loss function like [Mean Square Error (MSE)](https://en.wikipedia.org/wiki/Mean_squared_error), we are going to use [Pearson Correlation](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) that indicates linear statistical dependencies as a quantity to test accuracy.
+now we need to define another training function, it should be different since we will be performing a **regression** for these values (real numbers) and we need a different loss function like [Mean Square Error (MSE)](https://en.wikipedia.org/wiki/Mean_squared_error). And as a quantity to test accuracy we are going to use [Pearson Correlation](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) that indicates linear statistical dependencies between two variables.
 
 ```python
 def train_model_2(model, train_loader, test_loader, n_epochs, learn_rate):
@@ -582,7 +582,7 @@ plt.show()
 
 </div>
 ~~~
-the dashed line represents the identity ($f(x) = x$), helping us as a reference since the closest the points are to the identity it means the values are predicted more accurately, as expected the model performs better with the training set, but the correlation coefficient of almost 90% in the test set indicates a good prediction.
+the dashed line represents the identity ($f(x) = x$), helping us as a reference since the closer the points are to the identity the more accurate the prediction is. As expected the model performs better with the training set, but the correlation coefficient of almost 90% in the test set indicates a good prediction.
 
 We do the same analysis for each chemical property:
 ```python
