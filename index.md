@@ -1,5 +1,5 @@
 @def title = "Alfredo González-Espinoza, PhD"
-@def subtitle = " | Complex Systems | Data Science | Scientific Research |"
+@def subtitle = " | Data Science | Complex Systems | Scientific Research |"
 @def tags = ["syntax", "code"]
 
 ~~~
@@ -19,7 +19,8 @@
 \newcommand{\col}[2]{~~~<span style="color:~~~#1~~~">~~~!#2~~~</span>~~~}
 \\
 \col{purple}{**I am currently on the job market! I am looking for research/staff positions in either academia or industry.**}
-Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalez_Resume.pdf)
+
+\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalez_Resume.pdf)**}
 
 ## About me: 
 

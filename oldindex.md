@@ -1,5 +1,5 @@
 @def title = "Alfredo González-Espinoza, PhD"
-@def subtitle = " | Complex Systems | Data Science | Music Evolution |"
+@def subtitle = " | Data Science | Complex Systems | Scientific Research |"
 @def tags = ["syntax", "code"]
 
 ~~~
