@@ -20,7 +20,7 @@
 \\
 \col{purple}{**I am currently on the job market! I am looking for research/staff positions in either academia or industry.**}
 
-\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalez_Resume.pdf)**}
+\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalezResume.pdf)**}
 
 ## About me: 
 
