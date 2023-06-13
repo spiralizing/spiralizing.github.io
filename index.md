@@ -38,7 +38,7 @@ I like to play the cello and usually spend my free time listening to music, play
 
 ### Education
 
-* 2018 - PhD in Science (Physics), Autonomous University of the State of Morelos, Mexico.
+* 2018 - PhD in Science (Physics) *Graduated with honors*, Autonomous University of the State of Morelos, Mexico.
 * 2014 - MSc in Science (Physics), Autonomous University of the State of Morelos, Mexico.
 * 2011 - BSc in Science (Chemistry), Autonomous University of the State of Morelos, Mexico.
 
