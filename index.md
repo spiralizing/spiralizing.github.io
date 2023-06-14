@@ -22,9 +22,10 @@
 
 \col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalezResume.pdf)**}
 
+       
 ## About me: 
 
-I am an Interdisciplinary Data/Research Scientist interested in diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). I am passionate about data-oriented research and data-driven products that contribute to making a positive impact in society. [Here](/DataScience/) you can find some of the mini side-projects and exercises that I have done for fun in the past years. 
+I am an Interdisciplinary Data/Research Scientist interested in diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). I am passionate about data-oriented research and data-driven products that contribute to making a positive impact in society. [Here](/DataScience/) you can find some blog posts with fun mini Data Science projects and exercises I made. 
 
 I like to play the cello and usually spend my free time listening to music, playing video games and playing football (soccer).
 
@@ -41,4 +42,12 @@ I like to play the cello and usually spend my free time listening to music, play
 * 2011 - BSc in Science (Chemistry), Autonomous University of the State of Morelos, Mexico.
 
 Click [here](https://github.com/spiralizing/CVResume/blob/main/CV/AGonzalCV.pdf) for a more detailed CV.
+
+~~~
+<script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+
+<div class="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="HORIZONTAL" data-vanity="spiralizing" data-version="v1"><a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/spiralizing/en?trk=profile-badge">Connect with me on LinkedIn!</a></div>
+              
+~~~  
+     
 <!--- \tableofcontents <!-- you can use \toc as well -->
