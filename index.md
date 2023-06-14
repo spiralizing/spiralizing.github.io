@@ -18,15 +18,13 @@
 ~~~
 \newcommand{\col}[2]{~~~<span style="color:~~~#1~~~">~~~!#2~~~</span>~~~}
 \\
-\col{purple}{**I am currently on the job market! I am looking for research/staff positions in either academia or industry.**}
+\col{purple}{**I am currently on the job market! I am looking for Data Scientist/Data-oriented Researcher positions in either academia or industry.**}
 
 \col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalezResume.pdf)**}
 
 ## About me: 
 
-I am a Research Scientist interested in diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). 
-
-I am also a Data Science enthusiast, passionate about inference methods in interdisciplinary fields. [Here](/DataScience/) you can find some of the mini side-projects and exercises that I have done for fun in the past years. 
+I am an Interdisciplinary Data/Research Scientist interested in diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). I am passionate about data-oriented research and data-driven products that contribute to making a positive impact in society. [Here](/DataScience/) you can find some of the mini side-projects and exercises that I have done for fun in the past years. 
 
 I like to play the cello and usually spend my free time listening to music, playing video games and playing football (soccer).
 
