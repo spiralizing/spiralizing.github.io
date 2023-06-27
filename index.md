@@ -25,7 +25,7 @@
        
 ## About me: 
 
-I am an Interdisciplinary Data/Research Scientist who is passionate about data-oriented research and data-driven products that contribute to making a positive impact in society by solving real world problems. [Here](/DataScience/) you can find some blog posts with fun mini Data Science projects and exercises I made. I am also interested in scientific research on diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). 
+I am an Interdisciplinary Data/Research Scientist who is passionate about data-oriented research and data-driven products that contribute to making a positive impact in society by solving real world problems. [Here](/DataScience/) you can find some posts with fun mini Data Science projects and exercises I made. I am also interested in scientific research on diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). 
 
 I am an amateur Cellist and usually spend my free time listening to music, playing video games and playing football (soccer).
 
