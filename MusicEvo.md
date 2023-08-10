@@ -52,7 +52,7 @@ Creativity and **innovation** are concepts difficult to define and quantify. Mus
 </div>
 ~~~
 
-Paper: *Preprint in draft...*
+Paper: [*Preprint*](https://arxiv.org/abs/2308.03224)
 ## Frequency-dependent selection in music listenings
 
 Can we identify **evolutionary signatures** in social and **cultural behavior**? Can we understand underlying mechanisms when choosing what music to listen to, within the framework of evolutionary theory? – here we use evolutionary theory concepts to identify and measure **frequency-dependent selection** in listening histories.
