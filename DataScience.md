@@ -13,6 +13,8 @@ Some of the entries are more technical than others, but all of them have their r
 
 I hope you find something useful or interesting.
 
+* [In what key is "Hey Joe" by Jimi Hendrix?](/DSEntries/CenterOfEffect/)
+
 * [Building a semantic network from CNN news articles](/DSEntries/SemanticGraph/)
 
 * [Sentiment analysis and topic modeling in pop artists](/DSEntries/SentimentSongs1/)

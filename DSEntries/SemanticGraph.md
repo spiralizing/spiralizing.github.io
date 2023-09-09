@@ -7,7 +7,7 @@ rss = "How to build a semantic graph"
 tags = ["python","NLP", "data science", "knowledge graph"]
 +++
 
-A **semantic network**, sometimes referred as [knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph) is a graph $\mathcal{G}(v,e)$ where the vertices (or nodes) represent concepts, entities, events, etc. and the edges represent a relationship between the concepts. This relationship is said to be **semantic** because in natural language process it is usually defined if the concepts appear in the same sentence, paragraph or document. 
+A **semantic network**, sometimes referred as [knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph) is a graph $\mathcal{G}(v,e)$ where the vertices (or nodes) represent concepts, entities, events, etc. and the edges represent a relationship between the concepts. This relationship is said to be **semantic** because the way these networks are built is by preserving spatial relationships between words in written language. One of the simplest ways to build one of these networks is to create edges between words that appear in the same sentence or paragraph, with the assumption that these words are related somehow. 
 
 Here we are going to build a semantic network from [Cable News Network (CNN)](https://www.cnn.com/) articles that I downloaded from a [Kaggle dataset](https://www.kaggle.com/datasets/hadasu92/cnn-articles-after-basic-cleaning).
 
