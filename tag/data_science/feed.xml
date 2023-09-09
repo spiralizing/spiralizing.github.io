@@ -23,6 +23,25 @@
 
 <item>
   <title>
+    <![CDATA[  What Key is Hey Joe in?  ]]>
+  </title>
+  <link> https://spiralizing.github.io/DSEntries/CenterOfEffect/index.html </link>
+  <guid> https://spiralizing.github.io/DSEntries/CenterOfEffect/index.html </guid>
+  <description>
+    <![CDATA[  Finding Most Likely Key  ]]>
+  </description>  
+    
+  <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
     <![CDATA[  Predicting wine quality using chemical properties  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/WineQuality/index.html </link>
