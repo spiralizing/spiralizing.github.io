@@ -211,8 +211,6 @@ $$
 
 where the weights $\omega_i$ represent the *importance* of the note and to mantain the values within the same boundaries the weights are normalized $\sum_i w_i = 1$. 
 
-where the weights $\omega_i$ represent the *importance* of the note and to mantain the values within the same boundaries the weights are normalized $\sum_i w_i = 1$. 
-
 Weights can be built however we want, but one of the most natural musical features we can use for the weights is the **duration** of each note, under de assumption that notes that last longer are more relevant for the tonal center. 
 
 In summary, the Center of Effect (CoE) key finding algorithm uses the vector $\vec{C}_e$ for the set of notes, and defines the most likely key as:
@@ -251,7 +249,7 @@ c_minor = [60, 63, 67] # c minor chord
  67
 ```
 and then, we can compute the center of effect with the function `get_center_effect()`, this function can accept a sigle array of numbers representing the notes in MIDI notation or two arrays of numbers representing the notes in MIDI notation and their respective durations. Duration units are irrelevant since the algorithm involves a normalization.
-and then, we can compute the center of effect with the function `get_center_effect()`, this function can accept a sigle array of numbers representing the notes in MIDI notation or two arrays of numbers representing the notes in MIDI notation and their respective durations. Duration units are irrelevant since the algorithm involves a normalization.
+
 
 We can see that each center of effect is different, for C major:
 
