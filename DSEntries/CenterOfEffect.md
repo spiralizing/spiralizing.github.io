@@ -1,5 +1,5 @@
 +++
-title = "What Key is Hey Joe in?"
+title = "What Key is 'Hey Joe' in?"
 hascode = true
 date = Date(2023, 9, 9)
 rss = "Finding Most Likely Key"
@@ -7,17 +7,17 @@ rss = "Finding Most Likely Key"
 tags = ["Julia","Music Information Retrieval", "data science", "key finding"]
 +++
 
-#### *Disclaimer: I know this is a bit of a controversial subject in the music comunity, so please don't take this post as the only possible truth, but take it more as informational and have fun reading it.*
+> *Disclaimer: I know this is a bit of a controversial subject in the music comunity, so please don't take this post as the only possible truth, but take it more as informational and have fun reading it.*
 
-During my postdoctoral years at [Penn](https://evolution.sas.upenn.edu/), I developed a Julia package with the functions to compute the Spiral Representation and Center of Effect that Elaine Chew developed in her research and presented in her book *Mathematical and Computational Modeling of Tonality*. The goal for this package -besides from make the functions available to more people- was to use the representation to identify and quantify musical features such as *local key* (or immediate tonal center) or *key transitions* and [study their change over time (400 years of western classical music)](https://arxiv.org/abs/2308.03224).  
+During my postdoctoral years at [Penn](https://evolution.sas.upenn.edu/), I developed a Julia package with the functions to compute the Spiral Representation and Center of Effect that Elaine Chew developed in her research and presented in her book *Mathematical and Computational Modeling of Tonality*. The goal for this package -besides from making the functions available to more people- was to use the representation to identify and quantify musical features such as *local key* (or immediate tonal center) or *key transitions* and [study their change over time (400 years of western classical music)](https://arxiv.org/abs/2308.03224).  
 
 The main application of the Spiral Representation is to find the tonality (key or tonal center) of a given set of notes. This is achieved by combining different concepts from music, mathematics and physics. 
 
-As an amateur cellist and with an obsession and curiosity around music, one of my favorite musicians/youtubers happens to be Adam Neely, he made a video a while ago where he makes a very detailed harmony analysis of the song "Hey Joe" by Jimi Hendrix to explain why he thinks the tonality or key of the song is *E*. 
+As an amateur cellist and with an obsessive curiosity around music, one of my favorite musicians/youtubers happens to be [Adam Neely](https://www.youtube.com/@AdamNeely), he made a [video](https://www.youtube.com/watch?v=DVvmALPu5TU) a while ago where he makes a very detailed harmony analysis of the song "Hey Joe" by Jimi Hendrix to explain why he thinks the tonality or key of the song is *E*:
 
 [![](https://img.youtube.com/vi/DVvmALPu5TU/0.jpg)](https://www.youtube.com/watch?v=DVvmALPu5TU)
 
-So I decided to test the variation of Elaine Chew's algorithm that I developed to answer in a more *quantitative* way the question:
+His video was so exciting and inspiring that I decided to test the variation of Elaine Chew's algorithm that I developed to try to answer in a more *quantitative* way the question:
 
 **In what key "Hey Joe" is in?**
 
@@ -35,7 +35,7 @@ Inspired by the helican configuration of Longuet-Higgins' harmonic network, also
 <div class="container">
 
     <img class="center" src="/assets/Neo-Riemannian_Tonnetz.png" width="500" height="350">
-    
+    <blockquote> <cite>Rendering of the Tonnetz. The A minor triad is in dark blue, and the C major triad is in dark red. Interpreted as a torus, the Tonnetz has 12 nodes (pitches) and 24 triangles (triads). Image and caption from Wikipedia.</cite></blockquote>
 </div>
 ~~~
 The spiral array attempts to preserve the harmonic relationships of the Tonnetz network in a helix-type (cilinder) representation using analytic geometry in order to make the representation more quantitative.
@@ -44,7 +44,7 @@ The spiral array attempts to preserve the harmonic relationships of the Tonnetz 
 <div class="container">
 
     <img class="center" src="/assets/SpiralArray_Pitches.png" width="500" height="350">
-    
+    <blockquote> <cite> Schematic representation of pitches and their harmonic relationships in the spiral array. Figures were extracted from Elaine Chew's book: Mathematical and Computational Modeling of Tonality</cite></blockquote>
 
 </div>
 ~~~
@@ -55,7 +55,7 @@ The tesselation from the Tonnetz model can be illustrated in a better way if we 
 <div class="container">
 
     <img class="center" src="/assets/SpiralArray_Keys.png" width="500" height="350">
-    
+    <blockquote> <cite> Schematic representation of chords and keys in the spiral array. Figures were extracted from Elaine Chew's book: Mathematical and Computational Modeling of Tonality</cite></blockquote>    
 
 </div>
 ~~~
@@ -235,7 +235,7 @@ The `MusicSpiralRepresentation.jl` package uses the same [numerical notation](ht
 <div class="container">
 
     <img class="center" src="/assets/midi_numbers.png" width="350" height="350">
-
+    <blockquote> <cite> MIDI note numbers assigned to each note. Figure extracted from: https://djip.co/blog/logic-studio-9-midi-note-numbers </cite></blockquote>  
 </div>
 ~~~
 With this information let's construct the two chords and test the algorithm with them
@@ -349,13 +349,14 @@ Any["a" 0.7027; "e" 0.7294; "E" 0.8394; "A" 0.8775; "C" 1.0115]
 ```
 Interestingly, the set of weights `w_2` adds enough emphasis on the *E* pitch to make the resultant $\vec{C}_{w_2}$ closer to *A* minor than *C* major. This result does make sense because the note *E* is a perfect fifth away from *A* and makes it the dominant key for *A* major and minor. This is true in this case when we are giving more importance to the second note by a factor of 10.
 
-Now let's try the algorithm with real examples, I have made some annotations in the music score excerpt of the sonata no. 16 (not 15, I am not sure why the edition of this piece on IMSLP had this number) dividing the first line into measures and I wrote down to what my music theory training tells me the key for that measure is. It is difficult to assing a single tonal key for each measure so I wrote down if there was a second key that could be considered for the measure.
+Now let's try the algorithm with a real example, in the figure below are the first five measures of the sonata no. 16 (not 15, I am not sure why the edition of this piece on IMSLP had this number) in C major by Mozart. I made some annotations on each measure indicating what *-my training in music theory tells me-* key measure is in. In some of them is not possible to assing a single tonal key so I wrote down if there was a second key that could be considered.
 
 ~~~
 <div class="container">
 
     <img class="center" src="/assets/MozartSonata.png" width="500" height="500">
-
+    <blockquote> <cite> The figure shows the first five measures from piano
+    sonata K. 545 in C by W. A. Mozart, along with the most likely key (or two most likely keys)</cite></blockquote>
 </div>
 ~~~
 
@@ -485,7 +486,7 @@ Any["F" 0.2962; "C" 0.5891; "d" 0.6592]
 
 which is in agreement with the annotations. The algorithm doesn't only guess the closest key, it lists all the keys with their respective distances to the center of effect, this information can be useful to know what other keys can be considered and how close those keys are. Inspecting the second most likely keys from the algorithm we can confirm that they also agree with the annotations (for measures 2,3 and 4).
 
-Now we finally can try to answer the question we initally made:
+Finally, we can try to answer the question we initally made:
 
 # In what key is "Hey Joe" by Jimi Hendrix? 
 
@@ -545,7 +546,7 @@ msr.get_rank_freq(heyjoe_keys)
 ```
 With this result, there is nothing else to say but what we already heard by Adam Neely's own words...
 
-## It's in E.
+# It's in E.
 
 
 If you liked this, please don't forget to take a look at the jupyter notebok with the original code [here](https://github.com/spiralizing/WebsiteNotebooks/blob/main/Julia/KeyFindingExample.ipynb).
