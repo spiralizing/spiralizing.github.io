@@ -3,7 +3,7 @@ title = "What Key is 'Hey Joe' in?"
 hascode = true
 date = Date(2023, 9, 9)
 rss = "Finding Most Likely Key"
-
+image = "https://img.youtube.com/vi/DVvmALPu5TU/0.jpg"
 tags = ["Julia","Music Information Retrieval", "data science", "key finding"]
 +++
 
