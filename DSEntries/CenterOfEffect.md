@@ -9,7 +9,7 @@ tags = ["Julia","Music Information Retrieval", "data science", "key finding"]
 
 > *Disclaimer: I know this is a bit of a controversial subject in the music comunity, so please don't take this post as the only possible truth, but take it more as informational and have fun reading it.*
 
-During my postdoctoral years at [Penn](https://evolution.sas.upenn.edu/), I developed a Julia package with the functions to compute the Spiral Representation and Center of Effect that Elaine Chew developed in her research and presented in her book *Mathematical and Computational Modeling of Tonality*. The goal for this package -besides from making the functions available to more people- was to use the representation to identify and quantify musical features such as *local key* (or immediate tonal center) or *key transitions* and [study their change over time (400 years of western classical music)](https://arxiv.org/abs/2308.03224).  
+During my postdoctoral years at [Penn](https://evolution.sas.upenn.edu/), I developed a [Julia package](https://github.com/spiralizing/MusicSpiralRepresentation.jl) with the functions to compute the Spiral Representation and Center of Effect that Elaine Chew developed in her research and presented in her book *Mathematical and Computational Modeling of Tonality*. The goal for this package -besides from making the functions available to more people- was to use the representation to identify and quantify musical features such as *local key* (or immediate tonal center) or *key transitions* and [study their change over time (400 years of western classical music)](https://arxiv.org/abs/2308.03224).  
 
 The main application of the Spiral Representation is to find the tonality (key or tonal center) of a given set of notes. This is achieved by combining different concepts from music, mathematics and physics. 
 
@@ -22,6 +22,7 @@ His video was so exciting and inspiring that I decided to test the variation of 
 **In what key "Hey Joe" is in?**
 
 but first... 
+
 
 Let's introduce some definitions
 
@@ -65,7 +66,7 @@ $$
     \vec{P}(k) = \begin{bmatrix} x_k \\ y_k \\ z_k \end{bmatrix} = \begin{bmatrix} r sin\frac{k\pi}{2} \\ r cos\frac{k\pi}{2} \\ k h\end{bmatrix} ,
 $$
 
-where $r$ and $h$ are fixed: $r=1$ and $h=(2/15)^{1/2}$. And $k$ is a number representing a specific note. The starting note $k_0$ is chosen arbitrary, for simplicity we define $k_0$ as the C note (e.g. with $k_0=$ C, $k+1=$ G, $k+2=$ D and so on).
+where $r$ and $h$ are fixed: $r=1$ and $h=(2/15)^{1/2}$. And $k$ is a number representing a specific note. The starting note $k_0$ is chosen arbitrary, for simplicity we define $k_0$ as the C note (e.g. with $k_0=$ C, $k_0+1=$ G, $k_0+2=$ D and so on).
 
 The major and minor chords are constructed as linear combinations of pitches:
 
@@ -105,7 +106,7 @@ $$
 $$
 making a total of $2+2+3*4 = 16$ parameters for the model. Parameters were chosen from Appendix A (model calibration) of the book [Mathematical and Computational Modeling of Tonality](https://link.springer.com/book/10.1007/978-1-4614-9475-1), where the author uses an heuristic approach explained in great detail.
 
-In Machine Learning terminology, the Spiral Array can be seen as an embedding for musical notes, chords and keys in $\mathbf{R}^3$ where the distances between them (their *semantic relationships*) are related to the harmonic relationship between them. 
+In Machine Learning terminology, the Spiral Array can be seen as an embedding for musical notes, chords and keys in $\mathbf{R}^3$ where the distances between them (their *semantic relationships*) are related to their harmonic relationships. 
 
 To start using code in this post I'm going to load some libraries first
 ```julia
@@ -117,7 +118,7 @@ using LinearAlgebra
 using Random
 using Statistics
 ```
-## Julia package for the Spiral Representation: MusicSpiralRepresentation.jl
+## Julia package for the Spiral Representation: [MusicSpiralRepresentation.jl](https://github.com/spiralizing/MusicSpiralRepresentation.jl)
 
 Installation can be done via `repl` with the package manager 
 
@@ -201,7 +202,9 @@ scatter!(min_keys[1], min_keys[2], min_keys[3], m=:star, color=:orange, ms=12, l
 </div>
 ~~~
 
-# The Center of Effect algorithm
+# How do we *compute* the most likely key?
+
+### The Center of Effect algorithm
 
 The center of effect is an algorithm developed to find the most likely tonality (key) for a given set of notes in the spiral array, $P = \{\vec{p}_1, \vec{p}_2,...,\vec{p}_N\}$. This algorithm uses the concept of *center of mass* to represent the notes with an **effective** tonal center in the form of a linear combination of the positions of the notes in the spiral array:
 
@@ -212,6 +215,8 @@ $$
 where the weights $\omega_i$ represent the *importance* of the note and to mantain the values within the same boundaries the weights are normalized $\sum_i w_i = 1$. 
 
 Weights can be built however we want, but one of the most natural musical features we can use for the weights is the **duration** of each note, under de assumption that notes that last longer are more relevant for the tonal center. 
+
+After computing the center of effect $\vec{C}_e$, this is *compared* to all the keys in the spiral representation and the *closest* key is selected as the *most likely key*.
 
 In summary, the Center of Effect (CoE) key finding algorithm uses the vector $\vec{C}_e$ for the set of notes, and defines the most likely key as:
 
@@ -226,7 +231,7 @@ $$
 $$
 To exemplify how it works, let's do one of the simplest tests: 
 
-*What key are the C major and c minor chords in?*
+_**What key are the C major and c minor chords in?**_
 
 The `MusicSpiralRepresentation.jl` package uses the same [numerical notation](https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies) that [MIDI](https://en.wikipedia.org/wiki/MIDI) uses.
 ~~~
@@ -248,7 +253,7 @@ c_minor = [60, 63, 67] # c minor chord
  63
  67
 ```
-and then, we can compute the center of effect with the function `get_center_effect()`, this function can accept a sigle array of numbers representing the notes in MIDI notation or two arrays of numbers representing the notes in MIDI notation and their respective durations. Duration units are irrelevant since the algorithm involves a normalization.
+and then, we can compute the center of effect with the function `get_center_effect()`, this function can accept a sigle array of numbers representing the notes in MIDI notation or two arrays of numbers representing the notes in MIDI notation and their respective durations. Duration scale is irrelevant since the algorithm involves a normalization at the moment of computing $\vec{C}_e$.
 
 
 We can see that each center of effect is different, for C major:
@@ -276,7 +281,7 @@ msr.get_center_effect(c_minor)
 ```
 To know in what key the two sets of notes are, we need to compute the distances from the center of effect to each of the different keys in the Spiral Representation. 
 
-We can do this by calling the function `get_distance_to_keys(center_of_effect)`, the function takes as argument the vector (x,y,z) for the center of effect and returns a Matrix{Any} with the keys ordered by their respective distances.
+We can do this by calling the function `get_distance_to_keys()`, the function takes as argument the vector (x,y,z) for the center of effect and returns a Matrix{Any} with the keys ordered by their respective distances.
 
 So we know what we expect if we call this function for the center of effect of our variable `c_major`:
 
@@ -347,7 +352,7 @@ Any["a" 0.7027; "e" 0.7294; "E" 0.8394; "A" 0.8775; "C" 1.0115]
 ```
 Interestingly, the set of weights `w_2` adds enough emphasis on the *E* pitch to make the resultant $\vec{C}_{w_2}$ closer to *A* minor than *C* major. This result does make sense because the note *E* is a perfect fifth away from *A* and makes it the dominant key for *A* major and minor. This is true in this case when we are giving more importance to the second note by a factor of 10.
 
-Now let's try the algorithm with a real example, in the figure below are the first five measures of the sonata no. 16 (not 15, I am not sure why the edition of this piece on IMSLP had this number) in C major by Mozart. I made some annotations on each measure indicating what *-my training in music theory tells me-* key measure is in. In some of them is not possible to assing a single tonal key so I wrote down if there was a second key that could be considered.
+Now let's try the algorithm with a real example, in the figure below are the first five measures of the sonata no. 16 (not 15, I am not sure why the edition of this piece on IMSLP had this number) in C major by Mozart. I made some annotations on each measure indicating what *-my training in music theory tells me-* key measure is in. In some of the measures I wrote down two possible keys since it is not clear to me which of the two keys is more likely.
 
 ~~~
 <div class="container">
