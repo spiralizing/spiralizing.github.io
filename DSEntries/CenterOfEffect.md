@@ -224,7 +224,7 @@ $$
     \argmin_{T \in \bm{T}} || \vec{C}_e - \vec{T} ||,
 $$
 
-which corresponds to the key $T$ for which the euclidean distance to the measure is minimum. Here $\bm{T}$ is the set of possible major and minor keys: 
+which corresponds to the key $T$ for which the euclidean distance to $\vec{C}_e$ is minimum. Here $\bm{T}$ is the set of possible major and minor keys: 
 
 $$
 \bm{T} = \{ \bm{T}_M(k) \forall k\} \cup \{\bm{T}_m(k) \forall k \}.
