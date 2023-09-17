@@ -7,7 +7,7 @@ image = "https://img.youtube.com/vi/DVvmALPu5TU/0.jpg"
 tags = ["Julia","Music Information Retrieval", "data science", "key finding"]
 +++
 
-> *Disclaimer: I know this is a bit of a controversial subject in the music comunity, so please don't take this post as the only possible truth, but take it more as informational and have fun reading it.*
+> *Disclaimer: I know this is a bit of a controversial subject in the music community, so please don't take this post as the only possible truth, but take it more as informational and have fun reading it.*
 
 During my postdoctoral years at [Penn](https://evolution.sas.upenn.edu/), I developed a [Julia package](https://github.com/spiralizing/MusicSpiralRepresentation.jl) with the functions to compute the Spiral Representation and Center of Effect that Elaine Chew developed in her research and presented in her book *Mathematical and Computational Modeling of Tonality*. The goal for this package -besides from making the functions available to more people- was to use the representation to identify and quantify musical features such as *local key* (or immediate tonal center) or *key transitions* and [study their change over time (400 years of western classical music)](https://arxiv.org/abs/2308.03224).  
 
