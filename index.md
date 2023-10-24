@@ -20,7 +20,7 @@
 \\
 \col{purple}{**I am currently on the job market! I am looking for Data Scientist/Data-oriented Researcher positions in either academia or industry.**}
 
-\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume/AGonzalezResume.pdf)**}
+\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume_v2/main.pdf)**}
 
        
 ## About me: 

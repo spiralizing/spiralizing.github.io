@@ -7,7 +7,7 @@ rss = "Transfering the style from one image to another"
 tags = ["science", "data science"]
 +++
 
-Style transfer is one of the many cool applications that [Convolutional Neural Networks (CNNs)](https://en.wikipedia.org/wiki/Convolutional_neural_network) have. The main idea of this method is to use the **kernel features** that a model has learned to transfer the _style_ or **spatial structure** of an image to a different one.
+Style transfer (Transfer Learning) is one of the many cool applications that some Machine Learning models have. In this case I am going to use [Convolutional Neural Networks (CNNs)](https://en.wikipedia.org/wiki/Convolutional_neural_network) for style transfer. The main idea of this method is to use the **kernel features** that a **CNN** model has learned to transfer the _style_ or **spatial structure** of an image to a different one.
 \toc
 ### Loading imports, model and images
 First we are going to load some imports
