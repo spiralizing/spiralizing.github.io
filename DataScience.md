@@ -17,7 +17,9 @@ I hope you find something useful or interesting.
 
 * [Building a semantic network from CNN news articles](/DSEntries/SemanticGraph/)
 
-* [Sentiment analysis and topic modeling in pop artists](/DSEntries/SentimentSongs1/)
+* [Sentiment analysis and topic modeling in pop artists](/DSEntries/LLMs/)
+
+* [Exploring Large Language Models](/DSEntries/WineQuality/)
 
 * [Copying the style of an image to another using Convolutional Neural Networks](/DSEntries/StyleTransfer/)
 
