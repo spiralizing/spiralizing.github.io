@@ -1,8 +1,8 @@
 +++
-title = "Large Language Models Examples"
+title = "Exploring Large Language Models"
 hascode = true
 date = Date(2022, 10, 14)
-rss = "Large Language Models Examples"
+rss = "Exploring Large Language Models"
 
 tags = ["LLM", "data science", "NLP","Fine-tune"]
 +++
