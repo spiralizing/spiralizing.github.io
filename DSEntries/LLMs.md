@@ -9,7 +9,7 @@ tags = ["LLM", "data science", "NLP","Fine-tune"]
 
 I know I am a bit late to the *LLM* (and AI) hype, but with so many Language models being released to the public via the [Transformers API by Huggingface](https://huggingface.co/transformers/v3.1.0/index.html) for Python, I decided to give them a try and learn about how to use them not only as assistants but to do research with them or **fine-tune** them.
 
-Here you can find short examples with some of the code I used to explore and learn about these models.
+Here, you can find short examples with some of the code I used to explore and learn about these models.
 
 \toc
 
@@ -17,7 +17,7 @@ Here you can find short examples with some of the code I used to explore and lea
 
 Earlier this year, I [made a post](/DSEntries/SentimentSongs1/)  about sentiment analysis of pop song lyrics from different artists. That time I used a lexicon-based analyzer (VADER) that doesn't require any kind of training because it implements a rule-based score. One of the disadvantages of VADER is that is not transferable to other languages because it was built specifically for the English language in social media.
 
-To refresh our memory: sentiment analysis consists in assigning a global *sentiment* (or sentiment score) to a phrase or statement, assigning a category and a weight to each word and averaging them to obtain a sentiment score. Below some examples for the binary (positive or negative) scenario: 
+To refresh our memory: sentiment analysis involves assigning a global sentiment (or sentiment score) to a phrase or statement by categorizing each word, assigning weights, and then averaging them to obtain an overall sentiment score. Below some examples for the binary (positive or negative) scenario: 
 
 |     Category     |           Example           |
 |:----------------:|:---------------------------:|
@@ -26,7 +26,7 @@ To refresh our memory: sentiment analysis consists in assigning a global *sentim
 
 However, if we want a more complex or custom ruled-based analyzer there are not many other options but to build it ourselves. But don't worry, here is where the *magic* of pre-trained Large Language Models comes into play. 
 
-A pre-trained LLM, it is what it sounds it is: a Language Model that has been trained with a corpus large enough to *learn* non-trivial relationships between words and perform a specific task. Learning these relationships between words allows the model to generate text that resembles text written by someone. But that is not exactly the *magic* I was referring to, what I was referring to is something called **Transfer Learning**, I used this method in a [previous post](/DSEntries/StyleTransfer/) for a different problem. 
+A pre-trained LLM is exactly what it sounds like: a Language Model that has been trained with a corpus large enough to *learn* non-trivial relationships between words and perform a specific task. Learning these relationships between words allows the model to generate text that resembles text written by someone. Learning these relationships between words allows the model to generate text that resembles text written by someone, but that is not exactly the *magic* I was referring to. What I was referring to is something called **Transfer Learning**, and I used this method in a [previous post](/DSEntries/StyleTransfer/) for a different problem.
 
 The basis of transfer learning is to use the knowledge (representations, relationships) that the model learned during training for a task to perform a new task. In this particular case we want to use a LLM that has been trained for **next token prediction** (text generation) and *fine-tune* it for **sequence classification** (sentiment analysis). The *knowledge* here consists in the relationships between words (tokens) also known as **semantic relationships** that the model *learns* in the **attention layers** of the [Transformer architecture](https://en.wikipedia.org/wiki/Transformer_(machine_learning_model)#Architecture). 
 
