@@ -23,50 +23,12 @@
 
 <item>
   <title>
-    <![CDATA[  Building a semantic network  ]]>
-  </title>
-  <link> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </link>
-  <guid> https://spiralizing.github.io/DSEntries/SemanticGraph/index.html </guid>
-  <description>
-    <![CDATA[  How to build a semantic graph  ]]>
-  </description>  
-    
-  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  Large Language Models Examples  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/LLMs/index.html </link>
   <guid> https://spiralizing.github.io/DSEntries/LLMs/index.html </guid>
   <description>
     <![CDATA[  Large Language Models Examples  ]]>
-  </description>  
-    
-  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
-    <![CDATA[  Sentiment analysis and topic modeling in pop artists  ]]>
-  </title>
-  <link> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </link>
-  <guid> https://spiralizing.github.io/DSEntries/SentimentSongs1/index.html </guid>
-  <description>
-    <![CDATA[  Sentiment analysis and topic model for some pop artists  ]]>
   </description>  
     
   <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  

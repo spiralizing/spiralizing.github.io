@@ -1,0 +1,301 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Large Language Models Examples</title> <meta property="twitter:card" content=summary > <meta property="twitter:creator" content=sethaxen > <meta property="twitter:title" content="Large Language Models Examples"> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/CenterOfEffect/" class=pure-menu-link >What key is Hey Joe in</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/LLMs/" class=pure-menu-link >Exploring LLMs</a> <li class="pure-menu-item "><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> </div> </div> <div id=main > <div class=header > <h1>Large Language Models Examples</h1> <h2> -| Data Science | Complex Systems | Scientific Research | </h2> </div> <div class=franklin-content > <p>I know I am a bit late to the <em>LLM</em> &#40;and AI&#41; hype, but with so many Language models being released to the public via the <a href="https://huggingface.co/transformers/v3.1.0/index.html">Transformers API by Huggingface</a> for Python, I decided to give them a try and learn about how to use them not only as assistants but to do research with them or <strong>fine-tune</strong> them.</p> <p>Here you can find short examples with some of the code I used to explore and learn about these models.</p> <h1 id=fine_tuning_for_sentiment_analysis ><a href="#fine_tuning_for_sentiment_analysis" class=header-anchor >Fine tuning for sentiment analysis</a></h1> <p>Earlier this year, I <a href="/DSEntries/SentimentSongs1/">made a post</a> about sentiment analysis of pop song lyrics from different artists. That time I used a lexicon-based analyzer &#40;VADER&#41; that doesn&#39;t require any kind of training because it implements a rule-based score. One of the disadvantages of VADER is that is not transferable to other languages because it was built specifically for the English language in social media.</p> <p>To refresh our memory: sentiment analysis consists in assigning a global <em>sentiment</em> &#40;or sentiment score&#41; to a phrase or statement, assigning a category and a weight to each word and averaging them to obtain a sentiment score. Below some examples for the binary &#40;positive or negative&#41; scenario: </p> <table><tr><th align=center >Category<th align=center >Example<tr><td align=center >Positive emotion<td align=center >Love, nice, good, great<tr><td align=center >Negative emotion<td align=center >Hurt, ugly, sad, bad, worse</table> <p>However, if we want a more complex or custom ruled-based analyzer there are not many other options but to build it ourselves. But don&#39;t worry, here is where the <em>magic</em> of pre-trained Large Language Models comes into play. </p> <p>A pre-trained LLM, it is what it sounds it is: a Language Model that has been trained with a corpus large enough to <em>learn</em> non-trivial relationships between words and perform a specific task. Learning these relationships between words allows the model to generate text that resembles text written by someone. But that is not exactly the <em>magic</em> I was referring to, what I was referring to is something called <strong>Transfer Learning</strong>, I used this method in a <a href="/DSEntries/StyleTransfer/">previous post</a> for a different problem. </p> <p>The basis of transfer learning is to use the knowledge &#40;representations, relationships&#41; that the model learned during training for a task to perform a new task. In this particular case we want to use a LLM that has been trained for <strong>next token prediction</strong> &#40;text generation&#41; and <em>fine-tune</em> it for <strong>sequence classification</strong> &#40;sentiment analysis&#41;. The <em>knowledge</em> here consists in the relationships between words &#40;tokens&#41; also known as <strong>semantic relationships</strong> that the model <em>learns</em> in the <strong>attention layers</strong> of the <a href="https://en.wikipedia.org/wiki/Transformer_&#40;machine_learning_model&#41;#Architecture">Transformer architecture</a>. </p> <p>Fortunately for us, there are already several pre-trained and fine-tuned models deployed by the community on <a href="https://huggingface.co/models">Huggingface</a> that can be used for a wide variety of tasks.</p> <p>Here, we are going to <strong>load, test and fine tune</strong> a model already <a href="https://huggingface.co/daveni/twitter-xlm-roberta-emotion-es">fine-tuned to categorize tweets in Spanish.</a> This particular model is based on a pre-trained version of <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> called <a href="https://huggingface.co/docs/transformers/model_doc/xlm-roberta">XML-ROBERTa</a> that was developed for multi-language purposes. </p> <p>Let&#39;s start with the code for this entry by loading some libraries: </p> <pre><code class="python hljs"><span class=hljs-comment >#transformers library from huggingface to load the model and tokenizer of the model</span>
+<span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span> AutoModelForSequenceClassification
+<span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span> AutoTokenizer, AutoConfig
+
+<span class=hljs-comment >#torch utils</span>
+<span class=hljs-keyword >import</span> torch.nn <span class=hljs-keyword >as</span> nn
+<span class=hljs-comment >#numpy for numerical and pandas for dataframes</span>
+<span class=hljs-keyword >import</span> numpy <span class=hljs-keyword >as</span> np
+<span class=hljs-keyword >import</span> pandas <span class=hljs-keyword >as</span> pd</code></pre> <p>And we load <a href="https://huggingface.co/daveni/twitter-xlm-roberta-emotion-es">THIS</a> model, with it&#39;s tokenizer and configuration from the pre-trained version:</p> <pre><code class="python hljs"><span class=hljs-comment >#repo adress</span>
+model_path = <span class=hljs-string >&quot;daveni/twitter-xlm-roberta-emotion-es&quot;</span>
+<span class=hljs-comment >#loading tokenizer</span>
+tokenizer = AutoTokenizer.from_pretrained(model_path ) 
+<span class=hljs-comment >#loading configuration</span>
+config = AutoConfig.from_pretrained(model_path ) 
+<span class=hljs-comment >#loading the model</span>
+model = AutoModelForSequenceClassification.from_pretrained(model_path)</code></pre> <p>One cool thing about open source &#40;and open access&#41; is that we can inspect details about the model, its architecture and parameters:</p> <pre><code class="python hljs"><span class=hljs-comment >#inspecting the model</span>
+model</code></pre> <pre><code class="plaintext hljs">XLMRobertaForSequenceClassification(
+  (roberta): XLMRobertaModel(
+    (embeddings): XLMRobertaEmbeddings(
+      (word_embeddings): Embedding(250002, 768, padding_idx=1)
+      (position_embeddings): Embedding(514, 768, padding_idx=1)
+      (token_type_embeddings): Embedding(1, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (encoder): XLMRobertaEncoder(
+      (layer): ModuleList(
+        (0-11): 12 x XLMRobertaLayer(
+          (attention): XLMRobertaAttention(
+            (self): XLMRobertaSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): XLMRobertaSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): XLMRobertaIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): XLMRobertaOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+  )
+  (classifier): XLMRobertaClassificationHead(
+    (dense): Linear(in_features=768, out_features=768, bias=True)
+    (dropout): Dropout(p=0.1, inplace=False)
+    (out_proj): Linear(in_features=768, out_features=7, bias=True)
+  )
+)</code></pre> <p>The first layers are the embedding layers followed by the encoder/decoder layers &#40;12&#41;, the output layer and the most important for us: the classifier. As I mentioned previously, we can build custom sentiment analyzers with language models, this classifier has 7 <code>out_features</code> or categories: </p> <ul> <li><p>Joy</p> <li><p>Sadness</p> <li><p>Anger</p> <li><p>Fear</p> <li><p>Disgust</p> <li><p>Surprised</p> <li><p>Others </p> </ul> <p>To be able to use the model let&#39;s first define a couple of functions to process and evaluate data:</p> <pre><code class="python hljs"><span class=hljs-comment >#we are going to use softmax to normalize the output</span>
+<span class=hljs-keyword >from</span> scipy.special <span class=hljs-keyword >import</span> softmax
+<span class=hljs-comment >#function to pre-process tweets</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">preprocess_tweet</span>(<span class=hljs-params >text</span>):
+    new_text = []
+    <span class=hljs-keyword >for</span> t <span class=hljs-keyword >in</span> text.split(<span class=hljs-string >&quot; &quot;</span>):
+        t = <span class=hljs-string >&#x27;@user&#x27;</span> <span class=hljs-keyword >if</span> t.startswith(<span class=hljs-string >&#x27;@&#x27;</span>) <span class=hljs-keyword >and</span> <span class=hljs-built_in >len</span>(t) &gt; <span class=hljs-number >1</span> <span class=hljs-keyword >else</span> t
+        t = <span class=hljs-string >&#x27;http&#x27;</span> <span class=hljs-keyword >if</span> t.startswith(<span class=hljs-string >&#x27;http&#x27;</span>) <span class=hljs-keyword >else</span> t
+        new_text.append(t)
+    <span class=hljs-keyword >return</span> <span class=hljs-string >&quot; &quot;</span>.join(new_text)
+
+<span class=hljs-comment >#For evaluation and printing</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_sentiment</span>(<span class=hljs-params >text</span>):
+    <span class=hljs-comment >#tokenize returning tensors for pytorch format</span>
+    enc_in = tokenizer(text, return_tensors=<span class=hljs-string >&#x27;pt&#x27;</span>)
+    <span class=hljs-comment >#passing the encoded input through the model</span>
+    output = model(**enc_in)
+    <span class=hljs-comment >#getting score values</span>
+    scores = output[<span class=hljs-number >0</span>][<span class=hljs-number >0</span>].detach().numpy()
+    <span class=hljs-comment >#normalizing with softmax, sorting and printing</span>
+    scores = softmax(scores)
+    ranking = np.argsort(scores)
+    ranking = ranking[::-<span class=hljs-number >1</span>]
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;Original Text: \n <span class=hljs-subst >{text}</span> \n&#x27;</span>)
+    <span class=hljs-keyword >for</span> j <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(scores.shape[<span class=hljs-number >0</span>]):
+        l = config.id2label[ranking[j]]
+        s = scores[ranking[j]]
+        <span class=hljs-built_in >print</span>(<span class=hljs-string >f&quot;<span class=hljs-subst >{j+<span class=hljs-number >1</span>}</span>) <span class=hljs-subst >{l}</span> <span class=hljs-subst >{np.<span class=hljs-built_in >round</span>(<span class=hljs-built_in >float</span>(s), <span class=hljs-number >4</span>)}</span>&quot;</span>)
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >&#x27;====&#x27;</span>*<span class=hljs-number >20</span>+<span class=hljs-string >&#x27;\n&#x27;</span>)</code></pre> <p>Now let&#39;s try out the model with the statement: &quot;Me encanta tomar café en la mañana, lamentablemente el día de hoy no he tomado café.&quot; Which translates to &quot;I love drinking coffee in the morning, unfortunately I haven&#39;t had coffee today&quot;.</p> <pre><code class="python hljs">text = <span class=hljs-string >&quot;Me encanta tomar café en la mañana, lamentablemente el día de hoy no he tomado café&quot;</span>
+<span class=hljs-comment >#no need to pre-process this time.</span>
+get_sentiment(text)</code></pre> <pre><code class="plaintext hljs">Original Tweet: 
+ Me encanta tomar café en las mañanas, lamentablemente el día de hoy no he tomado café. 
+
+1) sadness 0.6812
+2) joy 0.1508
+3) others 0.1181
+4) anger 0.0208
+5) surprise 0.0165
+6) disgust 0.0074
+7) fear 0.0053
+================================================================================</code></pre> <p>Which is indeed a sad statement. </p> <p>Now let&#39;s fine-tune this model, let&#39;s say we want to do an analysis of tweets in Spanish with only two sentiments &#40;positive or negative&#41; and for tweets particularly from <strong>México</strong>. First, we need a reliable source of data to train this model: <a href="http://tass.sepln.org/">TASS</a> is a workshop on semantic analysis that has curated several data sets for semantic analysis in Spanish. They have a <a href="http://tass.sepln.org/tass_data/download.php?auth&#61;QtDa3s5sA4ReWvYeWrf">dataset for Mexican Spanish</a>, I downloaded it and used it to fine-tune this model.</p> <p>Before loading the data, we are going to define some functions that will help us processing and creating datasets to use with pytorch</p> <pre><code class="python hljs"><span class=hljs-keyword >import</span> torch
+<span class=hljs-comment >#we define a custom class with torch dataset utilities</span>
+<span class=hljs-keyword >class</span> <span class="hljs-title class_">CustomDataSet</span>(torch.utils.data.Dataset):
+    <span class=hljs-keyword >def</span> <span class="hljs-title function_">__init__</span>(<span class=hljs-params >self, encodings, labels</span>):
+      <span class=hljs-comment >#encodings and labels</span>
+        self.encodings = encodings
+        self.labels = labels
+
+    <span class=hljs-keyword >def</span> <span class="hljs-title function_">__getitem__</span>(<span class=hljs-params >self, idx</span>):
+        item = {key: torch.tensor(val[idx]) <span class=hljs-keyword >for</span> key, val <span class=hljs-keyword >in</span> self.encodings.items()}
+        item[<span class=hljs-string >&#x27;labels&#x27;</span>] = torch.tensor(self.labels[idx])
+        <span class=hljs-keyword >return</span> item
+
+    <span class=hljs-keyword >def</span> <span class="hljs-title function_">__len__</span>(<span class=hljs-params >self</span>):
+        <span class=hljs-keyword >return</span> <span class=hljs-built_in >len</span>(self.labels)
+
+<span class=hljs-comment >#using sklearn to split data</span>
+<span class=hljs-keyword >from</span> sklearn.model_selection <span class=hljs-keyword >import</span> train_test_split
+
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_traintest_datasets</span>(<span class=hljs-params >data, target, test_size=<span class=hljs-number >0.2</span></span>):
+    train_tweets, test_tweets, train_labels, test_labels = train_test_split(data, target, test_size=test_size)
+    train_encodings = tokenizer(train_tweets, padding=<span class=hljs-literal >True</span>, return_tensors=<span class=hljs-string >&#x27;pt&#x27;</span>)
+    test_encodings = tokenizer(test_tweets,padding=<span class=hljs-literal >True</span>, return_tensors=<span class=hljs-string >&#x27;pt&#x27;</span>)
+    
+    <span class=hljs-keyword >return</span> CustomDataSet(train_encodings, train_labels), CustomDataSet(test_encodings, test_labels)</code></pre> <p>And now we can load our data and build the datasets</p> <pre><code class="python hljs"><span class=hljs-comment >#loading training data </span>
+df_tass = pd.read_csv(<span class=hljs-string >&quot;train_data/train/mx.tsv&quot;</span>,sep=<span class=hljs-string >&#x27;\t&#x27;</span>, names=[<span class=hljs-string >&#x27;id&#x27;</span>,<span class=hljs-string >&#x27;text&#x27;</span>,<span class=hljs-string >&#x27;label&#x27;</span>])
+<span class=hljs-comment >#dropping nans </span>
+df_tass.dropna(inplace=<span class=hljs-literal >True</span>)
+<span class=hljs-comment >#extracting values</span>
+data = df_tass[<span class=hljs-string >&#x27;text&#x27;</span>].values
+<span class=hljs-comment >#preprocessing</span>
+data = <span class=hljs-built_in >list</span>(<span class=hljs-built_in >map</span>(<span class=hljs-keyword >lambda</span> x: preprocess(x), data))
+<span class=hljs-comment >#convert N (negative) to 0 and P (positive) to 1</span>
+target = df_tass[<span class=hljs-string >&#x27;label&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> x: <span class=hljs-number >0</span> <span class=hljs-keyword >if</span> x==<span class=hljs-string >&#x27;N&#x27;</span> <span class=hljs-keyword >else</span> <span class=hljs-number >1</span>).values
+
+<span class=hljs-comment >#build datasets</span>
+train_dataset, test_dataset = get_traintest_datasets(data, target)</code></pre> <p>We are almost ready to fine-tune our model, the problem now is that our model initially has seven categories and now our training data has only two. We need to modify our model to have two <code>out_features</code> on its classifier, in order to do so, we can simply load the same model including two new arguments:</p> <pre><code class="python hljs">binary_model = AutoModelForSequenceClassification.from_pretrained(model_path, num_labels=<span class=hljs-number >2</span>, ignore_mismatched_sizes=<span class=hljs-literal >True</span>)</code></pre>
+<pre><code class="plaintext hljs">Some weights of XLMRobertaForSequenceClassification were not initialized from the model checkpoint at daveni/twitter-xlm-roberta-emotion-es and are newly initialized because the shapes did not match:
+- classifier.out_proj.weight: found shape torch.Size([7, 768]) in the checkpoint and torch.Size([2, 768]) in the model instantiated
+- classifier.out_proj.bias: found shape torch.Size([7]) in the checkpoint and torch.Size([2]) in the model instantiated
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.</code></pre>
+<p>and the transformers package tells us that we need to &quot;train&quot; this model again because we have modified the classifier and its weights have been re-initialized due to a mismatch in dimensions. This is great because is exactly what we wanted, if we inspect the model we can confirm that the last layer has been modified from a seven-category classifier to a binary one:</p>
+<pre><code class="python hljs">binary_model</code></pre>
+<pre><code class="plaintext hljs">XLMRobertaForSequenceClassification(
+  (roberta): XLMRobertaModel(
+    (embeddings): XLMRobertaEmbeddings(
+      (word_embeddings): Embedding(250002, 768, padding_idx=1)
+      (position_embeddings): Embedding(514, 768, padding_idx=1)
+      (token_type_embeddings): Embedding(1, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (encoder): XLMRobertaEncoder(
+      (layer): ModuleList(
+        (0-11): 12 x XLMRobertaLayer(
+          (attention): XLMRobertaAttention(
+            (self): XLMRobertaSelfAttention(
+              (query): Linear(in_features=768, out_features=768, bias=True)
+              (key): Linear(in_features=768, out_features=768, bias=True)
+              (value): Linear(in_features=768, out_features=768, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): XLMRobertaSelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): XLMRobertaIntermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): XLMRobertaOutput(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+  )
+  (classifier): XLMRobertaClassificationHead(
+    (dense): Linear(in_features=768, out_features=768, bias=True)
+    (dropout): Dropout(p=0.1, inplace=False)
+    (out_proj): Linear(in_features=768, out_features=2, bias=True)
+  )
+)</code></pre>
+<p>Now we can fine-tune our model, there are a couple of alternatives for this, we can either use the <a href="https://huggingface.co/transformers/v3.1.0/main_classes/trainer.html"><code>Trainer</code></a> included in the Transformers package or we can write our training function with Pytorch like we always do. For this case we are going to use the trainer that comes with the Transformers API because it is very simple and it will save us several lines of code.</p>
+<p>To use the trainer we need to load some libraries first</p>
+<pre><code class="python hljs"><span class=hljs-comment >#for evaluation</span>
+<span class=hljs-keyword >from</span> sklearn.metrics <span class=hljs-keyword >import</span> confusion_matrix, classification_report, ConfusionMatrixDisplay
+<span class=hljs-comment >#trainer</span>
+<span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span>  Trainer, TrainingArguments
+<span class=hljs-comment >#for metric</span>
+<span class=hljs-keyword >import</span> evaluate
+<span class=hljs-comment >#defining the type of metric we are going to use</span>
+metric = evaluate.load(<span class=hljs-string >&quot;accuracy&quot;</span>)
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">compute_metrics</span>(<span class=hljs-params >eval_pred</span>):
+    predictions, labels = eval_pred
+    predictions = np.argmax(predictions, axis=<span class=hljs-number >1</span>)
+
+    <span class=hljs-keyword >return</span> metric.compute(predictions=predictions, references=labels)</code></pre>
+<p>and define our trainer arguments and the trainer itself</p>
+<pre><code class="python hljs">training_args = TrainingArguments(
+    output_dir=<span class=hljs-string >&#x27;./results&#x27;</span>,          <span class=hljs-comment ># output directory</span>
+    num_train_epochs=<span class=hljs-number >3</span>,              <span class=hljs-comment ># total number of training epochs (we don&#x27;t need many)</span>
+    per_device_train_batch_size=<span class=hljs-number >16</span>,  <span class=hljs-comment ># batch size per device during training</span>
+    per_device_eval_batch_size=<span class=hljs-number >64</span>,   <span class=hljs-comment ># batch size for evaluation</span>
+    warmup_steps=<span class=hljs-number >500</span>,                <span class=hljs-comment ># number of warmup steps for learning rate scheduler</span>
+    weight_decay=<span class=hljs-number >0.01</span>,               <span class=hljs-comment ># strength of weight decay</span>
+    logging_dir=<span class=hljs-string >&#x27;./logs&#x27;</span>,            <span class=hljs-comment ># directory for storing logs</span>
+    logging_steps=<span class=hljs-number >10</span>,
+)
+
+trainer = Trainer(
+    model=binary_model,                         <span class=hljs-comment ># the model</span>
+    args=training_args,                  <span class=hljs-comment ># training arguments, defined above</span>
+    train_dataset=train_dataset,         <span class=hljs-comment ># training dataset</span>
+    eval_dataset=test_dataset,             <span class=hljs-comment ># evaluation dataset</span>
+    compute_metrics=compute_metrics  <span class=hljs-comment ># accuracy</span>
+)</code></pre>
+<p>with the trainer we can evaluate first our model, this should give an accuracy of <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∼</mo><mn>0.50</mn></mrow><annotation encoding="application/x-tex">∼0.50</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.3669em;"></span><span class=mrel >∼</span><span class=mspace  style="margin-right:0.2778em;"></span></span><span class=base ><span class=strut  style="height:0.6444em;"></span><span class=mord >0.50</span></span></span></span> if the training data is balanced for a binary case:</p>
+<pre><code class="python hljs">trainer.evaluate()</code></pre>
+<pre><code class="plaintext hljs">{&#x27;eval_loss&#x27;: 0.663949728012085,
+ &#x27;eval_accuracy&#x27;: 0.6363636363636364,
+ &#x27;eval_runtime&#x27;: 4.9397,
+ &#x27;eval_samples_per_second&#x27;: 40.084,
+ &#x27;eval_steps_per_second&#x27;: 0.81}</code></pre>
+<p>which gives us the accuracy of 66 percent, we expect to improve this number after training our model:</p>
+<pre><code class="python hljs">trainer.train()</code></pre>
+<pre><code class="plaintext hljs">{&#x27;train_runtime&#x27;: 374.7152, 
+&#x27;train_samples_per_second&#x27;: 6.341, 
+&#x27;train_steps_per_second&#x27;: 0.4, 
+&#x27;train_loss&#x27;: 0.18583528677622477, 
+&#x27;epoch&#x27;: 3.0}</code></pre>
+<p>and evaluate again</p>
+<pre><code class="python hljs">trainer.evaluate()</code></pre>
+<pre><code class="plaintext hljs">{&#x27;eval_loss&#x27;: 0.6542710065841675,
+ &#x27;eval_accuracy&#x27;: 0.8232323232323232,
+ &#x27;eval_runtime&#x27;: 5.2173,
+ &#x27;eval_samples_per_second&#x27;: 37.951,
+ &#x27;eval_steps_per_second&#x27;: 0.767,
+ &#x27;epoch&#x27;: 3.0}</code></pre>
+<p>with a new value for accuracy of 82 percent. This increase in accuracy, although significant it is still not ideal, running for more epochs and/or doing several runnings we can choose the model that performs the best, but that is a problem to explore in another post.</p>
+<p>We can finally test our fine-tuned model with new data never seen before</p>
+<pre><code class="python hljs"><span class=hljs-comment >#loading test data</span>
+eval_tass = pd.read_csv(<span class=hljs-string >&quot;train_data/dev/mx.tsv&quot;</span>,sep=<span class=hljs-string >&#x27;\t&#x27;</span>, names=[<span class=hljs-string >&#x27;id&#x27;</span>,<span class=hljs-string >&#x27;text&#x27;</span>,<span class=hljs-string >&#x27;label&#x27;</span>])
+<span class=hljs-comment >#dropping nans</span>
+eval_tass.dropna(inplace=<span class=hljs-literal >True</span>)
+<span class=hljs-comment >#extracting values</span>
+eval_data = eval_tass[<span class=hljs-string >&#x27;text&#x27;</span>].values
+<span class=hljs-comment >#preprocessing tweets</span>
+eval_data = <span class=hljs-built_in >list</span>(<span class=hljs-built_in >map</span>(<span class=hljs-keyword >lambda</span> x: preprocess(x), eval_data))
+<span class=hljs-comment >#convert N (negative) to 0 and P (positive) to 1</span>
+eval_target = eval_tass[<span class=hljs-string >&#x27;label&#x27;</span>].apply(<span class=hljs-keyword >lambda</span> x: <span class=hljs-number >0</span> <span class=hljs-keyword >if</span> x==<span class=hljs-string >&#x27;N&#x27;</span> <span class=hljs-keyword >else</span> <span class=hljs-number >1</span>).values
+
+<span class=hljs-comment >#encoding the tweets</span>
+encoded_eval = <span class=hljs-built_in >list</span>(<span class=hljs-built_in >map</span>(<span class=hljs-keyword >lambda</span> x: tokenizer(x, return_tensors=<span class=hljs-string >&#x27;pt&#x27;</span>), eval_data))
+
+<span class=hljs-comment >#predicting categories</span>
+predicted_labels = <span class=hljs-built_in >list</span>(<span class=hljs-built_in >map</span>( <span class=hljs-keyword >lambda</span> x: np.argmax( binary_model(**x)[<span class=hljs-number >0</span>][<span class=hljs-number >0</span>].detach().numpy()), encoded_eval))</code></pre>
+<p>and use the confusion matrix to visualize the model&#39;s performance</p>
+<pre><code class="python hljs">cm = confusion_matrix(eval_target, predicted_labels)
+
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=(<span class=hljs-string >&#x27;N&#x27;</span>,<span class=hljs-string >&#x27;P&#x27;</span>))
+
+disp.plot()</code></pre>
+<p>
+<div class=container >
+
+    <img class=center  src="/assets/cm_finetune.svg" width=300  height=300">
+
+</div>
+ with it&#39;s respective classification report</p>
+<pre><code class="python hljs"><span class=hljs-built_in >print</span>(classification_report(eval_target, predicted_labels))</code></pre>
+<pre><code class="plaintext hljs">Classification report:
+
+                precision    recall  f1-score   support
+
+           0       0.81      0.86      0.84       252
+           1       0.86      0.81      0.83       258
+
+    accuracy                           0.83       510
+   macro avg       0.83      0.83      0.83       510
+weighted avg       0.83      0.83      0.83       510</code></pre>
+<div class=page-foot >
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: December 14, 2023.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+      </div> 
+  </div> 
+  <script src="/libs/pure/ui.min.js"></script>
+  
+      
+
+
+
+  
+  
+      <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
