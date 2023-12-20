@@ -46,7 +46,7 @@ Click [here](https://github.com/spiralizing/CVResume/blob/main/CV/AGonzalCV.pdf)
 ~~~
 <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 
-<div class="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="HORIZONTAL" data-vanity="spiralizing" data-version="v1"><a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/spiralizing/en?trk=profile-badge">Connect with me on LinkedIn!</a></div>
+<div class="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="HORIZONTAL" data-vanity="agonzaleze" data-version="v1"><a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/agonzaleze/en?trk=profile-badge">Connect with me on LinkedIn!</a></div>
               
 ~~~  
      
