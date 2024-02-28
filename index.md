@@ -18,18 +18,19 @@
 ~~~
 \newcommand{\col}[2]{~~~<span style="color:~~~#1~~~">~~~!#2~~~</span>~~~}
 \\
-\col{purple}{**I am currently on the job market! I am looking for Data Scientist/Data-oriented Researcher positions in either academia or industry.**}
-
-\col{purple}{**Checkout my resume [here!](https://github.com/spiralizing/CVResume/blob/main/Resume_v2/main.pdf)**}
-
-       
+  
 ## About me: 
 
-I am an Interdisciplinary Data/Research Scientist who is passionate about data-oriented research and data-driven products that contribute to making a positive impact in society by solving real world problems. [Here](/DataScience/) you can find some posts with fun mini Data Science projects and exercises I made. I am also interested in scientific research on diverse topics related to music, language, cognition, collective and human behavior from a statistical physics and complex systems perspective, you can find more about my research projects [here](/Research/). 
+I am a multiskilled professional with a background in Chemistry, Physics and Computer Science. I have 10+ years of quantitative research experience. I use my analytical and technical skills to solve academic and business data-oriented problems with innovative interdisciplinary approaches. Currently I am a [Research Data Librarian](https://www.library.cmu.edu/about/people/alfredo-gonzalez-espinoza) at Carnegie Mellon University, where I bring my interdisciplinary background and expertise in processing and analyzing data of various types to provide research and data management support to the whole CMU community.
+
+Personally, I'm interested in tools and methods for statistical modelling and inference in social sciences and humanities. I am also interested in scientific research on diverse topics related to music, language, cognition, collective and human behavior from a complex systems perspective.
 
 I am an amateur Cellist and usually spend my free time listening to music, playing video games and playing football (soccer).
 
 ## CV
+
+### Research Data Librarian
+* 2024-present - [Carnegie Mellon University](https://www.cmu.edu/), Pittsburgh, PA, USA.
 ### Postdoctoral experience
 
 * 2019-2022 - [Mathematical Biology Group](https://evolution.sas.upenn.edu/), University of Pennsylvania, PA, USA.
