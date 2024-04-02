@@ -1,4 +1,4 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Exploring Large Language Models</title> <meta property="twitter:card" content=summary > <meta property="twitter:creator" content=sethaxen > <meta property="twitter:title" content="Exploring Large Language Models"> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/CenterOfEffect/" class=pure-menu-link >What key is Hey Joe in</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/LLMs/" class=pure-menu-link >Exploring LLMs</a> <li class="pure-menu-item "><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> </div> </div> <div id=main > <div class=header > <h1>Exploring Large Language Models</h1> <h2> -| Data Science | Complex Systems | Scientific Research | </h2> </div> <div class=franklin-content > <p>I know I am a bit late to the <em>LLM</em> &#40;and AI&#41; hype, but with so many Language models being released to the public via the <a href="https://huggingface.co/transformers/v3.1.0/index.html">Transformers API by Huggingface</a> for Python, I decided to give them a try and learn about how to use them not only as assistants but to do research with them or <strong>fine-tune</strong> them.</p> <p>Here, you can find short examples with some of the code I used to explore and learn about these models.</p> <h1 id=fine_tuning_for_sentiment_analysis ><a href="#fine_tuning_for_sentiment_analysis" class=header-anchor >Fine tuning for sentiment analysis</a></h1> <p>Earlier this year, I <a href="/DSEntries/SentimentSongs1/">made a post</a> about sentiment analysis of pop song lyrics from different artists. That time I used a lexicon-based analyzer &#40;VADER&#41; that doesn&#39;t require any kind of training because it implements a rule-based score. One of the disadvantages of VADER is that is not transferable to other languages because it was built specifically for the English language in social media.</p> <p>To refresh our memory: sentiment analysis involves assigning a global sentiment &#40;or sentiment score&#41; to a phrase or statement by categorizing each word, assigning weights, and then averaging them to obtain an overall sentiment score. Below some examples for the binary &#40;positive or negative&#41; scenario: </p> <table><tr><th align=center >Category<th align=center >Example<tr><td align=center >Positive emotion<td align=center >Love, nice, good, great<tr><td align=center >Negative emotion<td align=center >Hurt, ugly, sad, bad, worse</table> <p>However, if we want a more complex or custom ruled-based analyzer there are not many other options but to build it ourselves. But don&#39;t worry, here is where the <em>magic</em> of pre-trained Large Language Models comes into play. </p> <p>A pre-trained LLM is exactly what it sounds like: a Language Model that has been trained with a corpus large enough to <em>learn</em> non-trivial relationships between words and perform a specific task. Learning these relationships between words allows the model to generate text that resembles text written by someone, but that is not exactly the <em>magic</em> I was referring to. What I was referring to is something called <strong>Transfer Learning</strong>, and I used this method in a <a href="/DSEntries/StyleTransfer/">previous post</a> for a different problem.</p> <p>The basis of transfer learning is to use the knowledge &#40;representations, relationships&#41; that the model learned during training for a task to perform a new task. In this particular case we want to use a LLM that has been trained for <strong>next token prediction</strong> &#40;text generation&#41; and <em>fine-tune</em> it for <strong>sequence classification</strong> &#40;sentiment analysis&#41;. The <em>knowledge</em> here consists in the relationships between words &#40;tokens&#41; also known as <strong>semantic relationships</strong> that the model <em>learns</em> in the <strong>attention layers</strong> of the <a href="https://en.wikipedia.org/wiki/Transformer_&#40;machine_learning_model&#41;#Architecture">Transformer architecture</a>. </p> <p>Fortunately for us, there are already several pre-trained and fine-tuned models deployed by the community on <a href="https://huggingface.co/models">Huggingface</a> that can be used for a wide variety of tasks.</p> <p>Here, we are going to <strong>load, test and fine tune</strong> a model already <a href="https://huggingface.co/daveni/twitter-xlm-roberta-emotion-es">fine-tuned to categorize tweets in Spanish.</a> This particular model is based on a pre-trained version of <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> called <a href="https://huggingface.co/docs/transformers/model_doc/xlm-roberta">XML-ROBERTa</a> that was developed for multi-language purposes. </p> <p>Let&#39;s start with the code for this entry by loading some libraries: </p> <pre><code class="python hljs"><span class=hljs-comment >#transformers library from huggingface to load the model and tokenizer of the model</span>
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> .franklin-content{padding-left:10%;} @media (min-width: 940px) { .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;} .header {width: 700px;} } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Exploring Large Language Models</title> <meta property="twitter:card" content=summary > <meta property="twitter:creator" content=sethaxen > <meta property="twitter:title" content="Exploring Large Language Models"> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/CenterOfEffect/" class=pure-menu-link >What key is Hey Joe in</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item "><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/LLMs/" class=pure-menu-link >Exploring LLMs</a> <li class="pure-menu-item "><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> </div> </div> <div id=main > <div class=header > <h1>Exploring Large Language Models</h1> <h2> -| Data Science | Complex Systems | Scientific Research | </h2> </div> <div class=franklin-content > <p>I know I am a bit late to the <em>LLM</em> &#40;and AI&#41; hype, but with so many Language models being released to the public via the <a href="https://huggingface.co/transformers/v3.1.0/index.html">Transformers API by Huggingface</a> for Python, I decided to give them a try and learn about how to use them not only as assistants but to use them for research purposes.</p> <p>Here, you can find short examples with some of the code I used to explore and learn about these models.</p> <div class=franklin-toc ><ol><li><a href="#fine_tuning_for_sentiment_analysis">Fine tuning for sentiment analysis</a><li><a href="#using_sentence-similarity_to_search_papers_on_arxiv">Using sentence-similarity to search papers on ArXiV</a></ol></div> <h2 id=fine_tuning_for_sentiment_analysis ><a href="#fine_tuning_for_sentiment_analysis" class=header-anchor >Fine tuning for sentiment analysis</a></h2> <p>Earlier this year, I <a href="/DSEntries/SentimentSongs1/">made a post</a> about sentiment analysis of pop song lyrics from different artists. That time I used a lexicon-based analyzer &#40;VADER&#41; that doesn&#39;t require any kind of training because it implements a rule-based score. One of the disadvantages of VADER is that is not transferable to other languages because it was built specifically for the English language in social media.</p> <p>To refresh our memory: sentiment analysis involves assigning a global sentiment &#40;or sentiment score&#41; to a phrase or statement by categorizing each word, assigning weights, and then averaging them to obtain an overall sentiment score. Below some examples for the binary &#40;positive or negative&#41; scenario: </p> <table><tr><th align=center >Category<th align=center >Example<tr><td align=center >Positive emotion<td align=center >Love, nice, good, great<tr><td align=center >Negative emotion<td align=center >Hurt, ugly, sad, bad, worse</table> <p>However, if we want a more complex or custom ruled-based analyzer there are not many other options but to build it ourselves. But don&#39;t worry, here is where the <em>magic</em> of pre-trained Large Language Models comes into play. </p> <p>A pre-trained LLM is exactly what it sounds like: a Language Model that has been trained with a corpus large enough to <em>learn</em> non-trivial relationships between words and perform a specific task. Learning these relationships between words allows the model to generate text that resembles text written by someone, but that is not exactly the <em>magic</em> I was referring to. What I was referring to is something called <strong>Transfer Learning</strong>, and I used this method in a <a href="/DSEntries/StyleTransfer/">previous post</a> for a different problem.</p> <p>The basis of transfer learning is to use the knowledge &#40;representations, relationships&#41; that the model learned during training for a task to perform a new task. In this particular case we want to use a LLM that has been trained for <strong>next token prediction</strong> &#40;text generation&#41; and <em>fine-tune</em> it for <strong>sequence classification</strong> &#40;sentiment analysis&#41;. The <em>knowledge</em> here consists in the relationships between words &#40;tokens&#41; also known as <strong>semantic relationships</strong> that the model <em>learns</em> in the <strong>attention layers</strong> of the <a href="https://en.wikipedia.org/wiki/Transformer_&#40;machine_learning_model&#41;#Architecture">Transformer architecture</a>. </p> <p>Fortunately for us, there are already several pre-trained and fine-tuned models deployed by the community on <a href="https://huggingface.co/models">Huggingface</a> that can be used for a wide variety of tasks.</p> <p>Here, we are going to <strong>load, test and fine tune</strong> a model already <a href="https://huggingface.co/daveni/twitter-xlm-roberta-emotion-es">fine-tuned to categorize tweets in Spanish.</a> This particular model is based on a pre-trained version of <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> called <a href="https://huggingface.co/docs/transformers/model_doc/xlm-roberta">XML-ROBERTa</a> that was developed for multi-language purposes. </p> <p>Let&#39;s start with the code for this entry by loading some libraries: </p> <pre><code class="python hljs"><span class=hljs-comment >#transformers library from huggingface to load the model and tokenizer of the model</span>
 <span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span> AutoModelForSequenceClassification
 <span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span> AutoTokenizer, AutoConfig
 
@@ -282,8 +282,297 @@ disp.plot()</code></pre>
     accuracy                           0.83       510
    macro avg       0.83      0.83      0.83       510
 weighted avg       0.83      0.83      0.83       510</code></pre>
+<h2 id=using_sentence-similarity_to_search_papers_on_arxiv ><a href="#using_sentence-similarity_to_search_papers_on_arxiv" class=header-anchor >Using sentence-similarity to search papers on ArXiV</a></h2>
+<p><strong>Are you about to start a research project and need to do literature review, but want to do it in a fun way using Large Language Models?</strong></p>
+<p>One cool application of Large Language Models is to use their <a href="https://en.wikipedia.org/wiki/Word_embedding">word embeddings</a> to compute text simmilarities. <em>Embeddings</em> are machine readable representations of objects that need to be <em>translated</em> for a machine to process them. These representations have numeric values and they attempt to preserve intrinsic properties of the system. </p>
+<p>In the case of words in text, one of the most important properties that we want to preserve is <em>semantic relationships</em>; how words or word types are related to each others. In principle, if we compute the distance between two representations of words we will be able to tell how <em>similar</em> they are &#40;see <em>Fig 1</em>&#41;. Of course these <em>semantic relationships</em> are going to be dependent on how the model was trained, and although there is a lot to learn from how to build these embeddings this is not the goal of this post.</p>
+<p><img src="https://www.nlplanet.org/course-practical-nlp/_images/word_embeddings.png" alt="Scheme of a 2-D representation of the words &quot;statistics&quot;, &quot;mathematics&quot;, &quot;Tiger&quot; and &quot;Lion&quot;" /></p>
+<blockquote>
+<p><em>Fig 1. Scheme of a 2-D representation of the words &quot;statistics&quot;, &quot;mathematics&quot;, &quot;Tiger&quot; and &quot;Lion&quot;. Source: https://www.nlplanet.org/course-practical-nlp/01-intro-to-nlp/11-text-as-vectors-embeddings</em></p>
+</blockquote>
+<p>For this post we only need to know that <strong>we can use the embeddings that LLMs use for other things than making queries &#40;prompting&#41; to a LLM</strong>. </p>
+<p>In this short demonstration we are going to use language models -that were developed to analyze sentences &#40;<a href="https://www.sbert.net/">sentence-transformers</a>&#41;- to find articles on Arxiv that might be useful for a particular project, using <em>keywords</em> and a description of the project &#40;or abstract&#41; we want to develop.  </p>
+<p>For simplicity and to reduce computational time, we are going to divide the search process into the following steps:</p>
+<ul>
+<li><p><strong>Step 1:</strong> Filter the articles that cointain specific or general keywords that we want to look for</p>
+
+<li><p><strong>Step 2:</strong> Compute similarities between the abstracts from the papers that we collected and the article of reference</p>
+
+<li><p><strong>Step 3:</strong> Sort collected articles by similarity values</p>
+
+</ul>
+<p>This way we don&#39;t need to calculate similarities from articles that don&#39;t include our keywords.</p>
+<p>Let&#39;s start with importing the libraries we are going to use:</p>
+<pre><code class="python hljs"><span class=hljs-comment ># import libraries</span>
+
+<span class=hljs-comment >#for numerical calculations</span>
+<span class=hljs-keyword >import</span> numpy <span class=hljs-keyword >as</span> np
+
+<span class=hljs-comment ># for files and directories</span>
+<span class=hljs-keyword >import</span> os
+<span class=hljs-keyword >import</span> json
+
+<span class=hljs-comment ># plotting</span>
+<span class=hljs-keyword >import</span> matplotlib.pyplot <span class=hljs-keyword >as</span> plt
+<span class=hljs-comment >#%matplotlib inline</span>
+
+<span class=hljs-comment >#regex</span>
+<span class=hljs-keyword >import</span> re</code></pre>
+<p>and to retrieve ArXiV&#39;s information we can <a href="https://www.kaggle.com/datasets/Cornell-University/arxiv">download their MetaData Dataset from Kaggle</a>. This dataset provides the following information for every article on ArXiV:</p>
+<ul>
+<li><p>id: ArXiv ID &#40;can be used to access the paper&#41;</p>
+
+<li><p>submitter: Who submitted the paper</p>
+
+<li><p>authors: Authors of the paper</p>
+
+<li><p>title: Title of the paper</p>
+
+<li><p>comments: Additional info, such as number of pages and figures</p>
+
+<li><p>journal-ref: Information about the journal the paper was published in</p>
+
+<li><p>doi: <a href="Digital Object Identifier">https://www.doi.org</a></p>
+
+<li><p>abstract: The abstract of the paper</p>
+
+<li><p>categories: Categories / tags in the ArXiv system</p>
+
+<li><p>versions: A version history</p>
+
+</ul>
+<p>once we have downloaded the dataset, we can either load it or <em>stream</em> it. Since the dataset is aroud ~ 4GB, instead of loading the file we are going to use the <em>yield</em> keyword to iterate over the lines without storing the entire file in memory:</p>
+<pre><code class="python hljs"><span class=hljs-comment ># Arxiv metadata dataset ~ 1.7 million of papers</span>
+
+<span class=hljs-comment ># File address</span>
+data_file = <span class=hljs-string >&quot;~\arxiv-metadata-oai-snapshot.json&quot;</span>
+
+<span class=hljs-string >&quot;&quot;&quot; get_metadata(data_file)
+
+    Function to get metadata from the json file
+    Args: data_file: name of the file (with full path if needed)  
+    Returns: yields the lines from the json file
+
+&quot;&quot;&quot;</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">get_metadata</span>(<span class=hljs-params >data_file</span>):
+    <span class=hljs-keyword >with</span> <span class=hljs-built_in >open</span>(data_file, <span class=hljs-string >&#x27;r&#x27;</span>) <span class=hljs-keyword >as</span> f:
+        <span class=hljs-keyword >for</span> line <span class=hljs-keyword >in</span> f:
+            <span class=hljs-keyword >yield</span> line</code></pre>
+<p>Now we can test our function <code>get_metadata&#40;&#41;</code> to print out the data for the first paper</p>
+<pre><code class="python hljs"><span class=hljs-comment ># get the metadata</span>
+arxiv_metadata = get_metadata(data_file)
+
+<span class=hljs-comment ># Printing the values of the first paper in the dataset by breaking the loop after the first iteration</span>
+<span class=hljs-keyword >for</span> paper <span class=hljs-keyword >in</span> arxiv_metadata:
+  <span class=hljs-keyword >for</span> k, v <span class=hljs-keyword >in</span> json.loads(paper).items():
+    <span class=hljs-built_in >print</span>(<span class=hljs-string >f&#x27;<span class=hljs-subst >{k}</span>: <span class=hljs-subst >{v}</span>&#x27;</span>)
+  <span class=hljs-keyword >break</span></code></pre>
+<pre><code class="plaintext hljs">id: 0704.0001
+submitter: Pavel Nadolsky
+authors: C. Bal\&#x27;azs, E. L. Berger, P. M. Nadolsky, C.-P. Yuan
+title: Calculation of prompt diphoton production cross sections at Tevatron and
+  LHC energies
+comments: 37 pages, 15 figures; published version
+journal-ref: Phys.Rev.D76:013009,2007
+doi: 10.1103/PhysRevD.76.013009
+report-no: ANL-HEP-PR-07-12
+categories: hep-ph
+license: None
+abstract:   A fully differential calculation in perturbative quantum chromodynamics is
+presented for the production of massive photon pairs at hadron colliders. All
+next-to-leading order perturbative contributions from quark-antiquark,
+gluon-(anti)quark, and gluon-gluon subprocesses are included, as well as
+all-orders resummation of initial-state gluon radiation valid at
+next-to-next-to-leading logarithmic accuracy. The region of phase space is
+specified in which the calculation is most reliable. Good agreement is
+demonstrated with data from the Fermilab Tevatron, and predictions are made for
+more detailed tests with CDF and DO data. Predictions are shown for
+distributions of diphoton pairs produced at the energy of the Large Hadron
+Collider (LHC). Distributions of the diphoton pairs from the decay of a Higgs
+boson are contrasted with those produced from QCD processes at the LHC, showing
+that enhanced sensitivity to the signal can be obtained with judicious
+selection of events.</code></pre>
+<p>It seems that our code is working so far. Now, lets take as case of study a paper already published in a journal that contains keywords and abstract. </p>
+<p>Because I find <a href="https://en.wikipedia.org/wiki/Collective_behavior">collective behavior</a> fascinating, and I have always wanted to work on a project that studies collective behaviour in <strong>football</strong> &#40;yes, the real one&#41;. Let&#39;s try to find papers that approach the study of collective behaviour in football in the way researchers study animal systems.</p>
+<p>We are going to use this really cool paper: <a href="https://link.springer.com/article/10.1007/s12064-020-00311-9">Searching for structure in collective systems</a> by <a href="https://www.sas.upenn.edu/~crtwomey/">Twomey et al.</a> where they develop a methodology to quantify coordination and identify the most &#40;and least&#41; coordinated components in multi-individual systems.</p>
+<p>Now, in order to start our search, lets define some of the variables we are going to use. For this particular case I want to find papers that study football, so I will make that keyword <em>a must</em> for my search, and I will define some secondary keywords that will help us to find more papers.</p>
+<pre><code class="python hljs"><span class=hljs-comment >#the main keywords</span>
+keywords_all = [<span class=hljs-string >&#x27;soccer&#x27;</span>] <span class=hljs-comment ># Soccer... :facepalm:</span>
+
+<span class=hljs-comment >#secondary keywords</span>
+keywords_any = [<span class=hljs-string >&#x27;collective&#x27;</span>,<span class=hljs-string >&#x27;behaviour&#x27;</span>,<span class=hljs-string >&#x27;behavior&#x27;</span>,<span class=hljs-string >&#x27;human&#x27;</span>,<span class=hljs-string >&#x27;sports&#x27;</span>, <span class=hljs-string >&#x27;football&#x27;</span>]
+
+<span class=hljs-comment >#the abstract/description we are going to use as reference</span>
+abstract_reference = [<span class=hljs-string >&#x27;From fish schools and bird flocks to biofilms and neural networks, collective systems in nature are made up of many mutually influencing individuals that interact locally to produce large-scale coordinated behavior. Although coordination is central to what it means to behave collectively, measures of large-scale coordination in these systems are ad hoc and system specific. The lack of a common quantitative scale makes broad cross-system comparisons difficult. Here we identify a systemindependent measure of coordination based on an information-theoretic measure of multivariate dependence and show it can be used in practice to give a new view of even classic, well-studied collective systems. Moreover, we use this measure to derive a novel method for finding the most coordinated components within a system and demonstrate how this can be used in practice to reveal intrasystem organizational structure.&#x27;</span>]</code></pre>
+<p>To search for the keywords we can define some functions</p>
+<pre><code class="python hljs"><span class=hljs-string >&quot;&quot;&quot; contains_any(keywords, text)
+
+    Function that recevies a list of keywords and a text and returns True if any of the keywords is in the text
+    input: keywords, text: as strings.
+    returns: True if any of the keywords is in the text, False otherwise.
+&quot;&quot;&quot;</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">contains_any</span>(<span class=hljs-params >keywords, text</span>):
+    pattern = <span class=hljs-string >r&quot;\b(&quot;</span> + <span class=hljs-string >&quot;|&quot;</span>.join(keywords) + <span class=hljs-string >r&quot;)\b&quot;</span>
+    <span class=hljs-keyword >return</span> <span class=hljs-built_in >bool</span>(re.search(pattern, text, flags=re.IGNORECASE))
+
+<span class=hljs-string >&quot;&quot;&quot; contains_all(keywords, text)
+    
+    Function that recevies a list of keywords and a text and returns True if all of the keywords are in the text
+    input: keywords, text: as strings.
+    returns: True if all of the keywords are in the text, False otherwise.    
+    
+&quot;&quot;&quot;</span>
+<span class=hljs-keyword >def</span> <span class="hljs-title function_">contains_all</span>(<span class=hljs-params >keywords, text</span>):
+    <span class=hljs-keyword >return</span> <span class=hljs-built_in >all</span>(word <span class=hljs-keyword >in</span> text <span class=hljs-keyword >for</span> word <span class=hljs-keyword >in</span> keywords)</code></pre>
+<p>Now we can start searching and collecting the MetaData from the papers that include &quot;soccer&quot; and/or the secondary keywords in their title or abstract</p>
+<pre><code class="python hljs">num_papers = <span class=hljs-number >500</span> <span class=hljs-comment >#setting a limit for retrieved papers, just in case we get too many</span>
+counter_ = <span class=hljs-number >0</span>    <span class=hljs-comment >#counter for the number of papers retrieved</span>
+collected_papers = []
+<span class=hljs-comment >#getting the metadata</span>
+arxiv_metadata = get_metadata(data_file)
+
+<span class=hljs-comment >#iterating over the metadata</span>
+<span class=hljs-keyword >for</span> paper <span class=hljs-keyword >in</span> arxiv_metadata:
+    <span class=hljs-comment >#loading the information of the paper</span>
+    paper_info = json.loads(paper)
+    <span class=hljs-comment >#checking if the paper contains the primary keywords</span>
+    <span class=hljs-keyword >if</span> contains_all(keywords_all, paper_info[<span class=hljs-string >&#x27;abstract&#x27;</span>].lower()) <span class=hljs-keyword >or</span> contains_all(keywords_all, paper_info[<span class=hljs-string >&#x27;title&#x27;</span>].lower()):
+        <span class=hljs-comment >#secondary keywords</span>
+        <span class=hljs-keyword >if</span> contains_any(keywords_any, paper_info[<span class=hljs-string >&#x27;abstract&#x27;</span>].lower()) <span class=hljs-keyword >or</span> contains_any(keywords_any, paper_info[<span class=hljs-string >&#x27;title&#x27;</span>].lower()):
+            <span class=hljs-comment >#we collect the paper</span>
+            collected_papers.append(paper_info)
+            counter_ += <span class=hljs-number >1</span>
+    <span class=hljs-comment >#if we have reached the limit we break the loop</span>
+    <span class=hljs-keyword >if</span> counter_ == num_papers:
+        <span class=hljs-keyword >break</span></code></pre>
+<pre><code class="python hljs"><span class=hljs-built_in >print</span>(<span class=hljs-string >f&quot;Total papers collected: <span class=hljs-subst >{<span class=hljs-built_in >len</span>(collected_papers)}</span>&quot;</span>)</code></pre>
+<pre><code class="plaintext hljs">Total papers collected: 227</code></pre>
+<p>It seems that we didn&#39;t need to break the loop since we only found 227. If we want to retrieve more papers we could modify our keywords &#40;adding more to the secondary keywords array&#41;, but we don&#39;t need that for this example.</p>
+<p>Let&#39;s print out the first 10 articles that we found</p>
+<pre><code class="python hljs">[<span class=hljs-built_in >print</span>(collected_papers[i][<span class=hljs-string >&#x27;title&#x27;</span>] + <span class=hljs-string >&#x27;\n&#x27;</span>) <span class=hljs-keyword >for</span> i <span class=hljs-keyword >in</span> <span class=hljs-built_in >range</span>(<span class=hljs-number >15</span>)]</code></pre>
+<pre><code class="plaintext hljs">Movement and Man at the end of the Random Walks
+
+New Mechanics of Generic Musculo-Skeletal Injury
+
+Using the Sound Card as a Timer
+
+Dynamics of tournaments: the soccer case
+
+Relative Age Effect in Elite Sports: Methodological Bias or Real
+  Discrimination?
+
+Soccer: is scoring goals a predictable Poissonian process?
+
+The Socceral Force
+
+Relative locality and the soccer ball problem
+
+Archetypal Athletes
+
+Learning RoboCup-Keepaway with Kernels
+
+Towards Real-Time Summarization of Scheduled Events from Twitter Streams
+
+A statistical view on team handball results: home advantage, team
+  fitness and prediction of match outcomes
+
+How does the past of a soccer match influence its future?
+
+Quantum Consciousness Soccer Simulator
+
+Inferring Team Strengths Using a Discrete Markov Random Field</code></pre>
+<p>With a little inspection we can notice that the articles seem to be related to soccer and even if they might contain some of our keywords, it is not very clear how many &#40;if any&#41; of them are going to be helpful for us. In order to retrieve the <em>most helpful</em> articles for our study, we can now compute how similar their abstracts are with respect to our abstract of reference.</p>
+<p>First we import the libraries we are going to use for the embeddings</p>
+<pre><code class="python hljs"><span class=hljs-comment ># Importing the necessary libraries for llms</span>
+<span class=hljs-keyword >from</span> transformers <span class=hljs-keyword >import</span> *
+<span class=hljs-keyword >from</span> sentence_transformers <span class=hljs-keyword >import</span> SentenceTransformer, util</code></pre>
+<p>The embedding we are going to use is from the model <code>paraphrase-MiniLM-L6-v2</code> and details about it can be found <a href="https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2">here</a>. This model was trained particularly to derive <em>semantically meaningful</em> <a href="https://en.wikipedia.org/wiki/Sentence_embedding">sentence embeddings</a> and compare them using <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a>. If you want to know about how the model was developed you can check the ArXiV paper <a href="https://arxiv.org/abs/1908.10084">here</a> or check the <a href="https://www.sbert.net/">documentation</a> for more details about the package <code>sentence_transformers</code>. </p>
+<p>Now let&#39;s load and inspect the model</p>
+<pre><code class="python hljs"><span class=hljs-comment ># We are going to use one of the models from the sentence-transformers library to get the embeddings of the sentences</span>
+model_name = <span class=hljs-string >&#x27;paraphrase-MiniLM-L6-v2&#x27;</span>
+llm_model = SentenceTransformer(model_name)</code></pre>
+<pre><code class="plaintext hljs">loading configuration file config.json from cache at C:\Users\.cache\huggingface\hub\models--sentence-transformers--paraphrase-MiniLM-L6-v2\snapshots\3bf4ae7445aa77c8daaef06518dd78baffff53c9\config.json
+Model config BertConfig {
+  &quot;_name_or_path&quot;: &quot;sentence-transformers/paraphrase-MiniLM-L6-v2&quot;,
+  &quot;architectures&quot;: [
+    &quot;BertModel&quot;
+  ],
+  &quot;attention_probs_dropout_prob&quot;: 0.1,
+  &quot;classifier_dropout&quot;: null,
+  &quot;gradient_checkpointing&quot;: false,
+  &quot;hidden_act&quot;: &quot;gelu&quot;,
+  &quot;hidden_dropout_prob&quot;: 0.1,
+  &quot;hidden_size&quot;: 384,
+  &quot;initializer_range&quot;: 0.02,
+  &quot;intermediate_size&quot;: 1536,
+  &quot;layer_norm_eps&quot;: 1e-12,
+  &quot;max_position_embeddings&quot;: 512,
+  &quot;model_type&quot;: &quot;bert&quot;,
+  &quot;num_attention_heads&quot;: 12,
+  &quot;num_hidden_layers&quot;: 6,
+  &quot;pad_token_id&quot;: 0,
+  &quot;position_embedding_type&quot;: &quot;absolute&quot;,
+  &quot;transformers_version&quot;: &quot;4.39.2&quot;,
+  &quot;type_vocab_size&quot;: 2,
+  &quot;use_cache&quot;: true,
+  &quot;vocab_size&quot;: 30522
+...
+}</code></pre>
+<p>One of the first thing we notice is that this model is based on <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> and that the embedding that it uses has 384 dimensions &#40;hidden<em>size&#41;. To corroborate that, we can _encode</em> &#40;pass through the model a sentence and get its emmbeding&#41; the abstract we are going to use for reference: </p>
+<pre><code class="python hljs"><span class=hljs-comment ># Getting the embeddings of the reference abstract</span>
+abstract_em = llm_model.encode(abstract_reference)
+<span class=hljs-comment ># Printing the shape of the embeddings</span>
+<span class=hljs-built_in >print</span>(np.shape(abstract_em))</code></pre>
+<p>Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how <em>semantically</em> close &#40;or far&#41; are the abstracts for the articles that we retrieved compared with the study we have as reference.</p>
+<pre><code class="python hljs"><span class=hljs-comment >#storing values</span>
+sim_values = []
+collected_titles = []
+collected_abstracts = []
+collected_arxiv_ids = []
+collected_doi = []
+
+<span class=hljs-comment >#iterating over the collected papers</span>
+<span class=hljs-keyword >for</span> paper <span class=hljs-keyword >in</span> collected_papers:
+    <span class=hljs-comment >#storing each of the important values we want to keep</span>
+    collected_titles.append(paper[<span class=hljs-string >&#x27;title&#x27;</span>])
+    collected_abstracts.append(paper[<span class=hljs-string >&#x27;abstract&#x27;</span>])
+    collected_arxiv_ids.append(paper[<span class=hljs-string >&#x27;id&#x27;</span>])
+    collected_doi.append(paper[<span class=hljs-string >&#x27;doi&#x27;</span>]) 
+    <span class=hljs-comment >#finally computing the similarity between abstracts and store it</span>
+    sim_values.append(<span class=hljs-built_in >float</span>(util.cos_sim(abstract_em, llm_model.encode(paper[<span class=hljs-string >&#x27;abstract&#x27;</span>]))[<span class=hljs-number >0</span>][<span class=hljs-number >0</span>].detach().numpy()))</code></pre>
+<p>And we can do a quick inspection of the first 15 papers</p>
+<pre><code class="python hljs"><span class=hljs-comment ># print the titles oredered by s with the reference title.</span>
+np.array(collected_titles)[np.argsort(sim_values)][::-<span class=hljs-number >1</span>][<span class=hljs-number >0</span>:<span class=hljs-number >14</span>]</code></pre>
+<pre><code class="plaintext hljs">array([&quot;Stochastic model for football&#x27;s collective dynamics&quot;,
+       &#x27;Using network science to analyze football passing networks: dynamics,\n  space, time and the multilayer nature of the game&#x27;,
+       &#x27;A Continuous-Time Stochastic Process for High-Resolution Network Data in\n  Sports&#x27;,
+       &#x27;The Soccer Game, bit by bit: An information-theoretic analysis&#x27;,
+       &#x27;Modeling ball possession dynamics in the game of football&#x27;,
+       &#x27;A new method for comparing rankings through complex networks: Model and\n  analysis of competitiveness of major European soccer leagues&#x27;,
+       &#x27;Emergent Coordination Through Competition&#x27;,
+       &#x27;Deep Decision Trees for Discriminative Dictionary Learning with\n  Adversarial Multi-Agent Trajectories&#x27;,
+       &#x27;Optimising Long-Term Outcomes using Real-World Fluent Objectives: An\n  Application to Football&#x27;,
+       &#x27;Hierarchical and State-based Architectures for Robot Behavior Planning\n  and Control&#x27;,
+       &#x27;Primacy &amp; Ranking of UEFA Soccer Teams from Biasing Organizing Rules&#x27;,
+       &quot;Disruptive innovations in RoboCup 2D Soccer Simulation League: from\n  Cyberoos&#x27;98 to Gliders2016&quot;,
+       &#x27;Alterations in Structural Correlation Networks with Prior Concussion in\n  Collision-Sport Athletes&#x27;,
+       &#x27;Optimising Game Tactics for Football&#x27;], dtype=&#x27;&lt;U145&#x27;)</code></pre>
+<p>Just by looking at the first five papers, I can confirm that I do recognize some of them because this is a topic I am very interested in. But this search already added a lot of references I wasn&#39;t aware of, so I&#39;m excited to read them as well&#33;</p>
+<p>Finally, we can save the papers we found in a DataFrame and export it as <code>.csv</code></p>
+<pre><code class="python hljs"><span class=hljs-keyword >import</span> pandas <span class=hljs-keyword >as</span> pd
+<span class=hljs-comment ># indexing the papers by the similarity value in decreasing order</span>
+ix_order = np.argsort(sim_values)[::-<span class=hljs-number >1</span>]
+<span class=hljs-comment ># Creating a pandas DataFrame with the collected data</span>
+df = pd.DataFrame({<span class=hljs-string >&#x27;title&#x27;</span>: np.array(collected_titles)[ix_order], 
+                   <span class=hljs-string >&#x27;abstract&#x27;</span>: np.array(collected_abstracts)[ix_order], 
+                   <span class=hljs-string >&#x27;arxiv_id&#x27;</span>: np.array(collected_arxiv_ids)[ix_order], 
+                   <span class=hljs-string >&#x27;doi&#x27;</span>: np.array(collected_doi)[ix_order], 
+                   <span class=hljs-string >&#x27;similarity&#x27;</span>: np.array(sim_values)[ix_order]})</code></pre>
+<pre><code class="python hljs"><span class=hljs-comment ># saving the dataframe as csv</span>
+df.to_csv(<span class=hljs-string >&#x27;collective_football_biblio.csv&#x27;</span>, index=<span class=hljs-literal >False</span>)</code></pre>
+<p><a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/Arxiv_search.ipynb">Here</a> you can find the notebook for this post.</p>
 <div class=page-foot >
-    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: February 28, 2024.
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: April 02, 2024.
     Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
 </div>
 </div>
