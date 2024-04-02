@@ -441,7 +441,7 @@ For simplicity and to reduce computational time, we are going to divide the sear
 * **Step 2:** Compute similarities between the abstracts from the papers that we collected and the article of reference
 * **Step 3:** Sort collected articles by similarity values
 
-This way we don't need to calculate similarities from articles that don't include our keywords.
+This way we don't need to calculate similarities from articles that don't include our keywords, and we can expect to find useful some of the articles from the top of the list.
 
 Let's start with importing the libraries we are going to use:
 ```python
