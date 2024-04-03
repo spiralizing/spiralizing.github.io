@@ -691,12 +691,15 @@ Model config BertConfig {
 }
 
 ```
-One of the first thing we notice is that this model is based on [BERT](https://en.wikipedia.org/wiki/BERT_(language_model)) and that the embedding that it uses has 384 dimensions (hidden_size). To corroborate that, we can _encode_ (pass through the model a sentence and get its emmbeding) the abstract we are going to use for reference: 
+One of the first thing we notice is that this model is based on [BERT](https://en.wikipedia.org/wiki/BERT_(language_model)) and that the embedding that it uses has 384 dimensions (_hidden size_). To corroborate that, we can _encode_ (pass through the model a sentence and get its emmbeding) the abstract we are going to use for reference: 
 ```python
 # Getting the embeddings of the reference abstract
 abstract_em = llm_model.encode(abstract_reference)
 # Printing the shape of the embeddings
 print(np.shape(abstract_em))
+```
+```plaintext
+(1, 384)
 ```
 Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how _semantically_ close the abstracts (papers retrieved) are to our reference.
 
