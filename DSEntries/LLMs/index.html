@@ -523,7 +523,7 @@ Model config BertConfig {
 abstract_em = llm_model.encode(abstract_reference)
 <span class=hljs-comment ># Printing the shape of the embeddings</span>
 <span class=hljs-built_in >print</span>(np.shape(abstract_em))</code></pre>
-<p>Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how <em>semantically</em> close &#40;or far&#41; are the abstracts for the articles that we retrieved compared with the study we have as reference.</p>
+<p>Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how <em>semantically</em> close the abstracts &#40;papers retrieved&#41; are to our reference.</p>
 <pre><code class="python hljs"><span class=hljs-comment >#storing values</span>
 sim_values = []
 collected_titles = []
@@ -572,7 +572,7 @@ df = pd.DataFrame({<span class=hljs-string >&#x27;title&#x27;</span>: np.array(c
 df.to_csv(<span class=hljs-string >&#x27;collective_football_biblio.csv&#x27;</span>, index=<span class=hljs-literal >False</span>)</code></pre>
 <p><a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/Arxiv_search.ipynb">Here</a> you can find the notebook for this post.</p>
 <div class=page-foot >
-    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: April 02, 2024.
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: April 03, 2024.
     Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
 </div>
 </div>
