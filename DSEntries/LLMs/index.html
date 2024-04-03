@@ -518,11 +518,12 @@ Model config BertConfig {
   &quot;vocab_size&quot;: 30522
 ...
 }</code></pre>
-<p>One of the first thing we notice is that this model is based on <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> and that the embedding that it uses has 384 dimensions &#40;hidden<em>size&#41;. To corroborate that, we can _encode</em> &#40;pass through the model a sentence and get its emmbeding&#41; the abstract we are going to use for reference: </p>
+<p>One of the first thing we notice is that this model is based on <a href="https://en.wikipedia.org/wiki/BERT_&#40;language_model&#41;">BERT</a> and that the embedding that it uses has 384 dimensions &#40;<em>hidden size</em>&#41;. To corroborate that, we can <em>encode</em> &#40;pass through the model a sentence and get its emmbeding&#41; the abstract we are going to use for reference: </p>
 <pre><code class="python hljs"><span class=hljs-comment ># Getting the embeddings of the reference abstract</span>
 abstract_em = llm_model.encode(abstract_reference)
 <span class=hljs-comment ># Printing the shape of the embeddings</span>
 <span class=hljs-built_in >print</span>(np.shape(abstract_em))</code></pre>
+<pre><code class="plaintext hljs">(1, 384)</code></pre>
 <p>Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how <em>semantically</em> close the abstracts &#40;papers retrieved&#41; are to our reference.</p>
 <pre><code class="python hljs"><span class=hljs-comment >#storing values</span>
 sim_values = []
