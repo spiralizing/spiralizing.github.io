@@ -698,7 +698,8 @@ abstract_em = llm_model.encode(abstract_reference)
 # Printing the shape of the embeddings
 print(np.shape(abstract_em))
 ```
-Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how _semantically_ close (or far) are the abstracts for the articles that we retrieved compared with the study we have as reference.
+Now, with this numerical representation of our abstract in the 384-dimensional space of this model, we can quantify how _semantically_ close the abstracts (papers retrieved) are to our reference.
+
 ```python
 #storing values
 sim_values = []
