@@ -13,13 +13,32 @@
     </title>
     <link> https://spiralizing.github.io/ </link>
     <description>
-      <![CDATA[  | Data Science | Complex Systems | Scientific Research |  ]]>
+      <![CDATA[  Complex Systems &amp; Computational Methods for Digital Arts &amp; Humanities  ]]>
     </description>
     <atom:link
       href="https://spiralizing.github.io/feed.xml"
       rel="self"
       type="application/rss+xml" />
 
+
+<item>
+  <title>
+    <![CDATA[  Personal Notes  ]]>
+  </title>
+  <link> https://spiralizing.github.io/Blog/index.html </link>
+  <guid> https://spiralizing.github.io/Blog/index.html </guid>
+  <description>
+    <![CDATA[  Personal notes that include thougths or advice  ]]>
+  </description>  
+    
+  <pubDate>Fri, 09 May 2025 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
 
 <item>
   <title>
@@ -124,6 +143,25 @@
   <guid> https://spiralizing.github.io/DSEntries/StyleTransfer/index.html </guid>
   <description>
     <![CDATA[  Transfering the style from one image to another  ]]>
+  </description>  
+    
+  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  LLMs as approximate information synthesizers  ]]>
+  </title>
+  <link> https://spiralizing.github.io/BlogNotes/LLMs_Synthesizers/index.html </link>
+  <guid> https://spiralizing.github.io/BlogNotes/LLMs_Synthesizers/index.html </guid>
+  <description>
+    <![CDATA[  LLMs as approximate information synthesizers  ]]>
   </description>  
     
   <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
