@@ -90,9 +90,9 @@ Specific examples include:
 
 - Modifying plotting functions: LLMs excel at modifying long or complicated plotting functions quickly. This is a simple synthesis that requires the source code and either a specific example of what you want or details of what you wish to modify.
 - Creating new functions for code. Whenever I want to integrate code in my work, I:
-    1. Create a first _shape_ that outlines the steps the code needs to perform
-    2. Synthesize a second shape that includes an algorithm following the steps of the first _shape_
+    1. Create a first _shape_ that outlines the steps for the task the code needs to perform
+    2. Synthesize a second _shape_ that includes an algorithm following the steps of the first _shape_
     3. Synthesize a third _shape_ containing pseudo-code that implements the synthesized algorithm
-    4. Synthesize a final _shape_ containing the code in my preferred programming language
+    4. Synthesize a final approximate _shape_ containing the code in my preferred programming language
 
 This framework and workflow is transferable to other disciplines and allows users to maintain more control over the process. It enables them to incorporate their own expertise, adding that "human" perspective that brings genuine value to the final product.
