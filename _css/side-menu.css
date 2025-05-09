@@ -1,15 +1,72 @@
+/* Side Menu CSS - Academic Profile Theme */
+
+:root {
+  --main-bg-color: #FBE9D0;
+  --secondary-bg-color: #90AEAD;
+  --primary-text-color: #244855;
+  --accent-color: #E64833;
+  --secondary-accent: #874F41;
+  --menu-bg-color: #244855;
+  --menu-text-color: #FBE9D0;
+  --menu-hover-bg: rgba(230, 72, 51, 0.2);
+  --menu-selected-bg: #E64833;
+}
+
 body {
-  background: #fff;
-  color: #363636;
+  color: var(--primary-text-color);
+  line-height: 1.6;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.header {
+  margin: 0;
+  color: var(--primary-text-color);
+  text-align: center;
+  padding: 2.5em 2em 0;
+  border-bottom: 1px solid var(--secondary-bg-color);
+}
+
+.header h1 {
+  margin: 0.2em 0;
+  font-size: 3em;
+  font-weight: 600;
 }
 
 .header h2 {
+  font-weight: 400;
+  color: var(--secondary-accent);
+  padding: 0;
+  margin-top: 0;
+  font-size: 1.2em;
   text-align: center;
 }
 
 .pure-img-responsive {
   max-width: 100%;
   height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(36, 72, 85, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: zoom-in;
+  position: relative;
+  z-index: 1;
+  background-color: #f5f2ee;
+  /* Porcelain background color */
+  padding: 15px;
+  border: 1px solid #e6e0da;
+}
+
+.pure-img-responsive:hover {
+  transform: scale(1.25);
+  box-shadow: 0 8px 25px rgba(36, 72, 85, 0.4);
+  z-index: 100;
+}
+
+.pure-img-responsive:active {
+  transform: scale(1.4);
+  box-shadow: 0 10px 30px rgba(36, 72, 85, 0.5);
 }
 
 /*
@@ -35,12 +92,12 @@ This is the parent `<div>` that contains the menu and the content area.
 }
 
 #layout.active #menu {
-  left: 200px;
-  width: 200px;
+  left: 250px;
+  width: 250px;
 }
 
 #layout.active .menu-link {
-  left: 200px;
+  left: 250px;
 }
 
 /*
@@ -49,39 +106,29 @@ The content `<div>` is where all your content goes.
 .content {
   margin: 0 auto;
   padding: 0 2em;
-  max-width: 800px;
+  max-width: 900px;
   margin-bottom: 50px;
   line-height: 1.6em;
 }
 
-.header {
-  margin: 0;
-  color: #333;
-  text-align: center;
-  padding: 2.5em 2em 0;
-  border-bottom: 1px solid #eee;
-}
-
-.header h1 {
-  margin: 0.2em 0;
-  font-size: 3em;
-  font-weight: 300;
-}
-
-.header h2 {
-  font-weight: 300;
-  color: #ccc;
-  padding: 0;
-  margin-top: 0;
-}
-
 .content-subhead {
   margin: 50px 0 20px 0;
-  font-weight: 300;
-  color: #888;
+  font-weight: 400;
+  color: var(--secondary-accent);
+  position: relative;
+  padding-bottom: 0.5em;
 }
 
-
+.content-subhead::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+}
 
 /*
 The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
@@ -89,30 +136,51 @@ appears on the left side of the page.
 */
 
 #menu {
-  margin-left: -200px; /* "#menu" width */
-  width: 200px;
+  margin-left: -250px;
+  /* "#menu" width */
+  width: 250px;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1000; /* so the menu or its navicon stays above all content */
-  background: #191818;
+  z-index: 1000;
+  /* so the menu or its navicon stays above all content */
+  background: var(--menu-bg-color);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Menu background pattern */
+#menu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(30deg, rgba(0, 0, 0, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(0, 0, 0, 0.05) 87.5%, rgba(0, 0, 0, 0.05)),
+    linear-gradient(150deg, rgba(0, 0, 0, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(0, 0, 0, 0.05) 87.5%, rgba(0, 0, 0, 0.05)),
+    linear-gradient(30deg, rgba(0, 0, 0, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(0, 0, 0, 0.05) 87.5%, rgba(0, 0, 0, 0.05)),
+    linear-gradient(150deg, rgba(0, 0, 0, 0.05) 12%, transparent 12.5%, transparent 87%, rgba(0, 0, 0, 0.05) 87.5%, rgba(0, 0, 0, 0.05));
+  background-size: 40px 70px;
+  opacity: 0.3;
+  z-index: -1;
 }
 
 /*
-    All anchors inside the menu should be styled like this.
-    */
+All anchors inside the menu should be styled like this.
+*/
 #menu a {
-  color: rgb(252, 98, 87);
+  color: var(--menu-text-color);
   border: none;
-  padding: 0.6em 0 0.6em 0.6em;
+  padding: 0.8em 0 0.8em 0.8em;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /*
-    Remove all background/borders, since we are applying them to #menu.
-    */
+Remove all background/borders, since we are applying them to #menu.
+*/
 #menu .pure-menu,
 #menu .pure-menu ul {
   border: none;
@@ -120,54 +188,62 @@ appears on the left side of the page.
 }
 
 /*
-    Add that light border to separate items into groups.
-    */
+Add that light border to separate items into groups.
+*/
 #menu .pure-menu ul,
 #menu .pure-menu .menu-item-divided {
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 /*
-        Change color of the anchor links on hover/focus.
-        */
+Change color of the anchor links on hover/focus.
+*/
 #menu .pure-menu li a:hover,
 #menu .pure-menu li a:focus {
-  background: #333;
+  background: var(--menu-hover-bg);
+  color: var(--accent-color);
 }
 
 /*
-    This styles the selected menu item `<li>`.
-    */
+This styles the selected menu item `<li>`.
+*/
 #menu .pure-menu-selected,
 #menu .pure-menu-heading {
-  background: #1f8dd6;
+  background: var(--menu-selected-bg);
 }
 
 /*
-        This styles a link within a selected menu item `<li>`.
-        */
+This styles a link within a selected menu item `<li>`.
+*/
 #menu .pure-menu-selected a {
-  color: #fff;
+  color: var(--menu-text-color);
 }
 
 /*
-    This styles the menu heading.
-    */
+This styles the menu heading.
+*/
 #menu .pure-menu-heading {
-  font-size: 110%;
-  color: #fff;
-  background: #1f8dd6;
+  font-size: 125%;
+  color: var(--menu-text-color);
   margin: 0;
+  padding: 1em 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /*
-    This styles the menu subheading.
-    */
+This styles the menu subheading.
+*/
 #menu .pure-menu-subheading {
   font-size: 115%;
-  color: rgb(22, 255, 127);
+  color: var(--accent-color);
   background: transparent;
   margin: 0;
+  padding: 0.8em;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* -- Dynamic Button For Responsive Menu ------------------------------------- */
@@ -183,21 +259,26 @@ small screens.
 */
 .menu-link {
   position: fixed;
-  display: block; /* show this only on small screens */
+  display: block;
+  /* show this only on small screens */
   top: 0;
-  left: 0; /* "#menu width" */
-  background: #000;
-  background: rgba(0, 0, 0, 0.7);
-  font-size: 10px; /* change this value to increase/decrease button size */
+  left: 0;
+  /* "#menu width" */
+  background: var(--primary-text-color);
+  background: rgba(36, 72, 85, 0.8);
+  font-size: 10px;
+  /* change this value to increase/decrease button size */
   z-index: 10;
-  width: 2em;
+  width: 2.5em;
   height: auto;
-  padding: 2.1em 1.6em;
+  padding: 2.2em 1.8em;
+  border-radius: 0 0 4px 0;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .menu-link:hover,
 .menu-link:focus {
-  background: #000;
+  background: var(--primary-text-color);
 }
 
 .menu-link span {
@@ -208,9 +289,11 @@ small screens.
 .menu-link span,
 .menu-link span::before,
 .menu-link span::after {
-  background-color: #fff;
+  background-color: var(--menu-text-color);
   width: 100%;
   height: 0.2em;
+  border-radius: 1px;
+  transition: all 0.3s ease;
 }
 
 .menu-link span::before,
@@ -224,6 +307,20 @@ small screens.
   margin-top: 0.6em;
 }
 
+/* Animation for menu button */
+#layout.active .menu-link span {
+  background: transparent;
+}
+
+#layout.active .menu-link span::before {
+  transform: rotate(45deg);
+  margin-top: 0;
+}
+
+#layout.active .menu-link span::after {
+  transform: rotate(-45deg);
+  margin-top: 0;
+}
 
 /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
@@ -231,6 +328,7 @@ small screens.
 Hides the menu at `48em`, but modify this based on your app's needs.
 */
 @media (min-width: 48em) {
+
   .header,
   .content {
     padding-left: 2em;
@@ -238,34 +336,161 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   }
 
   #layout {
-    padding-left: 150px; /* left col width "#menu" */
+    padding-left: 250px;
+    /* left col width "#menu" */
     left: 0;
   }
 
   #menu {
-    left: 200px;
+    left: 250px;
   }
 
   .menu-link {
-    position: relative;
-    left: 150px;
+    position: fixed;
+    left: 250px;
     display: none;
   }
 
   #layout.active .menu-link {
-    left: 150px;
+    left: 250px;
   }
 }
 
 @media (max-width: 48em) {
+
   /* Only apply this when the window is small. Otherwise, the following
-    case results in extra padding on the left:
-        * Make the window small.
-        * Tap the menu to trigger the active state.
-        * Make the window large again.
-    */
+  case results in extra padding on the left:
+      * Make the window small.
+      * Tap the menu to trigger the active state.
+      * Make the window large again.
+  */
   #layout.active {
     position: relative;
-    left: 200px;
+    left: 250px;
+  }
+}
+
+/* Additional responsive styles */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2.5em;
+  }
+
+  .header h2 {
+    font-size: 1em;
+  }
+
+  .content {
+    padding: 0 1.5em;
+  }
+
+  .content-subhead {
+    margin: 30px 0 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 2em;
+  }
+
+  .header {
+    padding: 2em 1em 0;
+  }
+
+  .content {
+    padding: 0 1em;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #1e272e;
+    --secondary-bg-color: #3a4750;
+    --primary-text-color: #d2dae2;
+    --accent-color: #ff6b6b;
+    --secondary-accent: #ff9e80;
+    --menu-bg-color: #15202b;
+    --menu-text-color: #e2e2e2;
+    --menu-hover-bg: rgba(255, 107, 107, 0.2);
+    --menu-selected-bg: #ff6b6b;
+  }
+
+  .pure-img-responsive {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .menu-link {
+    background: rgba(21, 32, 43, 0.8);
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+  #layout,
+  #menu,
+  .menu-link,
+  #menu a,
+  .menu-link span,
+  .menu-link span::before,
+  .menu-link span::after,
+  .pure-img-responsive {
+    transition-duration: 0.001ms !important;
+  }
+
+  .pure-img-responsive:hover {
+    transform: none;
+  }
+
+  #layout.active .menu-link span::before {
+    transform: none;
+  }
+
+  #layout.active .menu-link span::after {
+    transform: none;
+  }
+}
+
+/* High contrast support */
+@media (forced-colors: active) {
+
+  #menu a,
+  .menu-link span,
+  .menu-link span::before,
+  .menu-link span::after {
+    forced-color-adjust: none;
+  }
+
+  #menu .pure-menu-selected,
+  #menu .pure-menu-heading {
+    background: Highlight;
+  }
+
+  #menu .pure-menu li a:hover,
+  #menu .pure-menu li a:focus {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* Print styles */
+@media print {
+
+  #menu,
+  .menu-link {
+    display: none !important;
+  }
+
+  #layout {
+    padding-left: 0 !important;
+  }
+
+  .header,
+  .content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }

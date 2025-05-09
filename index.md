@@ -1,11 +1,11 @@
 @def title = "Alfredo González-Espinoza, PhD"
-@def subtitle = " | Data Science | Complex Systems | Scientific Research |"
+@def subtitle = " Complex Systems & Music"
 @def tags = ["syntax", "code"]
 
 ~~~
 <div class="row">
   <div class="container">
-    <img class="left" src="/assets/Mypic.jpeg" width="200" height="200">
+    <img class="left" src="/assets/Mypic.jpeg" width="500" height="300">
     <p>
     Hi!
     </p>

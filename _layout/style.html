@@ -3,10 +3,38 @@
 <link rel="stylesheet" href="/css/side-menu.css">
 <!-- style adjustments -->
 <style>
-.franklin-content{padding-left:10%;}
-@media (min-width: 940px) {
-  .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;}
-  .header {width: 700px;}
-}
+        :root {
+            --content-width: 800px;
+            --content-padding: 5%;
+        }
+        
+        .franklin-content {
+            padding-left: var(--content-padding);
+            max-width: 100%;
+        }
+        @media (min-width: 740px) {
+            .franklin-content {
+                width: var(--content-width);
+                margin-left: 5px;
+                padding-left: 90px;
+            }
+            
+            .header {
+                width: 900px;
+            }
+        }
+       
+        /* Improve accessibility for screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
 </style>
 <link rel="icon" href="/assets/spiral1.jpg">
