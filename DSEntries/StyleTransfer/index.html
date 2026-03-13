@@ -1,4 +1,4 @@
-<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> :root { --content-width: 800px; --content-padding: 5%; } .franklin-content { padding-left: var(--content-padding); max-width: 100%; } @media (min-width: 740px) { .franklin-content { width: var(--content-width); margin-left: 5px; padding-left: 90px; } .header { width: 900px; } } /* Improve accessibility for screen readers */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Copying the style of an image to another</title> <meta property="twitter:card" content=summary > <meta property="twitter:creator" content=sethaxen > <meta property="twitter:title" content="Copying the style of an image to another"> <div id=layout > <a href="#menu" id=menuLink  class=menu-link ><span></span></a> <div id=menu > <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/CenterOfEffect/" class=pure-menu-link >What key is Hey Joe in</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item "><a href="/DSEntries/LLMs/" class=pure-menu-link >Exploring LLMs</a> <li class="pure-menu-item "><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> <ul class="pure-menu-list "><a href="/Blog/" class=pure-menu-subheading >Personal Notes</a> <li class="pure-menu-item "><a href="/BlogNotes/LLMs_Synthesizers/" class=pure-menu-link >LLMs as Synthesizers</a> </div> </div> <div id=main > <div class=header > <h1>Copying the style of an image to another</h1> <h2> Complex Systems and Computational Methods in Interdisciplinary Research </h2> </div> <div class=franklin-content > <p>Style transfer &#40;Transfer Learning&#41; is one of the many cool applications that some Machine Learning models have. In this case I am going to use <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Networks &#40;CNNs&#41;</a> for style transfer. The main idea of this method is to use the <strong>kernel features</strong> that a <strong>CNN</strong> model has learned to transfer the <em>style</em> or <strong>spatial structure</strong> of an image to a different one. <div class=franklin-toc ><ol><li><a href="#loading_imports_model_and_images">Loading imports, model and images</a><li><a href="#feature_activation_maps_and_gram_matrices">Feature activation maps and gram matrices</a><li><a href="#training_creating_the_image">Training &#40;creating&#41; the image</a><li><a href="#final_result">Final result</a></ol></div></p> <h3 id=loading_imports_model_and_images ><a href="#loading_imports_model_and_images" class=header-anchor >Loading imports, model and images</a></h3> <p>First we are going to load some imports</p> <pre><code class="python hljs"><span class=hljs-keyword >import</span> seaborn <span class=hljs-keyword >as</span> sns
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/pure.css"> <link rel=stylesheet  href="/css/side-menu.css"> <style> :root { --content-width: 800px; --content-padding: 5%; } .franklin-content { padding-left: var(--content-padding); max-width: 100%; } @media (min-width: 740px) { .franklin-content { width: var(--content-width); margin-left: 5px; padding-left: 90px; } .header { width: 900px; } } /* Improve accessibility for screen readers */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; } /* Skip-to-main navigation link */ .skip-link { position: absolute; top: -50px; left: 0; background: var(--accent-color, #E64833); color: #fff; padding: 8px 16px; z-index: 10000; transition: top 0.2s ease; font-weight: 600; text-decoration: none; border-radius: 0 0 4px 0; } .skip-link:focus { top: 0; } /* Custom focus indicators for keyboard navigation */ a:focus-visible, button:focus-visible, [role="button"]:focus-visible { outline: 3px solid var(--accent-color, #E64833); outline-offset: 2px; border-radius: 2px; } </style> <link rel=icon  href="/assets/spiral1.jpg"> <title>Copying the style of an image to another</title> <meta property="twitter:card" content=summary > <meta property="twitter:creator" content=sethaxen > <meta property="twitter:title" content="Copying the style of an image to another"> <a href="#main-content" class=skip-link >Skip to main content</a> <div id=layout > <a href="#menu" id=menuLink  class=menu-link  aria-label="Toggle navigation menu" aria-expanded=false  role=button ><span></span></a> <nav id=menu  role=navigation  aria-label="Main navigation"> <div class=pure-menu > <a class="pure-menu-heading " ><a href="/" class=pure-menu-heading >Home</a> <ul class="pure-menu-list "><a href="/Research/" class=pure-menu-subheading >Research Projects</a> <li class="pure-menu-item "><a href="/MusicEvo/" class=pure-menu-link >Music Evolution</a> <li class="pure-menu-item "><a href="/Cancer/" class=pure-menu-link >Breast Cancer</a> <li class="pure-menu-item "><a href="/PhysChem/" class=pure-menu-link >Physical Chemistry</a> </ul> <ul class="pure-menu-list "><a href="/DataScience/" class=pure-menu-subheading >Data Science</a> <li class="pure-menu-item "><a href="/DSEntries/CenterOfEffect/" class=pure-menu-link >What key is Hey Joe in</a> <li class="pure-menu-item "><a href="/DSEntries/SentimentSongs1/" class=pure-menu-link >Sentiment in songs</a> <li class="pure-menu-item "><a href="/DSEntries/SemanticGraph/" class=pure-menu-link >Semantic Graph </a> <li class="pure-menu-item pure-menu-selected"><a href="/DSEntries/StyleTransfer/" class=pure-menu-link >Style Transfer</a> <li class="pure-menu-item "><a href="/DSEntries/LLMs/" class=pure-menu-link >Exploring LLMs</a> <li class="pure-menu-item "><a href="/DSEntries/WineQuality/" class=pure-menu-link >Wine Quality </a> </ul> <ul class="pure-menu-list "><a href="/Blog/" class=pure-menu-subheading >Personal Notes</a> <li class="pure-menu-item "><a href="/BlogNotes/LLMs_Synthesizers/" class=pure-menu-link >LLMs as Synthesizers</a> </div> </nav> <div id=main > <main id=main-content > <div class=header > <h1>Copying the style of an image to another</h1> <h2> Complex Systems and Computational Methods in Interdisciplinary Research </h2> </div> <div class=franklin-content > <p>Style transfer &#40;Transfer Learning&#41; is one of the many cool applications that some Machine Learning models have. In this case I am going to use <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Networks &#40;CNNs&#41;</a> for style transfer. The main idea of this method is to use the <strong>kernel features</strong> that a <strong>CNN</strong> model has learned to transfer the <em>style</em> or <strong>spatial structure</strong> of an image to a different one. <div class=franklin-toc ><ol><li><a href="#loading_imports_model_and_images">Loading imports, model and images</a><li><a href="#feature_activation_maps_and_gram_matrices">Feature activation maps and gram matrices</a><li><a href="#training_creating_the_image">Training &#40;creating&#41; the image</a><li><a href="#final_result">Final result</a></ol></div></p> <h3 id=loading_imports_model_and_images ><a href="#loading_imports_model_and_images" class=header-anchor >Loading imports, model and images</a></h3> <p>First we are going to load some imports</p> <pre><code class="python hljs"><span class=hljs-keyword >import</span> seaborn <span class=hljs-keyword >as</span> sns
 
 <span class=hljs-keyword >import</span> scipy.stats <span class=hljs-keyword >as</span> stats
 
@@ -134,7 +134,7 @@ titles = [<span class=hljs-string >&#x27;Content pic&#x27;</span>, <span class=h
 <p>
 <div class=container >
 
-    <img class=center  src="/assets/transfer_img1.svg" width=500  height=350 >
+    <img class=center  src="/assets/transfer_img1.svg" alt="Content and style images used for neural style transfer" width=500  height=350 >
 
 </div>
  the <em>new pic</em> is the image that we are going to modify to make it look like the content and style images. Before doing that we need to define a couple of functions that will help us to extract the feature activation maps and compute the gram matrix &#40;or covariance matrix&#41;. </p>
@@ -191,7 +191,7 @@ plt.show()</code></pre>
 <p>
 <div class=container >
 
-    <img class=center  src="/assets/transfer_gram1.svg" width=500  height=350 >
+    <img class=center  src="/assets/transfer_gram1.svg" alt="Gram matrix visualization for style representation" width=500  height=350 >
 
 </div>
  it is worth reminding that these results come from a pre trained model that already learned the features &#40;kernels&#41; from a set of images, we are only exploring how those features are extracted from our image.</p>
@@ -220,7 +220,7 @@ plt.show()</code></pre>
 
 <div class=container >
 
-    <img class=center  src="/assets/transfer_gram2.svg" width=500  height=350 >
+    <img class=center  src="/assets/transfer_gram2.svg" alt="Comparison of Gram matrices at different CNN layers" width=500  height=350 >
 
 </div>
 
@@ -305,20 +305,35 @@ plt.show()</code></pre>
 
 <div class=container >
 
-    <img class=center  src="/assets/transfer_final.svg" width=500  height=350 >
+    <img class=center  src="/assets/transfer_final.svg" alt="Final result of neural style transfer combining content and style images" width=500  height=350 >
 
 </div>
 
 <p>which I kind of like it better than the original, I will consider using it as a profile picture instead.</p>
 <p>Don&#39;t forget to take a look at the <a href="https://github.com/spiralizing/WebsiteNotebooks/blob/main/Python/StyleTransfer.ipynb">notebook</a> for this post.</p>
 <div class=page-foot >
-    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: May 09, 2025.
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Alfredo González-Espinoza. Last modified: March 13, 2026.
     Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
 </div>
 </div>
+      </main> 
       </div> 
   </div> 
   <script src="/libs/pure/ui.min.js"></script>
+  <script>
+    // Toggle aria-expanded on menu button when menu state changes
+    (function() {
+      var menuLink = document.getElementById('menuLink');
+      var layout = document.getElementById('layout');
+      if (menuLink && layout) {
+        var observer = new MutationObserver(function() {
+          var isActive = layout.className.indexOf('active') !== -1;
+          menuLink.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        });
+        observer.observe(layout, { attributes: true, attributeFilter: ['class'] });
+      }
+    })();
+  </script>
   
       
 
