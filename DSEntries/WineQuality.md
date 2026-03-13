@@ -65,7 +65,7 @@ ax.set_xticklabels(allwine_data.columns,rotation=45)
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/chem_distro1.svg" width="500" height="350">
+    <img class="center" src="/assets/chem_distro1.svg" alt="Distribution plots of chemical properties in wine dataset" width="500" height="350">
 
 </div>
 ~~~
@@ -94,7 +94,7 @@ ax.set_xticklabels(normed_alldata.columns,rotation=45)
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/chem_distronorm.svg" width="500" height="350">
+    <img class="center" src="/assets/chem_distronorm.svg" alt="Normalized distribution plots of chemical properties in wine dataset" width="500" height="350">
 
 </div>
 ~~~
@@ -113,7 +113,7 @@ plt.xticks([0,1], labels=['White','Red'])
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/count_winetype.svg" width="350" height="350">
+    <img class="center" src="/assets/count_winetype.svg" alt="Bar chart showing count of wine samples by type" width="350" height="350">
 
 </div>
 ~~~
@@ -172,7 +172,7 @@ Now we can think about our [Artificial Neural Network (ANN)](https://en.wikipedi
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/nn.svg" width="600" height="600">
+    <img class="center" src="/assets/nn.svg" alt="Neural network architecture diagram for wine quality prediction" width="600" height="600">
 
 </div>
 ~~~
@@ -321,7 +321,7 @@ ax[1].grid()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/traintest_winetype.svg" width="500" height="400">
+    <img class="center" src="/assets/traintest_winetype.svg" alt="Training and test accuracy curves for wine type classification" width="500" height="400">
 
 </div>
 ~~~
@@ -359,7 +359,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cm_winetype.svg" width="500" height="450">
+    <img class="center" src="/assets/cm_winetype.svg" alt="Confusion matrix for wine type classification model" width="500" height="450">
 
 </div>
 ~~~
@@ -406,7 +406,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/chem_props.svg" width="600" height="600">
+    <img class="center" src="/assets/chem_props.svg" alt="Scatter plots of chemical properties across wine samples" width="600" height="600">
 
 </div>
 ~~~
@@ -542,7 +542,7 @@ ax[1].grid()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/traintest_fixedac.svg" width="500" height="400">
+    <img class="center" src="/assets/traintest_fixedac.svg" alt="Training and test accuracy curves for fixed acidity regression" width="500" height="400">
 
 </div>
 ~~~
@@ -578,7 +578,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cor_fixedac.svg" width="500" height="450">
+    <img class="center" src="/assets/cor_fixedac.svg" alt="Correlation plot of predicted vs actual fixed acidity values" width="500" height="450">
 
 </div>
 ~~~
@@ -655,7 +655,7 @@ for i in range(2):
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/regression_chemprops.svg" width="700" height="700">
+    <img class="center" src="/assets/regression_chemprops.svg" alt="Regression results for multiple chemical properties prediction" width="700" height="700">
 
 </div>
 ~~~
@@ -677,7 +677,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/quality_whitedistros.svg" width="300" height="300">
+    <img class="center" src="/assets/quality_whitedistros.svg" alt="Distribution of quality scores for white wines" width="300" height="300">
 
 </div>
 ~~~
@@ -700,7 +700,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/binary_qualitycount.svg" width="300" height="300">
+    <img class="center" src="/assets/binary_qualitycount.svg" alt="Bar chart showing binary quality class distribution" width="300" height="300">
 
 </div>
 ~~~
@@ -774,7 +774,7 @@ ax[1].grid()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/traintest_whitewinequality.svg" width="500" height="400">
+    <img class="center" src="/assets/traintest_whitewinequality.svg" alt="Training and test accuracy for white wine quality classification" width="500" height="400">
 
 </div>
 ~~~
@@ -812,7 +812,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cm_whitewinequality.svg" width="500" height="500">
+    <img class="center" src="/assets/cm_whitewinequality.svg" alt="Confusion matrix for white wine quality classification" width="500" height="500">
 
 </div>
 ~~~
@@ -861,7 +861,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/binary_redqualitycount.svg" width="300" height="300">
+    <img class="center" src="/assets/binary_redqualitycount.svg" alt="Bar chart showing binary quality distribution for red wines" width="300" height="300">
 
 </div>
 ~~~
@@ -922,7 +922,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cm_redwinequality.svg" width="500" height="500">
+    <img class="center" src="/assets/cm_redwinequality.svg" alt="Confusion matrix for red wine quality classification" width="500" height="500">
 
 </div>
 ~~~

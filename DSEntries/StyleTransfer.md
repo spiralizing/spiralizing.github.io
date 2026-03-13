@@ -176,7 +176,7 @@ for i, pic in enumerate([img_content, img_target, img_style]):
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/transfer_img1.svg" width="500" height="350">
+    <img class="center" src="/assets/transfer_img1.svg" alt="Content and style images used for neural style transfer" width="500" height="350">
 
 </div>
 ~~~
@@ -242,7 +242,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/transfer_gram1.svg" width="500" height="350">
+    <img class="center" src="/assets/transfer_gram1.svg" alt="Gram matrix visualization for style representation" width="500" height="350">
 
 </div>
 ~~~
@@ -276,7 +276,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/transfer_gram2.svg" width="500" height="350">
+    <img class="center" src="/assets/transfer_gram2.svg" alt="Comparison of Gram matrices at different CNN layers" width="500" height="350">
 
 </div>
 ~~~
@@ -378,7 +378,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/transfer_final.svg" width="500" height="350">
+    <img class="center" src="/assets/transfer_final.svg" alt="Final result of neural style transfer combining content and style images" width="500" height="350">
 
 </div>
 ~~~

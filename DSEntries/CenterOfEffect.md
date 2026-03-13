@@ -15,7 +15,7 @@ The main application of the Spiral Representation is to find the tonality (key o
 
 As an amateur cellist and with an obsessive curiosity around music, one of my favorite musicians/youtubers happens to be [Adam Neely](https://www.youtube.com/@AdamNeely), he made a [video](https://www.youtube.com/watch?v=DVvmALPu5TU) a while ago where he makes a very detailed harmony analysis of the song "Hey Joe" by Jimi Hendrix to explain why he thinks the tonality or key of the song is *E*:
 
-[![](https://img.youtube.com/vi/DVvmALPu5TU/0.jpg)](https://www.youtube.com/watch?v=DVvmALPu5TU)
+[![Adam Neely's video thumbnail about the key of Hey Joe](https://img.youtube.com/vi/DVvmALPu5TU/0.jpg)](https://www.youtube.com/watch?v=DVvmALPu5TU)
 
 His video was so exciting and inspiring that I decided to test the variation of Elaine Chew's algorithm that I developed to try to answer in a more *quantitative* way the question:
 
@@ -35,7 +35,7 @@ Inspired by the helican configuration of Longuet-Higgins' harmonic network, also
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/Neo-Riemannian_Tonnetz.png" width="500" height="350">
+    <img class="center" src="/assets/Neo-Riemannian_Tonnetz.png" alt="Neo-Riemannian Tonnetz network showing pitch relationships with A minor triad in blue and C major triad in red" width="500" height="350">
     <blockquote> <cite>Rendering of the Tonnetz. The A minor triad is in dark blue, and the C major triad is in dark red. Interpreted as a torus, the Tonnetz has 12 nodes (pitches) and 24 triangles (triads). Image and caption from Wikipedia.</cite></blockquote>
 </div>
 ~~~
@@ -44,7 +44,7 @@ The spiral array attempts to preserve the harmonic relationships of the Tonnetz 
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/SpiralArray_Pitches.png" width="500" height="350">
+    <img class="center" src="/assets/SpiralArray_Pitches.png" alt="Schematic of pitches and harmonic relationships in the spiral array model" width="500" height="350">
     <blockquote> <cite> Schematic representation of pitches and their harmonic relationships in the spiral array. Figures were extracted from Elaine Chew's book: Mathematical and Computational Modeling of Tonality</cite></blockquote>
 
 </div>
@@ -55,7 +55,7 @@ The tesselation from the Tonnetz model can be illustrated in a better way if we 
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/SpiralArray_Keys.png" width="500" height="350">
+    <img class="center" src="/assets/SpiralArray_Keys.png" alt="Schematic of chords and keys in the spiral array showing major and minor chord planes" width="500" height="350">
     <blockquote> <cite> Schematic representation of chords and keys in the spiral array. Figures were extracted from Elaine Chew's book: Mathematical and Computational Modeling of Tonality</cite></blockquote>    
 
 </div>
@@ -197,7 +197,7 @@ scatter!(min_keys[1], min_keys[2], min_keys[3], m=:star, color=:orange, ms=12, l
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/SpiralRep.png" width="600" height="700">
+    <img class="center" src="/assets/SpiralRep.png" alt="3D spiral representation plot showing pitches, chords, and keys in the spiral array" width="600" height="700">
 
 </div>
 ~~~
@@ -237,7 +237,7 @@ The `MusicSpiralRepresentation.jl` package uses the same [numerical notation](ht
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/midi_numbers.png" width="350" height="350">
+    <img class="center" src="/assets/midi_numbers.png" alt="MIDI note number assignments for each musical note on a piano keyboard" width="350" height="350">
     <blockquote> <cite> MIDI note numbers assigned to each note. Figure extracted from: https://djip.co/blog/logic-studio-9-midi-note-numbers </cite></blockquote>  
 </div>
 ~~~
@@ -357,7 +357,7 @@ Now let's try the algorithm with a real example, in the figure below are the fir
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/MozartSonata.png" width="500" height="500">
+    <img class="center" src="/assets/MozartSonata.png" alt="First five measures of Mozart's Piano Sonata K.545 in C major with key annotations" width="500" height="500">
     <blockquote> <cite> The figure shows the first five measures from piano
     sonata K. 545 in C by W. A. Mozart, along with the most likely key (or two most likely keys)</cite></blockquote>
 </div>

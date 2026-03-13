@@ -47,7 +47,7 @@ At the end of the day, we need to remember that these synthesizers are stochasti
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/llm_synthesizer_1b.png" width="500" height="350">
+    <img class="center" src="/assets/llm_synthesizer_1b.png" alt="Framework diagram showing an LLM transforming shape A to shape B with and without context" width="500" height="350">
     <blockquote> <cite> Framework diagram example. Using an LLM to go from shape A to shape B. When context is used the approximate output (B') that the LLM generates requires less work for the user to refine it compared with the path without context (B'').</cite></blockquote>    
 </div>
 ~~~
@@ -72,7 +72,7 @@ This framework can be implemented in different ways, depending on the _shapes_ y
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/llm_synthesizer_2b.png" width="500" height="350">
+    <img class="center" src="/assets/llm_synthesizer_2b.png" alt="Workflow diagram showing iterative LLM-assisted shape synthesis with user refinement" width="500" height="350">
     <blockquote> <cite> An example of a workflow using this framework. LLMs can be used to create different in-between steps of approximate shapes, with refinement by the user if needed, in an iterative fashion before getting the final desired shape.</cite></blockquote>    
 </div>
 ~~~

@@ -395,7 +395,7 @@ disp.plot()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cm_finetune.svg" width="300" height=300">
+    <img class="center" src="/assets/cm_finetune.svg" alt="Confusion matrix for fine-tuned model classification results" width="300" height=300">
 
 </div>
 ~~~

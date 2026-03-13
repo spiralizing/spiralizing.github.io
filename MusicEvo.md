@@ -20,7 +20,7 @@ The **auto-correlation** function of a signal contains information about its str
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/scalings.png" width="500" height="450">
+    <img class="center" src="/assets/scalings.png" alt="Plot showing different scaling regions in the auto-correlation function of music scores" width="500" height="450">
 
 </div>
 ~~~
@@ -33,7 +33,7 @@ Read the paper [here](https://github.com/spiralizing/CVResume/blob/main/Papers/P
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/Irrev.png" width="500" height="400">
+    <img class="center" src="/assets/Irrev.png" alt="Diagram illustrating irreversibility and interval asymmetry in musical melodies" width="500" height="400">
 
 </div>
 ~~~
@@ -47,7 +47,7 @@ Creativity and **innovation** are concepts difficult to define and quantify. Mus
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/NovPlot.png" width="500" height="300">
+    <img class="center" src="/assets/NovPlot.png" alt="Plot of innovation in key transitions over 500 years of western classical music" width="500" height="300">
 
 </div>
 ~~~
@@ -60,7 +60,7 @@ Can we identify **evolutionary signatures** in social and **cultural behavior**?
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/lastfm_ts.svg" width="500" height="700">
+    <img class="center" src="/assets/lastfm_ts.svg" alt="Time series of music listening data showing frequency-dependent selection patterns" width="500" height="700">
 
 </div>
 ~~~

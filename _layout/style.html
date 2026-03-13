@@ -36,5 +36,32 @@
             white-space: nowrap;
             border-width: 0;
         }
+
+        /* Skip-to-main navigation link */
+        .skip-link {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            background: var(--accent-color, #E64833);
+            color: #fff;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top 0.2s ease;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Custom focus indicators for keyboard navigation */
+        a:focus-visible,
+        button:focus-visible,
+        [role="button"]:focus-visible {
+            outline: 3px solid var(--accent-color, #E64833);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
 </style>
 <link rel="icon" href="/assets/spiral1.jpg">

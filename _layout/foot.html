@@ -1,7 +1,22 @@
 <!-- CONTENT ENDS HERE -->
+      </main> <!-- end of main-content -->
       </div> <!-- end of id=main -->
   </div> <!-- end of id=layout -->
   <script src="/libs/pure/ui.min.js"></script>
+  <script>
+    // Toggle aria-expanded on menu button when menu state changes
+    (function() {
+      var menuLink = document.getElementById('menuLink');
+      var layout = document.getElementById('layout');
+      if (menuLink && layout) {
+        var observer = new MutationObserver(function() {
+          var isActive = layout.className.indexOf('active') !== -1;
+          menuLink.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        });
+        observer.observe(layout, { attributes: true, attributeFilter: ['class'] });
+      }
+    })();
+  </script>
   {{ if hasmath }}
       {{ insert foot_katex.html }}
   {{ end }}

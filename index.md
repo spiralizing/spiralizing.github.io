@@ -5,7 +5,7 @@
 ~~~
 <div class="row">
   <div class="container">
-    <img class="left" src="/assets/Mypic.jpeg" width="500" height="300">
+    <img class="left" src="/assets/Mypic.jpeg" alt="Portrait photo of Alfredo González-Espinoza" width="500" height="300">
     <p>
     Hi!
     </p>

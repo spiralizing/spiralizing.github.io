@@ -47,7 +47,7 @@ sns.countplot(df_cnn['Category'])
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cnn_categ.svg" width="500" height="350">
+    <img class="center" src="/assets/cnn_categ.svg" alt="CNN news article category distribution" width="500" height="350">
 
 </div>
 ~~~
@@ -81,7 +81,7 @@ ax[2].set_ylabel('Count')
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/semnet_distro.svg" width="500" height="250">
+    <img class="center" src="/assets/semnet_distro.svg" alt="Distribution of semantic similarity scores in the network" width="500" height="250">
 
 </div>
 ~~~
@@ -276,7 +276,7 @@ nx.draw_networkx(entG, ax=ax,**plot_options)
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/semnet_fullnet.svg" width="500" height="500">
+    <img class="center" src="/assets/semnet_fullnet.svg" alt="Full semantic network graph visualization" width="500" height="500">
 
 </div>
 ~~~
@@ -302,7 +302,7 @@ nx.draw_networkx(large_c,pos=pos, ax=ax,**plot_options)
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/semnet_largec.svg" width="500" height="500">
+    <img class="center" src="/assets/semnet_largec.svg" alt="Largest connected component of the semantic network" width="500" height="500">
 
 </div>
 ~~~
@@ -342,7 +342,7 @@ fig.set_facecolor('grey')
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/semnet_partition.svg" width="500" height="500">
+    <img class="center" src="/assets/semnet_partition.svg" alt="Community partition of the semantic network" width="500" height="500">
 
 </div>
 ~~~

@@ -13,7 +13,7 @@ During my postdoctoral stay at the [Computational Genomics Lab](http://csbig.inm
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/cancer1.svg" width="500" height="1000">
+    <img class="center" src="/assets/cancer1.svg" alt="Visualization of gene co-expression clustering in breast cancer chromosomes" width="500" height="1000">
 
 </div>
 ~~~

@@ -120,7 +120,7 @@ sns.boxplot(x='Year', y='sentiment_score',data=df_artists[3])
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/ladygaga.svg" width="500" height="450">
+    <img class="center" src="/assets/ladygaga.svg" alt="Sentiment analysis plot for Lady Gaga songs" width="500" height="450">
 
 </div>
 ~~~
@@ -145,7 +145,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/sentiments_artists.svg" width="500" height="450">
+    <img class="center" src="/assets/sentiments_artists.svg" alt="Comparison of sentiment distributions across multiple artists" width="500" height="450">
 
 </div>
 ~~~
@@ -247,7 +247,7 @@ plt.show()
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/selenag.svg" width="500" height="350">
+    <img class="center" src="/assets/selenag.svg" alt="Sentiment analysis plot for Selena Gomez songs" width="500" height="350">
 
 </div>
 ~~~
@@ -313,7 +313,7 @@ for i,ax in enumerate(axs.flatten()):
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/sent_all_artists.svg" width="500" height="650">
+    <img class="center" src="/assets/sent_all_artists.svg" alt="Aggregated sentiment analysis across all analyzed artists" width="500" height="650">
 
 </div>
 ~~~

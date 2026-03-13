@@ -19,7 +19,7 @@ During my Bachelor and Master degrees I did research in Physical Chemistry, I wa
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/liese1.svg" width="500" height="300">
+    <img class="center" src="/assets/liese1.svg" alt="Liesegang pattern formation from HCl and ammonia gas phase reaction in a glass tube" width="500" height="300">
 
 </div>
 ~~~
@@ -32,7 +32,7 @@ We present a detailed study including **ab initio calculations** and classic **M
 ~~~
 <div class="container">
 
-    <img class="center" src="/assets/hidroxilamine.svg" width="500" height="300">
+    <img class="center" src="/assets/hidroxilamine.svg" alt="Molecular structure and interaction potential diagram of hydroxylamine" width="500" height="300">
 
 </div>
 ~~~
