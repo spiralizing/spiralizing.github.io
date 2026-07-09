@@ -651,8 +651,8 @@ pre:has(> code.language-plaintext) > code {
 ================================================================== */
 .franklin-content .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
   margin: 2em 0;
 }
 
@@ -689,7 +689,7 @@ pre:has(> code.language-plaintext) > code {
 
 .franklin-content .card-thumb {
   display: block;
-  aspect-ratio: 16 / 10;
+  height: 110px;
   background: #ffffff;
   overflow: hidden;
 }
@@ -699,7 +699,7 @@ pre:has(> code.language-plaintext) > code {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 8px;
+  padding: 6px;
   margin: 0;
   border: none;
   border-radius: 0;

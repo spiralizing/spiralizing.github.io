@@ -3,6 +3,16 @@ function hfun_bar(vname)
   return round(sqrt(val), digits=2)
 end
 
+# {{cssver}} — content hash of the CSS files, appended as ?v=... to the
+# stylesheet links so browsers refetch only when the CSS actually changes.
+function hfun_cssver(args...)
+  s = ""
+  for f in ("_css/franklin.css", "_css/pure.css", "_css/side-menu.css")
+    isfile(f) && (s *= read(f, String))
+  end
+  return string(abs(hash(s)) % 100000000)
+end
+
 # {{cards path1 path2 ...}} — render a grid of entry cards (thumbnail + title +
 # blurb) from each page's :title, :rss and :thumbnail page-variables.
 function hfun_cards(params)
