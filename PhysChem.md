@@ -1,5 +1,6 @@
 +++
 title = "Physical Chemistry"
+thumbnail = "/assets/hidroxilamine.svg"
 hascode = true
 date = Date(2022, 10, 1)
 rss = "Physical chemistry projects"

@@ -1,5 +1,6 @@
 +++
 title = "LLMs as approximate information synthesizers"
+thumbnail = "/assets/spiral.svg"
 hascode = true
 date = Date(2022, 10, 14)
 rss = "LLMs as approximate information synthesizers"

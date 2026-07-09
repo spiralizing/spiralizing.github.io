@@ -1,5 +1,6 @@
 +++
 title = "Predicting wine quality using chemical properties"
+thumbnail = "/assets/quality_whitedistros.svg"
 hascode = true
 date = Date(2023, 1, 5)
 rss = "Predicting wine quality with NN"

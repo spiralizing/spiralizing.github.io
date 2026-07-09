@@ -1,5 +1,6 @@
 +++
 title = "Exploring Large Language Models"
+thumbnail = "/assets/cm_finetune.svg"
 hascode = true
 date = Date(2022, 10, 14)
 rss = "Exploring Large Language Models"

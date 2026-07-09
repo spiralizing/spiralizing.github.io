@@ -1,5 +1,6 @@
 +++
 title = "Music Evolution"
+thumbnail = "/assets/lastfm_ts.svg"
 hascode = true
 date = Date(2022, 10, 1)
 rss = "Description of the work I have done around music"

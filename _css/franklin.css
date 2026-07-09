@@ -646,6 +646,101 @@ pre:has(> code.language-plaintext) > code {
   }
 }
 
+/* ==================================================================
+    ENTRY CARDS (thumbnail + title + blurb grid on landing pages)
+================================================================== */
+.franklin-content .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+  margin: 2em 0;
+}
+
+.franklin-content .card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 2px;
+  background: var(--porcelain-bg);
+  color: var(--primary-text-color);
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.franklin-content .card:hover {
+  transform: translateY(-3px);
+  border-color: var(--secondary-accent);
+  box-shadow: 0 6px 18px rgba(20, 32, 31, 0.12);
+}
+
+.franklin-content .card-bar {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--code-bg-color);
+  background: var(--terminal-blue);
+  padding: 4px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.franklin-content .card-thumb {
+  display: block;
+  aspect-ratio: 16 / 10;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* reset the big hover-zoom image styling for card thumbnails */
+.franklin-content .card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: inherit;
+  transition: none;
+}
+
+.franklin-content .card:hover .card-thumb img {
+  transform: none;
+}
+
+.franklin-content .card-body {
+  padding: 12px 14px 16px;
+}
+
+.franklin-content .card-title {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  color: var(--accent-color);
+}
+
+.franklin-content .card-desc {
+  display: block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.franklin-content .card:hover .card-title {
+  color: var(--secondary-accent);
+}
+
+.franklin-content .card:hover .card-desc {
+  color: var(--ink-soft);
+}
+
 @media (forced-colors: active) {
 
   .franklin-content a {

@@ -1,5 +1,6 @@
 +++
 title = "Gene co-expression in breast cancer"
+thumbnail = "/assets/cancer1.svg"
 hascode = true
 date = Date(2022, 10, 1)
 rss = "Project I worked on during my postdoctoral stay at INMEGEN."

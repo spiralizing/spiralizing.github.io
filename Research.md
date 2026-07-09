@@ -11,7 +11,4 @@ My path in research has not been straightforward, since college I have been inte
 
 Here you can find scientific research projects I have worked *-and currently work-* on.
 
-* [Music Evolution](/MusicEvo/)
-* [Breast Cancer](/Cancer/)
-* [Physical Chemistry](/PhysChem/)
-* [Information Science](/Libraries/)
+{{cards MusicEvo Cancer PhysChem Libraries}}

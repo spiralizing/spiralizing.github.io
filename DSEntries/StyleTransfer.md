@@ -1,5 +1,6 @@
 +++
 title = "Copying the style of an image to another"
+thumbnail = "/assets/transfer_final.svg"
 hascode = true
 date = Date(2022, 10, 14)
 rss = "Transfering the style from one image to another"

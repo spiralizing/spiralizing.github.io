@@ -1,5 +1,6 @@
 +++
 title = "What Key is 'Hey Joe' in?"
+thumbnail = "/assets/spiral.svg"
 hascode = true
 date = Date(2023, 9, 9)
 rss = "Finding Most Likely Key"

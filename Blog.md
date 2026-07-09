@@ -11,4 +11,4 @@ Hi!
 
 These are just personal writings that I have made for myself but consider decent enough to edit and share them with more people.
 
-* [Large Language Models as Approximate Information Synthesizers](/LLMs_Synthesizers)
+{{cards BlogNotes/LLMs_Synthesizers}}

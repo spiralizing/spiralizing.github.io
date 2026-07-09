@@ -1,5 +1,6 @@
 +++
 title = "Sentiment analysis and topic modeling in pop artists"
+thumbnail = "/assets/sentiments_artists.svg"
 hascode = true
 date = Date(2022, 10, 14)
 rss = "Sentiment analysis and topic model for some pop artists"

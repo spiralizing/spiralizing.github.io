@@ -1,5 +1,6 @@
 +++
 title = "Building a semantic network"
+thumbnail = "/assets/semnet_fullnet.svg"
 hascode = true
 date = Date(2022, 10, 14)
 rss = "How to build a semantic graph"

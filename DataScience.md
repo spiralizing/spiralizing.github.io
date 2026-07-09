@@ -13,14 +13,4 @@ Some of the entries are more technical than others, but all of them have their r
 
 I hope you find something useful or interesting.
 
-* [In what key is "Hey Joe" by Jimi Hendrix?](/DSEntries/CenterOfEffect/)
-
-* [Building a semantic network from CNN news articles](/DSEntries/SemanticGraph/)
-
-* [Sentiment analysis and topic modeling in pop artists](/DSEntries/LLMs/)
-
-* [Exploring Large Language Models](/DSEntries/WineQuality/)
-
-* [Copying the style of an image to another using Convolutional Neural Networks](/DSEntries/StyleTransfer/)
-
-* [Predicting wine quality scores](/DSEntries/WineQuality/)
+{{cards DSEntries/CenterOfEffect DSEntries/SemanticGraph DSEntries/SentimentSongs1 DSEntries/LLMs DSEntries/StyleTransfer DSEntries/WineQuality}}

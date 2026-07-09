@@ -1,5 +1,6 @@
 +++
 title = "LLM applications in Academic Libraries"
+thumbnail = "/assets/nn.svg"
 hascode = true
 date = Date(2022, 10, 1)
 rss = "Work on AI and LLMs applications in Academic Libraries"
