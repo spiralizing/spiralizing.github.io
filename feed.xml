@@ -23,25 +23,6 @@
 
 <item>
   <title>
-    <![CDATA[  Personal Notes  ]]>
-  </title>
-  <link> https://spiralizing.github.io/Blog/index.html </link>
-  <guid> https://spiralizing.github.io/Blog/index.html </guid>
-  <description>
-    <![CDATA[  Personal notes that include thougths or advice  ]]>
-  </description>  
-    
-  <pubDate>Fri, 09 May 2025 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  What Key is &#39;Hey Joe&#39; in?  ]]>
   </title>
   <link> https://spiralizing.github.io/DSEntries/CenterOfEffect/index.html </link>
@@ -175,50 +156,12 @@
 
 <item>
   <title>
-    <![CDATA[  Data Science  ]]>
-  </title>
-  <link> https://spiralizing.github.io/DataScience/index.html </link>
-  <guid> https://spiralizing.github.io/DataScience/index.html </guid>
-  <description>
-    <![CDATA[  Description of my data science examples and projects  ]]>
-  </description>  
-    
-  <pubDate>Fri, 14 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
     <![CDATA[  Music Evolution  ]]>
   </title>
   <link> https://spiralizing.github.io/MusicEvo/index.html </link>
   <guid> https://spiralizing.github.io/MusicEvo/index.html </guid>
   <description>
     <![CDATA[  Description of the work I have done around music  ]]>
-  </description>  
-    
-  <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>  
-  
-  
-  <atom:author>
-    <atom:name>Alfredo González-Espinoza</atom:name>
-  </atom:author>
-        
-</item>
-
-<item>
-  <title>
-    <![CDATA[  Research Projects  ]]>
-  </title>
-  <link> https://spiralizing.github.io/Research/index.html </link>
-  <guid> https://spiralizing.github.io/Research/index.html </guid>
-  <description>
-    <![CDATA[  List of my research topics  ]]>
   </description>  
     
   <pubDate>Sat, 01 Oct 2022 00:00:00 +0000</pubDate>  
@@ -317,6 +260,63 @@
   </description>  
     
   <pubDate>Fri, 22 Mar 2019 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Personal Notes  ]]>
+  </title>
+  <link>  </link>
+  <guid>  </guid>
+  <description>
+    <![CDATA[  Personal notes that include thougths or advice  ]]>
+  </description>  
+    
+  <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Research Projects  ]]>
+  </title>
+  <link>  </link>
+  <guid>  </guid>
+  <description>
+    <![CDATA[  List of my research topics  ]]>
+  </description>  
+    
+  <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>  
+  
+  
+  <atom:author>
+    <atom:name>Alfredo González-Espinoza</atom:name>
+  </atom:author>
+        
+</item>
+
+<item>
+  <title>
+    <![CDATA[  Data Science  ]]>
+  </title>
+  <link>  </link>
+  <guid>  </guid>
+  <description>
+    <![CDATA[  Description of my data science examples and projects  ]]>
+  </description>  
+    
+  <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>  
   
   
   <atom:author>
