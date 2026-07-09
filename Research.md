@@ -14,4 +14,4 @@ Here you can find scientific research projects I have worked *-and currently wor
 * [Music Evolution](/MusicEvo/)
 * [Breast Cancer](/Cancer/)
 * [Physical Chemistry](/PhysChem/)
-* [Information Science](/LLMDH/)
+* [Information Science](/Libraries/)
