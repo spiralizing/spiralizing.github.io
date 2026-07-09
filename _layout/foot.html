@@ -17,6 +17,29 @@
       }
     })();
   </script>
+  <script>
+    // Light / dark theme toggle (persisted in localStorage)
+    (function () {
+      var btn = document.getElementById('themeToggle');
+      if (!btn) return;
+      var root = document.documentElement;
+      var txt = btn.querySelector('.theme-toggle-txt');
+      function current() {
+        return root.getAttribute('data-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
+      function apply(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('theme', t); } catch (e) {}
+        if (txt) txt.textContent = t;
+        btn.setAttribute('aria-label', 'Switch to ' + (t === 'dark' ? 'light' : 'dark') + ' theme');
+      }
+      apply(current());
+      btn.addEventListener('click', function () {
+        apply(current() === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
   {{ if hasmath }}
       {{ insert foot_katex.html }}
   {{ end }}

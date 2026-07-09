@@ -5,57 +5,32 @@ Licensed under the BSD License.
 https://github.com/yahoo/pure/blob/master/LICENSE.md
 */
 
-/* Main Background Colors */
-:root {
-  --main-bg-color: #FBE9D0;
-  --secondary-bg-color: #90AEAD;
-  --primary-text-color: #244855;
-  --accent-color: #E64833;
-  --secondary-accent: #874F41;
-  --code-bg-color: #1A1A1A;
-  --code-text-color: #FFFFFF;
-  --terminal-red: #CB3C33;
-  --terminal-blue: #4063D8;
-  --terminal-green: #389826;
-  --terminal-purple: #9558B2;
-  --porcelain-bg: #F3E5D0;
-  --porcelain-border: #E2D4C2;
-  --light-text: #FFFFFF;
-  --btn-hover-bg: rgba(135, 79, 65, 0.1);
+/* NOTE: design tokens (:root) were consolidated into the inline <style> of
+   _layout/style.html — see design/PORTING.md. Do not re-add :root here. */
+
+* {
+  box-sizing: border-box;
 }
 
 html {
-  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Spectral', Georgia, serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   color: var(--primary-text-color);
+  /* fluid type: 16px on mobile → 20px on ~1250px+ desktops */
+  font-size: clamp(16px, 15px + 0.4vw, 20px);
+  line-height: 1.65;
 }
 
 body {
   margin: 0;
   background-color: var(--main-bg-color);
+  color: var(--primary-text-color);
+  font-family: 'Spectral', Georgia, serif;
   position: relative;
+  counter-reset: eqnum;
 }
-
-/* Triangle grid pattern in background */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-image: linear-gradient(30deg, var(--secondary-bg-color) 12%, transparent 12.5%, transparent 87%, var(--secondary-bg-color) 87.5%, var(--secondary-bg-color)),
-    linear-gradient(150deg, var(--secondary-bg-color) 12%, transparent 12.5%, transparent 87%, var(--secondary-bg-color) 87.5%, var(--secondary-bg-color)),
-    linear-gradient(30deg, var(--secondary-bg-color) 12%, transparent 12.5%, transparent 87%, var(--secondary-bg-color) 87.5%, var(--secondary-bg-color)),
-    linear-gradient(150deg, var(--secondary-bg-color) 12%, transparent 12.5%, transparent 87%, var(--secondary-bg-color) 87.5%, var(--secondary-bg-color)),
-    linear-gradient(60deg, rgba(144, 174, 173, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(144, 174, 173, 0.15) 75%, rgba(144, 174, 173, 0.15)),
-    linear-gradient(120deg, rgba(144, 174, 173, 0.15) 25%, transparent 25.5%, transparent 75%, rgba(144, 174, 173, 0.15) 75%, rgba(144, 174, 173, 0.15));
-  background-size: 80px 140px;
-  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 0 0;
-  opacity: 0.2;
-}
+/* Background triangle pattern removed per terminal redesign. */
 
 article,
 aside,
@@ -84,7 +59,6 @@ a {
 a:active,
 a:hover {
   color: var(--secondary-accent);
-  text-decoration: underline;
 }
 
 /* Typography */
@@ -95,11 +69,13 @@ h4,
 h5,
 h6 {
   color: var(--primary-text-color);
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.01em;
 }
 
 b,
 strong {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 small {
@@ -358,9 +334,6 @@ a.pure-button-selected {
 
 /* Media queries for responsiveness */
 @media screen and (max-width: 768px) {
-  body::before {
-    background-size: 40px 70px;
-  }
 
   .pure-form input,
   .pure-form select,
@@ -386,28 +359,10 @@ a.pure-button-selected {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-
-  body::before {
-    opacity: 0.1;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --main-bg-color: #1e272e;
-    --secondary-bg-color: #3a4750;
-    --primary-text-color: #d2dae2;
-    --accent-color: #ff6b6b;
-    --secondary-accent: #ff9e80;
-    --code-bg-color: #1a2327;
-    --code-text-color: #b2f5ea;
-    --light-text: #f1f2f6;
-  }
-
-  body::before {
-    opacity: 0.1;
-  }
-
+  /* Design tokens are switched in _layout/style.html, not here. */
   .pure-table td {
     background-color: rgba(30, 39, 46, 0.8);
   }
