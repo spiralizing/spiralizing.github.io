@@ -372,7 +372,10 @@ heyjoe_keys = [get_closest_key(heyjoe_measures[i]) <span class=hljs-keyword >for
   </div> 
   <script src="/libs/pure/ui.min.js"></script>
   <script>
-    // Toggle aria-expanded on menu button when menu state changes
+    /* Toggle aria-expanded on menu button when menu state changes.
+       NOTE: use block comments only in inline scripts. optimize() minifies each
+       HTML file down to a single line, so a // comment swallows the rest of the
+       script on the deployed site (works locally, dead in production). */
     (function() {
       var menuLink = document.getElementById('menuLink');
       var layout = document.getElementById('layout');
@@ -386,7 +389,7 @@ heyjoe_keys = [get_closest_key(heyjoe_measures[i]) <span class=hljs-keyword >for
     })();
   </script>
   <script>
-    // Light / dark theme toggle (persisted in localStorage)
+    /* Light / dark theme toggle (persisted in localStorage) */
     (function () {
       var btn = document.getElementById('themeToggle');
       if (!btn) return;
