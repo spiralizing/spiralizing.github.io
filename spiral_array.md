@@ -22,15 +22,26 @@ Explore the three-dimensional structure of musical harmony using the spiral arra
 <div id="spiral-plot"></div>
 
 <style>
+    /* Definite height (not aspect-ratio): Plotly measures the container at
+       newPlot time and collapses the scene if the height is indeterminate. */
     #spiral-plot {
         width: 100%;
         max-width: 1000px;
-        aspect-ratio: 1 / 1;
+        height: min(1000px, 85vh);
+        min-height: 420px;
         margin: 0 auto;
         display: block;
         background: #1a1a1a;
         border: 1px solid #6D6B66;
         overflow: visible;
+    }
+
+    #spiral-fallback {
+        color: #e9edec;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.85em;
+        padding: 1.2em;
+        text-align: center;
     }
 </style>
 
@@ -250,12 +261,22 @@ Explore the three-dimensional structure of musical harmony using the spiral arra
     // Initialize plot
     (function () {
         function drawSpiral() {
-            if (typeof Plotly === 'undefined') return;
-            Plotly.newPlot('spiral-plot', generateSpiralData(), spiralLayout, {
+            const el = document.getElementById('spiral-plot');
+            if (!el) return;
+            if (typeof Plotly === 'undefined') {
+                el.innerHTML = '<div id="spiral-fallback">The plotting library could not be' +
+                    ' loaded from cdn.plot.ly. Check the network connection or any' +
+                    ' content blocker, then reload.</div>';
+                return;
+            }
+            Plotly.newPlot(el, generateSpiralData(), spiralLayout, {
                 editable: false,
                 responsive: true,
                 staticPlot: false,
                 scrollZoom: true
+            }).then(function () {
+                // Guard against a zero-size first measurement (fonts/layout still settling)
+                Plotly.Plots.resize(el);
             });
         }
         if (document.readyState === 'loading') {
@@ -263,6 +284,12 @@ Explore the three-dimensional structure of musical harmony using the spiral arra
         } else {
             drawSpiral();
         }
+        window.addEventListener('load', function () {
+            const el = document.getElementById('spiral-plot');
+            if (el && typeof Plotly !== 'undefined' && el.classList.contains('js-plotly-plot')) {
+                Plotly.Plots.resize(el);
+            }
+        });
     })();
 </script>
 ~~~
