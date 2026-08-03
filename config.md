@@ -5,6 +5,10 @@ Add here global page variables to use throughout your website.
 author = "Alfredo González-Espinoza"
 mintoclevel = 2
 
+# Pages that set `@def noindex = true` get a robots noindex/nofollow meta tag
+# (see _layout/head.html). Default: pages are indexable.
+noindex = false
+
 # Add here files or directories that should be ignored by Franklin, otherwise
 # these files might be copied and, if markdown, processed by Franklin which
 # you might not want. Indicate directories by ending the name with a `/`.
